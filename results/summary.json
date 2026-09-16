@@ -1,0 +1,122 @@
+{
+  "experiment_config": {
+    "hardware": {
+      "device": "MacBook Pro",
+      "soc": "Apple M5",
+      "cpu_cores": 10,
+      "memory_gb": 24,
+      "backend": "Metal",
+      "llama_cpp_backend": "Metal",
+      "os": "macOS"
+    },
+    "base_model": {
+      "hf_repo": "Qwen/Qwen2.5-7B-Instruct",
+      "local_hf_dir": "models/huggingface/Qwen2.5-7B-Instruct",
+      "base_gguf": "models/base/Qwen2.5-7B-Instruct-F16.gguf"
+    },
+    "quantization": {
+      "levels": [
+        "Q8_0",
+        "Q6_K",
+        "Q5_K_M",
+        "Q4_K_M",
+        "Q3_K_M",
+        "Q2_K"
+      ],
+      "output_dir": "models/quantized"
+    },
+    "inference": {
+      "context_length": 4096,
+      "max_output_tokens": 256,
+      "temperature": 0,
+      "seed": 42
+    },
+    "benchmark": {
+      "warmup_runs": 3,
+      "measurement_runs": 10,
+      "llama_bench_bin": "external/llama.cpp/build/bin/llama-bench",
+      "llama_quantize_bin": "external/llama.cpp/build/bin/llama-quantize",
+      "llama_cli_bin": "external/llama.cpp/build/bin/llama-cli",
+      "memory_poll_interval_sec": 0.05
+    },
+    "paths": {
+      "raw_csv": "data/raw/benchmark_raw.csv",
+      "processed_stats": "data/processed/benchmark_stats.csv",
+      "summary_table": "results/tables/summary.csv",
+      "figures_dir": "results/figures",
+      "summary_json": "results/summary.json",
+      "logs_dir": "logs"
+    }
+  },
+  "hardware": {
+    "soc": "Apple M5",
+    "memory_gb": 24,
+    "backend": "Metal"
+  },
+  "llama_cpp_commit": "c6824a9e42ceeda5d58089fa274ddd816e59e68e",
+  "per_quant_summary": [
+    {
+      "quant": "F16",
+      "model_size_bytes": 15237853760,
+      "peak_mem_bytes": 13088571392,
+      "prompt_throughput_tps": 511.45,
+      "generation_throughput_tps": 6.639197,
+      "ttft_ms": 8010.5402957,
+      "total_latency_ms": 42679.9406166
+    },
+    {
+      "quant": "Q8_0",
+      "model_size_bytes": 8098525760,
+      "peak_mem_bytes": 8712765440,
+      "prompt_throughput_tps": 504.31319999999994,
+      "generation_throughput_tps": 13.8005,
+      "ttft_ms": 8124.5845166,
+      "total_latency_ms": 26141.4123584
+    },
+    {
+      "quant": "Q6_K",
+      "model_size_bytes": 6254199360,
+      "peak_mem_bytes": 6818725888,
+      "prompt_throughput_tps": 473.6723,
+      "generation_throughput_tps": 17.81892,
+      "ttft_ms": 8647.4086209,
+      "total_latency_ms": 22761.0959666
+    },
+    {
+      "quant": "Q5_K_M",
+      "model_size_bytes": 5444831808,
+      "peak_mem_bytes": 6000672768,
+      "prompt_throughput_tps": 487.84790000000004,
+      "generation_throughput_tps": 19.951410000000003,
+      "ttft_ms": 8396.7967834,
+      "total_latency_ms": 21098.6743001
+    },
+    {
+      "quant": "Q4_K_M",
+      "model_size_bytes": 4683074112,
+      "peak_mem_bytes": 5226938368,
+      "prompt_throughput_tps": 505.8669,
+      "generation_throughput_tps": 22.419069999999998,
+      "ttft_ms": 8097.7934917,
+      "total_latency_ms": 19386.8206959
+    },
+    {
+      "quant": "Q3_K_M",
+      "model_size_bytes": 3808391744,
+      "peak_mem_bytes": 4363927552,
+      "prompt_throughput_tps": 495.642,
+      "generation_throughput_tps": 26.50036,
+      "ttft_ms": 8264.0652914,
+      "total_latency_ms": 17826.975366799998
+    },
+    {
+      "quant": "Q2_K",
+      "model_size_bytes": 3015940672,
+      "peak_mem_bytes": 3594829824,
+      "prompt_throughput_tps": 505.8185,
+      "generation_throughput_tps": 33.16088,
+      "ttft_ms": 8097.8171165,
+      "total_latency_ms": 15779.493346
+    }
+  ]
+}

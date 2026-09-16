@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Models (GGUF / HF checkpoints) - too large for GitHub (100MB limit)
+models/
+
+# External third-party repo
+external/
+
+# Logs
+logs/
+
+# macOS
+.DS_Store
