@@ -14,3 +14,8 @@ logs/
 
 # macOS
 .DS_Store
+# Downloaded evaluation datasets
+data/datasets/
+
+# Tests
+.pytest_cache/
