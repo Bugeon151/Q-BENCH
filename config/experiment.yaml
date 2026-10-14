@@ -1,4 +1,8 @@
 hardware:
+  # New runs detect hardware at runtime (src/common.py detect_hw) and write to
+  # data/raw/<hw_id>/. Set `id` to override the auto-detected hw_id.
+  id: null
+  # Metadata of the v0.1 legacy run (data/raw/benchmark_raw.csv, read-only).
   device: "MacBook Pro"
   soc: "Apple M5"
   cpu_cores: 10
@@ -6,36 +10,91 @@ hardware:
   backend: "Metal"
   llama_cpp_backend: "Metal"
   os: "macOS"
-  # populated automatically at runtime from config/hardware.txt
 
-base_model:
-  hf_repo: "Qwen/Qwen2.5-7B-Instruct"
-  local_hf_dir: "models/huggingface/Qwen2.5-7B-Instruct"
-  base_gguf: "models/base/Qwen2.5-7B-Instruct-F16.gguf"
+# v1.0 model axis. Paths: <model_dirs.hf>/<name>, <model_dirs.base>/<name>-F16.gguf,
+# <quantization.output_dir>/<name>-<quant>.gguf
+models:
+  - {name: "Qwen2.5-1.5B-Instruct", hf_repo: "Qwen/Qwen2.5-1.5B-Instruct"}
+  - {name: "Qwen2.5-3B-Instruct", hf_repo: "Qwen/Qwen2.5-3B-Instruct"}
+  - {name: "Qwen2.5-7B-Instruct", hf_repo: "Qwen/Qwen2.5-7B-Instruct"}
+  - {name: "Qwen2.5-14B-Instruct", hf_repo: "Qwen/Qwen2.5-14B-Instruct"}
+default_model: "Qwen2.5-7B-Instruct"   # used when --model is not given
+model_dirs:
+  hf: "models/huggingface"
+  base: "models/base"
 
 quantization:
-  # F16 is base_gguf itself; these are produced from it via llama-quantize
+  # F16 is the base GGUF itself; these are produced from it via llama-quantize
   levels: [Q8_0, Q6_K, Q5_K_M, Q4_K_M, Q3_K_M, Q2_K]
   output_dir: "models/quantized"
 
 inference:
-  context_length: 4096
+  context_length: 4096            # v0.1 default ctx (--contexts default)
+  contexts: [512, 2048, 4096, 8192]  # v0.3 context axis (--contexts all)
   max_output_tokens: 256
+  # temperature/seed apply to quality_eval (llama-server) only; llama-bench
+  # uses synthetic tokens and does not sample.
   temperature: 0
   seed: 42
 
 benchmark:
   warmup_runs: 3
   measurement_runs: 10
+  n_gpu_layers: 99                # >= layer count = all layers (v0.1 used llama-bench default -1 = all)
+  flash_attn: "auto"              # on|off|auto (v0.1 used the llama-bench default: auto)
   llama_bench_bin: "external/llama.cpp/build/bin/llama-bench"
   llama_quantize_bin: "external/llama.cpp/build/bin/llama-quantize"
   llama_cli_bin: "external/llama.cpp/build/bin/llama-cli"
   memory_poll_interval_sec: 0.05
+  vram_poll_interval_ms: 100
+
+# Combos whose estimated footprint exceeds the device budget are skipped and logged.
+# Estimate = GGUF size + f16 KV cache(ctx, from HF config.json) + overhead_gb.
+memory_budget:
+  skip_over_budget: true
+  overhead_gb: 0.75        # estimate: compute buffers + runtime
+  metal_fraction: 0.67     # estimate of macOS default GPU working-set limit (~2/3 RAM)
+  cuda_fraction: 0.95      # of total VRAM
+  cpu_fraction: 0.80       # of RAM (CPU backend, or CUDA host offload in quality stage)
+  # "<backend>/<model>/<quant>" fnmatch patterns, always skipped.
+  # 14B Q8_0 (~15.7 GB, estimate) is close to 7B F16 (15.24 GB measured), which
+  # already showed memory-pressure signs on M5 24 GB (RSS < file size, tg CV 8%).
+  exclude:
+    - "Metal/Qwen2.5-14B-Instruct/Q8_0"
+
+perplexity:
+  llama_perplexity_bin: "external/llama.cpp/build/bin/llama-perplexity"
+  dataset_url: "https://huggingface.co/datasets/ggml-org/ci/resolve/main/wikitext-2-raw-v1.zip"
+  dataset_file: "data/datasets/wikitext-2-raw/wiki.test.raw"
+  ctx: 512                 # llama-perplexity default
+  chunks: null             # null = full test set
+  n_gpu_layers: "auto"     # auto lets llama.cpp --fit offload partially when VRAM is short
+
+quality:
+  llama_server_bin: "external/llama.cpp/build/bin/llama-server"
+  sample_file: "prompts/quality.json"
+  sample_seed: 42
+  n_parallel: 4            # llama-server -np slots
+  ctx_per_slot: 4096
+  n_gpu_layers: "auto"
+  port: 8089
+  request_timeout_sec: 600
+  exec_timeout_sec: 10     # HumanEval per-problem test timeout
+  datasets:
+    mmlu: {repo: "cais/mmlu", prefix: "all/test-", per_subject: 10, max_tokens: 16}
+    gsm8k: {repo: "openai/gsm8k", prefix: "main/test-", n: 250, max_tokens: 512}
+    humaneval: {repo: "openai/openai_humaneval", prefix: "openai_humaneval/test-", n: null, max_tokens: 768}
+
+analysis:
+  cv_warn_threshold: 0.03
 
 paths:
-  raw_csv: "data/raw/benchmark_raw.csv"
+  raw_csv: "data/raw/benchmark_raw.csv"          # v0.1 legacy (read-only)
+  raw_dir: "data/raw"                            # new runs: <raw_dir>/<hw_id>/benchmark_raw.csv
+  quality_dir: "data/quality"                    # <quality_dir>/<hw_id>/...
   processed_stats: "data/processed/benchmark_stats.csv"
   summary_table: "results/tables/summary.csv"
+  tables_dir: "results/tables"
   figures_dir: "results/figures"
   summary_json: "results/summary.json"
   logs_dir: "logs"
