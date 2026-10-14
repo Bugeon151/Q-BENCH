@@ -1,121 +1,94 @@
 """Pipeline stage: Warm-up + Benchmark + Raw Data Collection.
 
-Runs llama-bench across every prepared quantization level (F16 + configured
-quant levels), for three test groups (pp / tg / pg), each with a discarded
-warm-up phase followed by a measurement phase whose per-repetition samples
-are flattened into data/raw/benchmark_raw.csv.
+Iterates model x quant x ctx x test group (pp / tg / pg). Each group runs a
+discarded warm-up followed by a measurement phase whose per-repetition samples
+are flattened into data/raw/<hw_id>/benchmark_raw.csv together with
+llama-bench metadata, runtime hardware info, peak RSS/VRAM and swap usage.
+
+  pp: -p ctx -n 0             prompt processing of ctx tokens (TTFT)
+  tg: -d ctx -p 0 -n N        generation of N tokens at KV depth ctx
+  pg: -pg ctx,N -p 0 -n 0     prompt + generation (-p 0 -n 0 suppress the
+                              default pp512/tg128 tests llama-bench adds)
+
+The v0.1 file data/raw/benchmark_raw.csv (legacy schema) is never written.
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
-import os
-import platform
 import subprocess
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import yaml
+from common import (ROOT_DIR, check_budget, detect_hw, gguf_path, load_config, make_logger,
+                    quant_levels, select_models)
+from memory_monitor import MemoryMonitor, VramMonitor, swap_used_bytes
 
-from memory_monitor import MemoryMonitor
+TEST_GROUPS = {
+    "pp": lambda ctx, n: ["-p", str(ctx), "-n", "0"],
+    "tg": lambda ctx, n: ["-d", str(ctx), "-p", "0", "-n", str(n)],
+    "pg": lambda ctx, n: ["-pg", f"{ctx},{n}", "-p", "0", "-n", "0"],
+}
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-
-HARDWARE_SOC = "Apple M5"
-HARDWARE_MEMORY_GB = 24
-HARDWARE_BACKEND = "Metal"
+# llama-bench JSONL fields preserved verbatim in the raw CSV
+BENCH_META_FIELDS = [
+    "build_commit", "n_threads", "n_gpu_layers", "flash_attn", "n_batch", "n_ubatch",
+    "type_k", "type_v", "gpu_info", "cpu_info", "backends",
+]
 
 RAW_CSV_FIELDS = [
-    "quant",
-    "test_type",
-    "run_index",
-    "n_prompt",
-    "n_gen",
-    "n_depth",
-    "latency_ms",
-    "tokens_per_sec",
-    "model_size_bytes",
-    "peak_mem_bytes",
-    "timestamp",
-    "hardware_soc",
-    "hardware_memory_gb",
-    "hardware_backend",
+    "hw_id", "model", "quant", "ctx", "test_type", "run_index",
+    "n_prompt", "n_gen", "n_depth", "latency_ms", "tokens_per_sec",
+    "model_size_bytes", "peak_mem_bytes", "peak_vram_bytes",
+    "swap_used_before_bytes", "swap_used_after_bytes", "timestamp",
+    "os", "hardware_cpu", "hardware_gpu", "hardware_memory_bytes", "hardware_vram_bytes",
+    "hardware_backend", *BENCH_META_FIELDS,
 ]
 
 
-def load_config() -> dict:
-    with open(ROOT_DIR / "config" / "experiment.yaml") as f:
-        return yaml.safe_load(f)
+def raw_csv_path(cfg: dict, hw_id: str) -> Path:
+    return ROOT_DIR / cfg["paths"]["raw_dir"] / hw_id / "benchmark_raw.csv"
 
 
-def model_paths(cfg: dict) -> dict[str, Path]:
-    base_gguf = ROOT_DIR / cfg["base_model"]["base_gguf"]
-    stem = base_gguf.name.removesuffix("-F16.gguf")
-    quant_dir = ROOT_DIR / cfg["quantization"]["output_dir"]
-    paths = {"F16": base_gguf}
-    for level in cfg["quantization"]["levels"]:
-        paths[level] = quant_dir / f"{stem}-{level}.gguf"
-    return paths
-
-
-# test_type -> extra llama-bench CLI args (beyond -m/-r/-o/--no-warmup)
-TEST_GROUPS = {
-    "pp": lambda ctx: ["-p", str(ctx), "-n", "0"],
-    "tg": lambda ctx: ["-d", str(ctx), "-p", "0", "-n", "256"],
-    "pg": lambda ctx: ["-pg", f"{ctx},256"],
-}
-
-
-def run_llama_bench(
-    llama_bench_bin: str, model_path: Path, extra_args: list[str], repetitions: int, capture: bool
-) -> tuple[str, int | None]:
-    """Runs llama-bench, optionally capturing stdout (jsonl) and peak RSS."""
-    cmd = [
-        llama_bench_bin,
-        "-m",
-        str(model_path),
-        "-r",
-        str(repetitions),
-        "--no-warmup",
-        "-o",
-        "jsonl",
-        *extra_args,
-    ]
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    peak_mem = None
-    poll_interval = 0.05
-    with MemoryMonitor(proc.pid, poll_interval_sec=poll_interval) as mon:
-        stdout, stderr = proc.communicate()
-    peak_mem = mon.peak_rss_bytes
+def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float, vram_ms: int) -> tuple[str, int, int | None]:
+    """Runs llama-bench; returns (stdout, peak RSS bytes, peak VRAM delta bytes|None)."""
+    with VramMonitor(vram_ms) as vmon:
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
+            stderr=subprocess.PIPE, text=True,
+        )
+        with MemoryMonitor(proc.pid, poll_interval_sec=poll_sec) as mon:
+            stdout, stderr = proc.communicate()
     if proc.returncode != 0:
-        raise RuntimeError(f"llama-bench failed ({' '.join(cmd)}):\n{stderr}")
-    return stdout or "", peak_mem
+        raise RuntimeError(f"llama-bench failed ({' '.join(cmd)}):\n{stderr[-4000:]}")
+    return stdout or "", mon.peak_rss_bytes, vmon.peak_delta_bytes
 
 
 def parse_jsonl_rows(stdout: str) -> list[dict]:
+    return [json.loads(line) for line in stdout.splitlines() if line.strip()]
+
+
+def to_raw_rows(bench_rows: list[dict], base: dict) -> list[dict]:
+    """Flattens llama-bench JSONL records into one raw row per repetition."""
     rows = []
-    for line in stdout.strip().splitlines():
-        line = line.strip()
-        if line:
-            rows.append(json.loads(line))
+    for b in bench_rows:
+        meta = {k: b.get(k) for k in BENCH_META_FIELDS}
+        for i, (ns, ts) in enumerate(zip(b["samples_ns"], b["samples_ts"])):
+            rows.append({
+                **base, **meta, "run_index": i,
+                "n_prompt": b["n_prompt"], "n_gen": b["n_gen"], "n_depth": b["n_depth"],
+                "latency_ms": ns / 1e6, "tokens_per_sec": ts,
+            })
     return rows
 
 
-def already_done(raw_csv: Path, quant: str, test_type: str) -> bool:
+def done_keys(raw_csv: Path) -> set[tuple[str, str, str, str]]:
     if not raw_csv.exists():
-        return False
+        return set()
     with open(raw_csv) as f:
-        for row in csv.DictReader(f):
-            if row["quant"] == quant and row["test_type"] == test_type:
-                return True
-    return False
+        return {(r["model"], r["quant"], r["ctx"], r["test_type"]) for r in csv.DictReader(f)}
 
 
 def append_rows(raw_csv: Path, rows: list[dict]) -> None:
@@ -129,75 +102,65 @@ def append_rows(raw_csv: Path, rows: list[dict]) -> None:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--model", help="model name from config, or 'all' (default: default_model)")
+    ap.add_argument("--contexts", choices=["default", "all"], default="default",
+                    help="default: inference.context_length (v0.1); all: inference.contexts (v0.3)")
+    args = ap.parse_args()
+
     cfg = load_config()
-    llama_bench_bin = str(ROOT_DIR / cfg["benchmark"]["llama_bench_bin"])
-    warmup_runs = cfg["benchmark"]["warmup_runs"]
-    measurement_runs = cfg["benchmark"]["measurement_runs"]
-    ctx = cfg["inference"]["context_length"]
-    raw_csv = ROOT_DIR / cfg["paths"]["raw_csv"]
+    bcfg = cfg["benchmark"]
+    hw = detect_hw()
+    log = make_logger(cfg, "benchmark")
+    raw_csv = raw_csv_path(cfg, hw["hw_id"])
+    contexts = cfg["inference"]["contexts"] if args.contexts == "all" else [cfg["inference"]["context_length"]]
+    n_gen = cfg["inference"]["max_output_tokens"]
+    bin_path = str(ROOT_DIR / bcfg["llama_bench_bin"])
+    common_args = ["-ngl", str(bcfg["n_gpu_layers"]), "-fa", str(bcfg["flash_attn"]), "--no-warmup", "-o", "jsonl"]
+    log(f"hw_id={hw['hw_id']} backend={hw['backend']} os={hw['os']} -> {raw_csv}")
 
-    logs_dir = ROOT_DIR / cfg["paths"]["logs_dir"]
-    logs_dir.mkdir(parents=True, exist_ok=True)
-    log_path = logs_dir / f"benchmark_{datetime.now().strftime('%Y%m%dT%H%M%S')}.log"
-
-    def log(msg: str) -> None:
-        line = f"[benchmark] {msg}"
-        print(line)
-        with open(log_path, "a") as f:
-            f.write(line + "\n")
-
-    paths = model_paths(cfg)
-    for quant, gguf_path in paths.items():
-        if not gguf_path.exists():
-            log(f"FAIL: missing model file for {quant}: {gguf_path}")
-            sys.exit(1)
-
-    for quant, gguf_path in paths.items():
-        model_size_bytes = os.path.getsize(gguf_path)
-        for test_type, args_fn in TEST_GROUPS.items():
-            if already_done(raw_csv, quant, test_type):
-                log(f"SKIP {quant}/{test_type}: already in {raw_csv}")
-                continue
-
-            extra_args = args_fn(ctx)
-            log(f"{quant}/{test_type}: warm-up ({warmup_runs} runs, discarded)")
-            run_llama_bench(llama_bench_bin, gguf_path, extra_args, warmup_runs, capture=False)
-
-            log(f"{quant}/{test_type}: measurement ({measurement_runs} runs)")
-            stdout, peak_mem_bytes = run_llama_bench(
-                llama_bench_bin, gguf_path, extra_args, measurement_runs, capture=True
-            )
-            bench_rows = parse_jsonl_rows(stdout)
-
-            rows = []
-            timestamp = datetime.now(timezone.utc).isoformat()
-            for bench_row in bench_rows:
-                samples_ns = bench_row["samples_ns"]
-                samples_ts = bench_row["samples_ts"]
-                n_prompt = bench_row["n_prompt"]
-                n_gen = bench_row["n_gen"]
-                n_depth = bench_row["n_depth"]
-                for i, (ns, ts) in enumerate(zip(samples_ns, samples_ts)):
-                    rows.append(
-                        {
-                            "quant": quant,
-                            "test_type": test_type,
-                            "run_index": i,
-                            "n_prompt": n_prompt,
-                            "n_gen": n_gen,
-                            "n_depth": n_depth,
-                            "latency_ms": ns / 1e6,
-                            "tokens_per_sec": ts,
-                            "model_size_bytes": model_size_bytes,
-                            "peak_mem_bytes": peak_mem_bytes,
-                            "timestamp": timestamp,
-                            "hardware_soc": HARDWARE_SOC,
-                            "hardware_memory_gb": HARDWARE_MEMORY_GB,
-                            "hardware_backend": HARDWARE_BACKEND,
-                        }
-                    )
-            append_rows(raw_csv, rows)
-            log(f"{quant}/{test_type}: wrote {len(rows)} raw rows")
+    done = done_keys(raw_csv)
+    for model in select_models(cfg, args.model):
+        name = model["name"]
+        for quant in quant_levels(cfg):
+            path = gguf_path(cfg, name, quant)
+            if not path.exists():
+                raise SystemExit(f"FAIL: missing model file {path}. Run scripts/quantize.sh first.")
+            size = path.stat().st_size
+            for ctx in contexts:
+                ok, why = check_budget(cfg, name, quant, ctx + n_gen, hw, size)
+                if not ok:
+                    log(f"SKIP {name}/{quant}/ctx{ctx}: over memory budget ({why})")
+                    continue
+                for test_type, args_fn in TEST_GROUPS.items():
+                    tag = f"{name}/{quant}/ctx{ctx}/{test_type}"
+                    if (name, quant, str(ctx), test_type) in done:
+                        log(f"SKIP {tag}: already in {raw_csv}")
+                        continue
+                    cmd = [bin_path, "-m", str(path), *common_args, *args_fn(ctx, n_gen)]
+                    log(f"{tag}: warm-up ({bcfg['warmup_runs']} runs, discarded)")
+                    run_llama_bench([*cmd, "-r", str(bcfg["warmup_runs"])], False,
+                                    bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
+                    log(f"{tag}: measurement ({bcfg['measurement_runs']} runs)")
+                    swap_before = swap_used_bytes()
+                    stdout, peak_rss, peak_vram = run_llama_bench(
+                        [*cmd, "-r", str(bcfg["measurement_runs"])], True,
+                        bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
+                    swap_after = swap_used_bytes()
+                    base = {
+                        "hw_id": hw["hw_id"], "model": name, "quant": quant, "ctx": ctx, "test_type": test_type,
+                        "model_size_bytes": size, "peak_mem_bytes": peak_rss, "peak_vram_bytes": peak_vram,
+                        "swap_used_before_bytes": swap_before, "swap_used_after_bytes": swap_after,
+                        "timestamp": datetime.now(timezone.utc).isoformat(), "os": hw["os"],
+                        "hardware_cpu": hw["cpu"], "hardware_gpu": hw["gpu"],
+                        "hardware_memory_bytes": hw["memory_bytes"], "hardware_vram_bytes": hw["vram_bytes"],
+                        "hardware_backend": hw["backend"],
+                    }
+                    rows = to_raw_rows(parse_jsonl_rows(stdout), base)
+                    append_rows(raw_csv, rows)
+                    if swap_after > swap_before:
+                        log(f"WARN {tag}: swap grew {(swap_after - swap_before) / 1e9:.2f} GB during measurement")
+                    log(f"{tag}: wrote {len(rows)} raw rows")
 
     log("Benchmark complete.")
 
