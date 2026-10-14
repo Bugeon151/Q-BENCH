@@ -59,7 +59,7 @@ Quantization bit-width가 감소할수록 모델 크기와 실행 시 메모리 
 
 ### H3 — New Hardware Baseline
 
-신규 하드웨어(M5)에서 측정된 기준선은 기존 chuibm에서 보고된 성능 수치 대비 prompt/generation throughput이 유의하게 높은 수준으로 나타날 것이다.
+신규 하드웨어(M5)에서 측정된 기준선은 기존 세대 칩(M1–M4 등)에서 보고된 성능 수치 대비 prompt/generation throughput이 유의하게 높은 수준으로 나타날 것이다.
 
 ### H4 — Efficiency Frontier
 
@@ -168,10 +168,12 @@ Quantization 이외의 조건은 동일하게 유지한다.
 
 초기 기본값:
 
-* Context Length: 4096
+* Context Length: 4096 (tg는 KV depth 4096(`-d 4096`)에서 256 토큰 생성으로 측정)
 * Maximum Output: 256 tokens
 * Temperature: 0
 * Seed: 42
+
+※ 성능 측정(llama-bench) 경로는 합성 토큰으로 처리량만 측정하므로 **temperature, seed, 프롬프트 데이터셋을 사용하지 않는다.** 이 값들은 v0.2 품질 평가(llama-server) 경로에만 적용된다.
 
 ---
 
