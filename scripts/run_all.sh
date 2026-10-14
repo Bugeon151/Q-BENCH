@@ -1,27 +1,60 @@
 #!/usr/bin/env bash
-# Full Q-Bench v0.1 pipeline:
-# Environment Validation -> Model Validation -> Benchmark (warm-up + measurement)
-# -> Raw Data Collection -> Data Processing -> Statistical Analysis -> Visualization -> Report
+# Q-Bench pipeline. Completed items are skipped on re-run (resume).
+#
+# Usage: scripts/run_all.sh [--stage perf|ctx|quality|all] [--model NAME|all]
+#   perf    v0.1  benchmark at inference.context_length
+#   ctx     v0.3  benchmark over inference.contexts
+#   quality v0.2  perplexity + task accuracy (llama-server)
+#   all     perf + ctx + quality
+# Default: --stage perf, --model = config default_model. Analysis always runs last.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+STAGE="perf"
+MODEL=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --stage) STAGE="${2:?--stage needs a value}"; shift 2 ;;
+    --model) MODEL="${2:?--model needs a value}"; shift 2 ;;
+    -h|--help) sed -n '2,9p' "$0"; exit 0 ;;
+    *) echo "unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+case "$STAGE" in perf|ctx|quality|all) ;; *) echo "invalid --stage: $STAGE" >&2; exit 2 ;; esac
+
+PY=".venv/bin/python"
+MODEL_ARGS=()
+[ -n "$MODEL" ] && MODEL_ARGS=(--model "$MODEL")
+
 mkdir -p logs
 LOG_FILE="logs/run_all_$(date +%Y%m%dT%H%M%S).log"
-
 log() { echo "[run_all] $*" | tee -a "$LOG_FILE"; }
 
-log "Stage 1/4: Environment Validation"
+log "stage=$STAGE model=${MODEL:-<default>}"
+log "Environment Validation"
 bash scripts/setup.sh
 
-log "Stage 2/4: Model Validation"
-bash scripts/quantize.sh
+log "Model Validation"
+bash scripts/quantize.sh "$MODEL"
 
-log "Stage 3/4: Benchmark (warm-up + measurement + raw data collection)"
-.venv/bin/python src/benchmark.py
+if [ "$STAGE" = perf ] || [ "$STAGE" = all ]; then
+  log "Benchmark (v0.1, default ctx)"
+  "$PY" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts default
+fi
+if [ "$STAGE" = ctx ] || [ "$STAGE" = all ]; then
+  log "Benchmark (v0.3, context sweep)"
+  "$PY" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts all
+fi
+if [ "$STAGE" = quality ] || [ "$STAGE" = all ]; then
+  log "Perplexity (v0.2)"
+  "$PY" src/perplexity_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
+  log "Task accuracy (v0.2)"
+  "$PY" src/quality_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
+fi
 
-log "Stage 4/4: Data Processing + Statistical Analysis + Visualization + Report"
-.venv/bin/python src/analyze.py
+log "Analysis + Visualization + Report"
+"$PY" src/analyze.py
 
-log "Q-Bench v0.1 pipeline complete."
+log "Q-Bench pipeline complete (stage=$STAGE)."

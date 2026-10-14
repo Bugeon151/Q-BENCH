@@ -26,7 +26,7 @@ log "Installing llama.cpp GGUF conversion requirements..."
 "$PYTHON" -m pip install -q -r "$LLAMA_DIR/requirements/requirements-convert_hf_to_gguf.txt"
 
 log "Verifying llama.cpp binaries..."
-for bin in llama-quantize llama-bench llama-cli; do
+for bin in llama-quantize llama-bench llama-cli llama-perplexity llama-server; do
   BIN_PATH="$LLAMA_DIR/build/bin/$bin"
   if [ ! -x "$BIN_PATH" ]; then
     log "FAIL: missing or non-executable binary: $BIN_PATH"
@@ -36,19 +36,43 @@ for bin in llama-quantize llama-bench llama-cli; do
 done
 
 log "Recording hardware profile..."
+HW_ID="$("$PYTHON" "$ROOT_DIR/src/common.py" hwid)"
+HW_DIR="$ROOT_DIR/config/hardware/$HW_ID"
+mkdir -p "$HW_DIR"
 {
-  echo "Q-Bench Experimental Environment"
+  echo "Q-Bench Experimental Environment (hw_id: $HW_ID)"
   echo
   date
   echo
-  echo "Hardware:"
-  echo
-  system_profiler SPHardwareDataType SPDisplaysDataType 2>/dev/null \
-    | grep -vE 'Serial Number|Hardware UUID|Provisioning UDID' | sed 's/^/    /'
-  echo
-  sw_vers
-} > "$ROOT_DIR/config/hardware.txt"
-log "OK: config/hardware.txt updated"
+  case "$(uname -s)" in
+    Darwin)
+      # Device identifiers are filtered out before writing (privacy).
+      system_profiler SPHardwareDataType SPDisplaysDataType 2>/dev/null \
+        | grep -vE 'Serial Number|Hardware UUID|Provisioning UDID' | sed 's/^/    /'
+      echo
+      sw_vers
+      ;;
+    Linux)
+      uname -sr
+      grep -E '^PRETTY_NAME=' /etc/os-release 2>/dev/null || true
+      grep -qi microsoft /proc/version 2>/dev/null && echo "WSL: yes"
+      echo
+      lscpu 2>/dev/null | grep -vE '^(Flags|Vulnerability)' || true
+      echo
+      grep -E '^(MemTotal|SwapTotal):' /proc/meminfo
+      echo
+      if command -v nvidia-smi >/dev/null 2>&1; then
+        nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
+      else
+        echo "nvidia-smi: not found"
+      fi
+      ;;
+  esac
+} > "$HW_DIR/profile.txt"
+log "OK: ${HW_DIR#"$ROOT_DIR"/}/profile.txt updated"
+
+"$PYTHON" -m pip freeze > "$HW_DIR/requirements-lock.txt"
+log "OK: ${HW_DIR#"$ROOT_DIR"/}/requirements-lock.txt recorded (pip freeze)"
 
 log "Verifying llama.cpp commit pin..."
 ACTUAL_COMMIT="$(git -C "$LLAMA_DIR" rev-parse HEAD)"
@@ -66,7 +90,7 @@ fi
 log "Verifying python packages importable..."
 "$PYTHON" - <<'EOF'
 import importlib.util
-mods = ["yaml", "pandas", "numpy", "scipy", "matplotlib", "psutil", "huggingface_hub", "tqdm"]
+mods = ["yaml", "pandas", "numpy", "scipy", "matplotlib", "psutil", "huggingface_hub", "tqdm", "pyarrow"]
 missing = [m for m in mods if importlib.util.find_spec(m) is None]
 if missing:
     raise SystemExit(f"FAIL: missing python modules: {missing}")
