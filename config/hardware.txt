@@ -16,9 +16,6 @@ Hardware:
           Memory: 24 GB
           System Firmware Version: 18000.101.7
           OS Loader Version: 18000.101.7
-          Serial Number (system): C72MWKKXKF
-          Hardware UUID: 4E60D0F9-FE73-5E68-B5D7-459150EB648B
-          Provisioning UDID: 00008142-001269522223401C
           Activation Lock Status: Disabled
     
     Graphics/Displays:
