@@ -43,7 +43,8 @@ log "Recording hardware profile..."
   echo
   echo "Hardware:"
   echo
-  system_profiler SPHardwareDataType SPDisplaysDataType 2>/dev/null | sed 's/^/    /'
+  system_profiler SPHardwareDataType SPDisplaysDataType 2>/dev/null \
+    | grep -vE 'Serial Number|Hardware UUID|Provisioning UDID' | sed 's/^/    /'
   echo
   sw_vers
 } > "$ROOT_DIR/config/hardware.txt"
