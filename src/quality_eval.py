@@ -264,7 +264,10 @@ def main() -> None:
         for quant in args.quants or quant_levels(cfg):
             tag = f"{name}/{quant}"
             out_dir = qdir / name / quant
-            todo = {t: [it for it in items[t] if it["id"] not in read_done(out_dir / f"{t}.jsonl")] for t in args.tasks}
+            todo = {}
+            for t in args.tasks:
+                seen = read_done(out_dir / f"{t}.jsonl")
+                todo[t] = [it for it in items[t] if it["id"] not in seen]
             if not any(todo.values()):
                 log(f"SKIP {tag}: all tasks complete")
                 continue
