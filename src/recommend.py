@@ -4,7 +4,7 @@ Reads results/tables/{summary,quality,gate}.csv (run src/analyze.py first).
 For each (model, quant) with complete quality results:
   need_gib  GPU memory needed (GiB) at --ctx: the measured peak VRAM of a full-GPU run when one
             exists (any CUDA hw_id), else GGUF size + f16 KV cache + overhead from
-            config/models/<model>.json (marked "estimated")
+            config/model_configs/<model>.json (marked "estimated")
   fits      "gpu" if need_gib <= --vram-gb, "offload" if it fits in VRAM + --ram-gb, else "no"
   tps       generation tokens/s measured on --hw (blank if not measured there)
   quality   mean accuracy over the quality tasks; gate = regression verdict vs F16
@@ -35,7 +35,7 @@ def kv_bytes_per_token(model_cfg: dict) -> int:
 
 
 def load_model_cfgs(root: Path = ROOT_DIR) -> dict[str, dict]:
-    return {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted((root / "config" / "models").glob("*.json"))}
+    return {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted((root / "config" / "model_configs").glob("*.json"))}
 
 
 def candidates(summary: pd.DataFrame, quality: pd.DataFrame, gates: pd.DataFrame, model_cfgs: dict[str, dict],
