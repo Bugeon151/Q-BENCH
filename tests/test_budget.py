@@ -6,13 +6,14 @@ import pytest
 from common import GIB, check_budget, kv_cache_bytes, load_config
 
 M5 = {"backend": "Metal", "memory_bytes": 24 * GIB, "vram_bytes": 0}
-LAPTOP = {"backend": "CUDA", "memory_bytes": 32 * GIB, "vram_bytes": 12 * 1024 * 1024**2}
+LAPTOP = {"backend": "CUDA", "memory_bytes": 32 * GIB, "vram_bytes": 8151 * 1024**2}  # nvidia-smi memory.total
 QWEN = {  # num_hidden_layers, num_attention_heads, num_key_value_heads, hidden_size (HF config.json)
     "Qwen2.5-7B-Instruct": (28, 28, 4, 3584),
     "Qwen2.5-14B-Instruct": (48, 40, 8, 5120),
 }
 SIZE = {
     ("Qwen2.5-7B-Instruct", "F16"): 15_237_853_760,
+    ("Qwen2.5-7B-Instruct", "Q8_0"): 8_098_525_760,
     ("Qwen2.5-7B-Instruct", "Q4_K_M"): 4_683_074_112,
     ("Qwen2.5-14B-Instruct", "F16"): 29_540_000_000,
     ("Qwen2.5-14B-Instruct", "Q8_0"): 15_700_000_000,
@@ -48,6 +49,7 @@ def test_m5_rules(cfg):
 
 def test_laptop_rules(cfg):
     assert not fits(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "F16")
+    assert not fits(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "Q8_0", 512)
     assert fits(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "Q4_K_M", 8192 + 256)
     assert fits(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "F16", allow_host_offload=True)
 
