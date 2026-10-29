@@ -26,6 +26,7 @@ import sys
 import tempfile
 import threading
 import time
+import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -206,17 +207,35 @@ def start_server(cfg: dict, model_path: Path, log_path: Path, n_parallel: int | 
     raise SystemExit(f"FAIL: llama-server not healthy after 900 s; see {log_path}")
 
 
-def chat(cfg: dict, prompt: str, max_tokens: int) -> str:
+def post(cfg: dict, path: str, body: dict) -> dict:
     q = cfg["quality"]
-    body = json.dumps({
-        "messages": [{"role": "user", "content": prompt}], "max_tokens": max_tokens,
-        "temperature": cfg["inference"]["temperature"], "seed": cfg["inference"]["seed"],
-        "cache_prompt": False,
-    }).encode()
-    req = urllib.request.Request(f"http://127.0.0.1:{q['port']}/v1/chat/completions", data=body,
+    req = urllib.request.Request(f"http://127.0.0.1:{q['port']}{path}", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
     with _NO_PROXY.open(req, timeout=q["request_timeout_sec"]) as r:
-        return json.loads(r.read())["choices"][0]["message"]["content"] or ""
+        return json.loads(r.read())
+
+
+PARSE_ERROR = "does not match the expected"  # llama-server could not parse the reply into its chat format
+
+
+def chat(cfg: dict, prompt: str, max_tokens: int, errors: list | None = None) -> str:
+    """Chat completion. If llama-server rejects the generated reply because it does not fit the
+    model's chat-output format (HTTP 500, seen with collapsed low-bit quants), the same prompt is
+    rendered with /apply-template and regenerated with /completion, which returns the raw text;
+    the server error is appended to `errors` so the item records that the chat API failed."""
+    sampling = {"temperature": cfg["inference"]["temperature"], "seed": cfg["inference"]["seed"], "cache_prompt": False}
+    messages = [{"role": "user", "content": prompt}]
+    try:
+        r = post(cfg, "/v1/chat/completions", {"messages": messages, "max_tokens": max_tokens, **sampling})
+        return r["choices"][0]["message"]["content"] or ""
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")
+        if e.code != 500 or PARSE_ERROR not in detail:
+            raise
+        if errors is not None:
+            errors.append(detail[:300])
+    raw = post(cfg, "/apply-template", {"messages": messages})["prompt"]
+    return post(cfg, "/completion", {"prompt": raw, "n_predict": max_tokens, **sampling}).get("content") or ""
 
 # --------------------------------------------------------------------------- main
 
@@ -292,9 +311,12 @@ def main() -> None:
                     log(f"{tag}/{task}: {len(pending)} items")
 
                     def work(row: dict, task=task, spec=spec, out_file=out_file) -> None:
-                        text = chat(cfg, PROMPTS[task](row), spec["max_tokens"])
+                        errors: list[str] = []
+                        text = chat(cfg, PROMPTS[task](row), spec["max_tokens"], errors)
                         pred, correct = score(task, row, text, q["exec_timeout_sec"])
                         rec = {"id": row["id"], "pred": pred, "correct": bool(correct), "response": text}
+                        if errors:
+                            rec["api_error"] = errors[0]
                         with lock, open(out_file, "a", encoding="utf-8", newline="") as fh:
                             fh.write(json.dumps(rec) + "\n")
 

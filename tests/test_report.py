@@ -28,3 +28,11 @@ def test_capacity_section():
     text = "\n".join(report.capacity_section({"capacity": cap}, cfg))
     assert "| h | 7B | Q4_K_M | 8 | 2 | 300 | 320 |" in text and "TTFT <= 2000 ms" in text
     assert report.capacity_section({}, cfg) == []
+
+
+def test_api_errors(tmp_path):
+    d = tmp_path / "hw/m/Q3_K_M"
+    d.mkdir(parents=True)
+    (d / "gsm8k.jsonl").write_text('{"id": 1, "correct": true}\n{"id": 2, "correct": false, "api_error": "x"}\n')
+    (d / "mmlu.jsonl").write_text('{"id": 1, "correct": true, "api_error": "y"}\n')
+    assert report.api_errors(tmp_path) == {("m", "Q3_K_M"): 2}

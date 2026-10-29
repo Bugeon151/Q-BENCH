@@ -47,11 +47,24 @@ def short(model: str) -> str:
     return model.replace("Qwen2.5-", "").replace("-Instruct", "")
 
 
-def accuracy_section(t: dict, ref: dict, n_items: dict) -> list[str]:
+def api_errors(quality_dir) -> dict[tuple[str, str], int]:
+    """Items per (model, quant) whose chat request failed because llama-server could not parse the
+    reply (scored on the raw completion instead; field api_error in the item files)."""
+    out: dict[tuple[str, str], int] = {}
+    for f in quality_dir.glob("*/*/*/*.jsonl"):
+        n = sum('"api_error"' in line for line in f.read_text(encoding="utf-8").splitlines())
+        if n:
+            key = (f.parent.parent.name, f.parent.name)
+            out[key] = out.get(key, 0) + n
+    return out
+
+
+def accuracy_section(t: dict, ref: dict, n_items: dict, errors: dict | None = None) -> list[str]:
     f, q = t.get("frontier"), t.get("quality")
     if f is None or q is None:
         return []
     q = q.set_index(["model", "quant"])
+    errors = errors or {}
     rows = []
     for r in qsort(f).itertuples():
         row = {"model": short(r.model), "quant": r.quant, "GiB": f"{r.size_gib:.2f}", "bits/w": f"{r.bpw:.2f}"}
@@ -60,16 +73,22 @@ def accuracy_section(t: dict, ref: dict, n_items: dict) -> list[str]:
             row[task] = f"{pct(getattr(r, task))} ({pct(lo)}-{pct(hi)})"
         row.update({"mean": pct(r.quality), "PPL": f"{r.ppl:.3f}" if pd.notna(r.ppl) else "",
                     "gate vs F16": getattr(r, "gate", ""), "Pareto": "yes" if r.pareto else ""})
+        if errors:
+            row["chat API errors"] = errors.get((r.model, r.quant), "")
         rows.append(row)
         if r.quant == "F16" and r.model in ref["scores"]:
             s = ref["scores"][r.model]
             rows.append({"model": short(r.model), "quant": "published", "GiB": "", "bits/w": "",
-                         **{t_: f"{s[t_]:.1f}" for t_ in TASKS}, "mean": "", "PPL": "", "gate vs F16": "", "Pareto": ""})
+                         **{t_: f"{s[t_]:.1f}" for t_ in TASKS}, "mean": "", "PPL": "", "gate vs F16": "", "Pareto": "",
+                         **({"chat API errors": ""} if errors else {})})
     sizes = ", ".join(f"{k} {v}" for k, v in n_items.items())
     return ["## 1. Accuracy (95% Wilson CI) and the published scores", "",
             f"Accuracy in % on the fixed sample ({sizes} items); `published` rows: {ref['source']} ({ref['url']}), "
             "MMLU column = MMLU-Redux there. `mean` = unweighted mean of the three tasks. "
-            "Pareto: no other configuration is both smaller and more accurate.", "", md(pd.DataFrame(rows)), ""]
+            "Pareto: no other configuration is both smaller and more accurate."
+            + (" `chat API errors`: items where llama-server returned HTTP 500 because the reply did not fit the "
+               "chat format; scored on the raw completion of the same prompt." if errors else ""),
+            "", md(pd.DataFrame(rows)), ""]
 
 
 def speed_section(t: dict, hw: str, ctx: int) -> list[str]:
@@ -211,7 +230,8 @@ def main() -> None:
     sample = ROOT_DIR / cfg["quality"]["sample_file"]
     n_items = {k: d["n"] for k, d in json.loads(sample.read_text(encoding="utf-8"))["datasets"].items()} \
         if sample.exists() else {}
-    for sec in (accuracy_section(t, ref, n_items), speed_section(t, hw, cfg["inference"]["context_length"]), gate_section(t),
+    errors = api_errors(ROOT_DIR / cfg["paths"]["quality_dir"])
+    for sec in (accuracy_section(t, ref, n_items, errors), speed_section(t, hw, cfg["inference"]["context_length"]), gate_section(t),
                 flips_section(t), duel_section(t), capacity_section(t, cfg), perf_section(t)):
         lines += sec
     out = ROOT_DIR / "docs" / "RESULTS.md"
