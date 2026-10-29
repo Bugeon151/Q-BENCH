@@ -89,3 +89,33 @@ def test_partial_offload_flag():
 def test_pareto_mask():
     m = analyze.pareto_mask(np.array([1.0, 2.0, 3.0, 2.5]), np.array([1.0, 0.9, 0.5, 0.4]))
     assert m.tolist() == [True, True, True, False]
+
+
+def test_wilson_and_mcnemar():
+    lo, hi = analyze.wilson_ci(410, 570)
+    assert lo < 410 / 570 < hi and hi - lo == pytest.approx(0.0737, abs=1e-3)
+    ids = pd.Index(range(20))
+    ref = pd.Series([True] * 20, index=ids)
+    same = ref.copy()
+    worse = pd.Series([True] * 12 + [False] * 8, index=ids)  # 8 discordant, all one way
+    assert analyze.mcnemar_p(ref, same) == 1.0
+    assert analyze.mcnemar_p(ref, worse) == pytest.approx(2 * 0.5**8)
+
+
+def test_quality_table_paired():
+    acc = pd.DataFrame([{"hw_id": "gpu", "model": "m", "quant": q, "task": "mmlu", "n": 20, "expected_n": 20,
+                         "correct": c, "accuracy": c / 20} for q, c in (("F16", 20), ("Q2_K", 12))])
+    items = pd.DataFrame([("gpu", "m", q, "mmlu", i, q == "F16" or i < 12) for q in ("F16", "Q2_K") for i in range(20)],
+                         columns=["hw_id", "model", "quant", "task", "id", "correct"])
+    q = analyze.quality_table(pd.DataFrame(), acc, items).set_index("quant")
+    assert q.loc["Q2_K", "mmlu_p_vs_f16"] == pytest.approx(2 * 0.5**8)
+    assert q.loc["F16", "mmlu_p_vs_f16"] == 1.0
+    assert q.loc["Q2_K", "mmlu_ci_low"] < 0.6 < q.loc["Q2_K", "mmlu_ci_high"]
+
+
+def test_hardware_comparison_keeps_legacy():
+    s = pd.DataFrame([{"hw_id": hw, "model": "m", "ctx": 4096, "quant": "Q4_K_M", "generation_throughput_tps": t,
+                       "prompt_throughput_tps": 1.0, "ttft_ms": 1.0, "peak_mem_bytes": 1.0, "peak_vram_bytes": 1.0}
+                      for hw, t in ((analyze.LEGACY_HW_ID, 22.4), ("gpu", 69.3))])
+    h = analyze.hardware_comparison(s)
+    assert h.loc[0, f"generation_throughput_tps@{analyze.LEGACY_HW_ID}"] == 22.4
