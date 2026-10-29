@@ -73,7 +73,7 @@ def test_predicted_speed_for_unmeasured_hardware():
 
 def test_annotate_flips_and_capacity(tmp_path):
     rec = pd.DataFrame({"model": ["m", "m"], "quant": ["F16", "Q4_K_M"], "quality": [0.8, 0.79]})
-    pd.DataFrame([{"kind": "vs_F16", "task": "all", "model": "m", "quant": "Q4_K_M", "flips": 0.04},
+    pd.DataFrame([{"kind": "vs_ref", "task": "all", "model": "m", "quant": "Q4_K_M", "flips": 0.04},
                   {"kind": "rerun", "task": "all", "model": "m", "quant": "Q4_K_M", "flips": 0.01}]) \
         .to_csv(tmp_path / "flips.csv", index=False)
     pd.DataFrame([{"hw_id": "gpu", "model": "m", "quant": "Q4_K_M", "capacity_server": 8, "capacity_interactive": 2},

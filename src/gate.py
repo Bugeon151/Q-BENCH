@@ -36,6 +36,11 @@ from common import ROOT_DIR, load_config
 MARGIN = 0.03      # largest accuracy drop (absolute) still accepted as "no regression"
 ALPHA = 0.05
 POWER = 0.80
+REFERENCES = ("F16", "Q8_0")  # reference per model: F16, else Q8_0 when F16 was not evaluated (does not fit)
+
+
+def pick_reference(quants) -> str | None:
+    return next((r for r in REFERENCES if r in set(quants)), None)
 N_BOOT = 10_000
 SEED = 0
 
@@ -135,19 +140,21 @@ def gate(items: pd.DataFrame, hw: str, model: str, candidate: str, reference: st
     return out
 
 
-def gate_all(items: pd.DataFrame, expected_n: dict[str, int], reference: str = "F16",
+def gate_all(items: pd.DataFrame, expected_n: dict[str, int], reference: str | None = None,
              margin: float = MARGIN, alpha: float = ALPHA) -> pd.DataFrame:
-    """Gate every (hw, model, quant) against the reference, using only complete task files."""
+    """Gate every (hw, model, quant) against the reference (default: pick_reference per model),
+    using only complete task files."""
     counts = items.groupby(["hw_id", "model", "quant", "task"]).size()
     complete = {k for k, n in counts.items() if n == expected_n.get(k[3], -1)}
     keep = np.array([k in complete for k in zip(items.hw_id, items.model, items.quant, items.task)], dtype=bool)
     items = items[keep]  # boolean array: an empty list would select columns instead of rows
     frames = []
     for (hw, model), d in items.groupby(["hw_id", "model"]):
-        if reference not in set(d.quant):
+        ref = reference or pick_reference(d.quant)
+        if ref not in set(d.quant):
             continue
-        for quant in sorted(set(d.quant) - {reference}):
-            frames.append(gate(d, hw, model, quant, reference, margin, alpha))
+        for quant in sorted(set(d.quant) - {ref}):
+            frames.append(gate(d, hw, model, quant, ref, margin, alpha))
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 

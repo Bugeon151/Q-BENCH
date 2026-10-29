@@ -69,7 +69,7 @@ def test_pipeline_synthetic(tmp_path, monkeypatch):
     assert not summary.partial_offload.any()
     quality = pd.read_csv(tmp_path / "results/tables/quality.csv").set_index("quant")
     assert quality.loc["Q4_K_M", "quality_retention"] == pytest.approx(0.95)
-    assert quality.loc["Q4_K_M", "ppl_ratio_vs_f16"] == pytest.approx(7.2 / 7.0)
+    assert quality.loc["Q4_K_M", "ppl_ratio_vs_ref"] == pytest.approx(7.2 / 7.0)
     assert (tmp_path / "results/tables/hardware_comparison.csv").exists()
     figs = tmp_path / "results/figures"
     for f in ("gpu/Qwen2.5-7B-Instruct/ttft.png", "gpu/Qwen2.5-7B-Instruct/ctx_throughput.png",
@@ -108,8 +108,8 @@ def test_quality_table_paired():
     items = pd.DataFrame([("gpu", "m", q, "mmlu", i, q == "F16" or i < 12) for q in ("F16", "Q2_K") for i in range(20)],
                          columns=["hw_id", "model", "quant", "task", "id", "correct"])
     q = analyze.quality_table(pd.DataFrame(), acc, items).set_index("quant")
-    assert q.loc["Q2_K", "mmlu_p_vs_f16"] == pytest.approx(2 * 0.5**8)
-    assert q.loc["F16", "mmlu_p_vs_f16"] == 1.0
+    assert q.loc["Q2_K", "mmlu_p_vs_ref"] == pytest.approx(2 * 0.5**8)
+    assert q.loc["F16", "mmlu_p_vs_ref"] == 1.0
     assert q.loc["Q2_K", "mmlu_ci_low"] < 0.6 < q.loc["Q2_K", "mmlu_ci_high"]
 
 

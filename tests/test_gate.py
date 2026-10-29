@@ -94,3 +94,13 @@ def test_compare_task_reports_discordance():
     r = gate.compare_task(ref, cand, gate.MARGIN, gate.ALPHA)
     assert r["p_discordant"] == pytest.approx(0.10)
     assert r["n_needed"] == gate.items_needed(0.10)
+
+
+def test_reference_falls_back_to_q8_when_f16_missing():
+    assert gate.pick_reference(["Q4_K_M", "Q8_0", "F16"]) == "F16"
+    assert gate.pick_reference(["Q4_K_M", "Q8_0"]) == "Q8_0" and gate.pick_reference(["Q4_K_M"]) is None
+    ref = [True] * 450 + [False] * 150
+    d = pd.concat([items({"Q8_0": ref, "Q4": ref}, model="big"), items({"F16": ref, "Q4": ref}, model="small")])
+    g = gate.gate_all(d, {"mmlu": 600})
+    assert set(zip(g.model, g.reference)) == {("big", "Q8_0"), ("small", "F16")}
+    assert set(g[g.model == "big"].candidate) == {"Q4"}
