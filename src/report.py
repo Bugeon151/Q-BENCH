@@ -86,8 +86,9 @@ def accuracy_section(t: dict, ref: dict, n_items: dict, errors: dict | None = No
             f"Accuracy in % on the fixed sample ({sizes} items); `published` rows: {ref['source']} ({ref['url']}), "
             "MMLU column = MMLU-Redux there. `mean` = unweighted mean of the three tasks. "
             "Pareto: no other configuration is both smaller and more accurate."
-            + (" `chat API errors`: items where llama-server returned HTTP 500 because the reply did not fit the "
-               "chat format; scored on the raw completion of the same prompt." if errors else ""),
+            + (" `chat API errors`: items where llama-server returned HTTP 500 because the generated reply did not "
+               "fit its chat-output format; scored on a raw /completion of the same prompt, or as wrong when that "
+               "was rejected too (the client got no answer)." if errors else ""),
             "", md(pd.DataFrame(rows)), ""]
 
 
