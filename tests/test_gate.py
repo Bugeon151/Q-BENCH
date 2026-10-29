@@ -73,3 +73,24 @@ def test_cross_model_upgrade():
     res = gate.gate(df, "gpu", "7b", "Q4_K_M", candidate_model="14b").set_index("task")
     assert res.loc["mmlu", "diff"] == pytest.approx(0.2) and res.loc["overall", "verdict"] == "PASS"
     assert res.loc["overall", "candidate_model"] == "14b"
+
+
+def test_items_needed_formula_and_power():
+    """n_needed gives ~80% PASS probability when the true difference is 0 (simulated paired data)."""
+    p_disc, margin = 0.09, 0.03
+    n = int(gate.items_needed(p_disc, margin))
+    assert n == int(np.ceil((1.959964 + 0.841621) ** 2 * p_disc / margin ** 2))
+    rng = np.random.default_rng(1)
+    d = rng.choice([-1, 0, 1], p=[p_disc / 2, 1 - p_disc, p_disc / 2], size=(4000, n))
+    lo = d.mean(1) - 1.959964 * d.std(1, ddof=1) / np.sqrt(n)
+    assert abs((lo > -margin).mean() - 0.80) < 0.03
+    assert gate.items_needed(0.1, 0.03, true_diff=-0.03) == float("inf")
+    assert gate.items_needed(0.0, 0.03) == 0
+
+
+def test_compare_task_reports_discordance():
+    ref = pd.Series([True] * 90 + [False] * 10)
+    cand = pd.Series([True] * 85 + [False] * 5 + [True] * 5 + [False] * 5)
+    r = gate.compare_task(ref, cand, gate.MARGIN, gate.ALPHA)
+    assert r["p_discordant"] == pytest.approx(0.10)
+    assert r["n_needed"] == gate.items_needed(0.10)
