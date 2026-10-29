@@ -60,5 +60,6 @@ log "Analysis + Visualization + Report"
 "$PYTHON" src/consistency.py
 "$PYTHON" src/frontier.py
 "$PYTHON" src/loadtest.py --summarize-only
+"$PYTHON" src/report.py
 
 log "Q-Bench pipeline complete (stage=$STAGE)."
