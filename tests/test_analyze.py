@@ -66,6 +66,7 @@ def test_pipeline_synthetic(tmp_path, monkeypatch):
 
     summary = pd.read_csv(tmp_path / "results/tables/summary.csv")
     assert len(summary) == 8 and set(summary.ctx) == {512, 4096}
+    assert not summary.partial_offload.any()
     quality = pd.read_csv(tmp_path / "results/tables/quality.csv").set_index("quant")
     assert quality.loc["Q4_K_M", "quality_retention"] == pytest.approx(0.95)
     assert quality.loc["Q4_K_M", "ppl_ratio_vs_f16"] == pytest.approx(7.2 / 7.0)
@@ -75,6 +76,14 @@ def test_pipeline_synthetic(tmp_path, monkeypatch):
               "gpu/Qwen2.5-7B-Instruct/ctx_ttft.png", "gpu/Qwen2.5-7B-Instruct/pareto.png",
               "quality/gpu_Qwen2.5-7B-Instruct.png", "hardware/Qwen2.5-7B-Instruct_generation_throughput.png"):
         assert (figs / f).exists(), f
+
+
+def test_partial_offload_flag():
+    rng = np.random.default_rng(1)
+    raw = _raw("gpu", [4096], ["F16", "Q4_K_M"], rng)
+    raw["n_gpu_layers"] = np.where(raw.quant == "F16", "fit:1024MiB", "99")
+    summary = analyze.summarize(analyze.compute_stats(raw), 0.03).set_index("quant")
+    assert summary.loc["F16", "partial_offload"] and not summary.loc["Q4_K_M", "partial_offload"]
 
 
 def test_pareto_mask():

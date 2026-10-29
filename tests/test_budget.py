@@ -58,3 +58,18 @@ def test_skip_disabled(cfg):
     cfg["memory_budget"]["skip_over_budget"] = False
     cfg["memory_budget"]["exclude"] = []
     assert fits(cfg, LAPTOP, "Qwen2.5-14B-Instruct", "F16")
+
+
+def test_plan_combo_offload(cfg):
+    from benchmark import gpu_args, plan_combo
+    size = SIZE[("Qwen2.5-7B-Instruct", "F16")]
+    assert plan_combo(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "F16", 4096, size)[0] == "offload"
+    assert plan_combo(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "F16", 8192, size)[0] is None  # default ctx only
+    assert plan_combo(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "Q4_K_M", 8192,
+                      SIZE[("Qwen2.5-7B-Instruct", "Q4_K_M")])[0] == "gpu"
+    assert plan_combo(cfg, M5, "Qwen2.5-14B-Instruct", "F16", 4096,
+                      SIZE[("Qwen2.5-14B-Instruct", "F16")])[0] is None  # Metal: no partial offload
+    cfg["benchmark"]["offload"]["enabled"] = False
+    assert plan_combo(cfg, LAPTOP, "Qwen2.5-7B-Instruct", "F16", 4096, size)[0] is None
+    assert gpu_args(cfg["benchmark"], True) == ["-fitt", "1024"]
+    assert gpu_args(cfg["benchmark"], False) == ["-ngl", "99"]

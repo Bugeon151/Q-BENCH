@@ -88,7 +88,7 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 # v0.2  7B 7종 quant: perplexity + MMLU/GSM8K/HumanEval (추정 2~4시간)
 ./scripts/run_all.sh --stage quality
 
-# 하드웨어 비교용 성능 측정 (VRAM 8GB 예산 초과 조합은 자동 SKIP: 7B F16, Q8_0)
+# 하드웨어 비교용 성능 측정. VRAM 8GB 예산 초과 조합(7B F16, Q8_0)은 ctx 4096에서만 CPU 일부 오프로드로 측정
 ./scripts/run_all.sh --stage perf
 ./scripts/run_all.sh --stage ctx        # 선택
 ```
@@ -124,5 +124,6 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 |---|---|
 | `FAIL: external/llama.cpp HEAD ... does not match` | `git -C external/llama.cpp checkout <config/llama_cpp_commit.txt>` 후 재빌드 |
 | `SKIP ... over memory budget` | 의도된 동작. 규칙은 `config/experiment.yaml`의 `memory_budget` |
+| `over GPU budget, partial CPU offload via -fitt` | 의도된 동작(CUDA, 기본 ctx만). VRAM에 안 들어가는 조합을 llama-bench `-fitt`로 GPU+CPU에 나눠 측정. 반복 수는 `benchmark.offload`(워밍업 1, 측정 3) |
 | `WARN CV>3%` (analyze) | 결과 신뢰도 낮음. 다른 앱을 끄고 재측정 권장. raw는 수정하지 말고 `hardware.id`를 바꿔 새 디렉터리에 측정 |
 | llama-server가 뜨지 않음 | `logs/server_<model>_<quant>.log` 마지막 20줄 확인 |

@@ -10,6 +10,11 @@ llama-bench metadata, runtime hardware info, peak RSS/VRAM and swap usage.
   pg: -pg ctx,N -p 0 -n 0     prompt + generation (-p 0 -n 0 suppress the
                               default pp512/tg128 tests llama-bench adds)
 
+Combos over the GPU memory budget are skipped, except at the default ctx on CUDA
+when benchmark.offload is enabled and the combo fits with host RAM: those run with
+llama-bench -fitt (layers that do not fit stay on the CPU), with the reduced run
+counts from benchmark.offload, and are marked n_gpu_layers="fit:<MiB>MiB".
+
 The v0.1 file data/raw/benchmark_raw.csv (legacy schema) is never written.
 """
 
@@ -66,6 +71,27 @@ def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float, vram_ms: int
     return stdout or "", mon.peak_rss_bytes, vmon.peak_delta_bytes
 
 
+def gpu_args(bcfg: dict, offload: bool) -> list[str]:
+    """-ngl N for full offload, or -fitt MiB to let llama.cpp split layers between GPU and CPU."""
+    if offload:
+        return ["-fitt", str(bcfg["offload"]["fit_target_mib"])]
+    return ["-ngl", str(bcfg["n_gpu_layers"])]
+
+
+def plan_combo(cfg: dict, hw: dict, model: str, quant: str, ctx: int, size: int) -> tuple[str | None, str]:
+    """Returns (mode, reason): mode "gpu", "offload" or None (skip)."""
+    n_ctx = ctx + cfg["inference"]["max_output_tokens"]
+    ok, why = check_budget(cfg, model, quant, n_ctx, hw, size)
+    if ok:
+        return "gpu", why
+    ocfg = cfg["benchmark"].get("offload") or {}
+    if ocfg.get("enabled") and hw["backend"] == "CUDA" and ctx == cfg["inference"]["context_length"]:
+        ok, why_host = check_budget(cfg, model, quant, n_ctx, hw, size, allow_host_offload=True)
+        if ok:
+            return "offload", why_host
+    return None, why
+
+
 def parse_jsonl_rows(stdout: str) -> list[dict]:
     return [json.loads(line) for line in stdout.splitlines() if line.strip()]
 
@@ -116,7 +142,7 @@ def main() -> None:
     contexts = cfg["inference"]["contexts"] if args.contexts == "all" else [cfg["inference"]["context_length"]]
     n_gen = cfg["inference"]["max_output_tokens"]
     bin_path = str(resolve_bin(bcfg["llama_bench_bin"]))
-    common_args = ["-ngl", str(bcfg["n_gpu_layers"]), "-fa", str(bcfg["flash_attn"]), "--no-warmup", "-o", "jsonl"]
+    common_args = ["-fa", str(bcfg["flash_attn"]), "--no-warmup", "-o", "jsonl"]
     log(f"hw_id={hw['hw_id']} backend={hw['backend']} os={hw['os']} -> {raw_csv}")
 
     done = done_keys(raw_csv)
@@ -128,23 +154,27 @@ def main() -> None:
                 raise SystemExit(f"FAIL: missing model file {path}. Run scripts/quantize.sh first.")
             size = path.stat().st_size
             for ctx in contexts:
-                ok, why = check_budget(cfg, name, quant, ctx + n_gen, hw, size)
-                if not ok:
+                mode, why = plan_combo(cfg, hw, name, quant, ctx, size)
+                if mode is None:
                     log(f"SKIP {name}/{quant}/ctx{ctx}: over memory budget ({why})")
                     continue
+                offload = mode == "offload"
+                runs = bcfg["offload"] if offload else bcfg
+                if offload:
+                    log(f"{name}/{quant}/ctx{ctx}: over GPU budget, partial CPU offload via -fitt ({why})")
                 for test_type, args_fn in TEST_GROUPS.items():
                     tag = f"{name}/{quant}/ctx{ctx}/{test_type}"
                     if (name, quant, str(ctx), test_type) in done:
                         log(f"SKIP {tag}: already in {raw_csv}")
                         continue
-                    cmd = [bin_path, "-m", str(path), *common_args, *args_fn(ctx, n_gen)]
-                    log(f"{tag}: warm-up ({bcfg['warmup_runs']} runs, discarded)")
-                    run_llama_bench([*cmd, "-r", str(bcfg["warmup_runs"])], False,
+                    cmd = [bin_path, "-m", str(path), *gpu_args(bcfg, offload), *common_args, *args_fn(ctx, n_gen)]
+                    log(f"{tag}: warm-up ({runs['warmup_runs']} runs, discarded)")
+                    run_llama_bench([*cmd, "-r", str(runs["warmup_runs"])], False,
                                     bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
-                    log(f"{tag}: measurement ({bcfg['measurement_runs']} runs)")
+                    log(f"{tag}: measurement ({runs['measurement_runs']} runs)")
                     swap_before = swap_used_bytes()
                     stdout, peak_rss, peak_vram = run_llama_bench(
-                        [*cmd, "-r", str(bcfg["measurement_runs"])], True,
+                        [*cmd, "-r", str(runs["measurement_runs"])], True,
                         bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
                     swap_after = swap_used_bytes()
                     base = {
@@ -157,6 +187,9 @@ def main() -> None:
                         "hardware_backend": hw["backend"],
                     }
                     rows = to_raw_rows(parse_jsonl_rows(stdout), base)
+                    if offload:  # llama-bench reports the CLI default (-1), not the fitted layer count
+                        for r in rows:
+                            r["n_gpu_layers"] = f"fit:{bcfg['offload']['fit_target_mib']}MiB"
                     append_rows(raw_csv, rows)
                     if swap_after > swap_before:
                         log(f"WARN {tag}: swap grew {(swap_after - swap_before) / 1e9:.2f} GB during measurement")
