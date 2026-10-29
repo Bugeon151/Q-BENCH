@@ -37,6 +37,6 @@ Qwen2.5-Instruct(1.5B/3B/7B/14B)를 여러 GGUF 양자화 수준(F16, Q8_0, Q6_K
 ## 환경
 
 * Apple M5, 24 GB Unified Memory, Metal (성능 측정)
-* Intel Core Ultra 9, 32 GB, RTX 5070 Ti Laptop 12 GB, CUDA (품질 평가, 하드웨어 비교)
+* Intel Core Ultra 9 275HX, 32 GB, RTX 5070 Laptop 8 GB, CUDA, Windows 11 (품질 평가, 하드웨어 비교)
 * llama.cpp (pinned: `config/llama_cpp_commit.txt`)
 * 하드웨어 프로파일: `config/hardware/<hw_id>/profile.txt` (v0.1: `config/hardware.txt`)

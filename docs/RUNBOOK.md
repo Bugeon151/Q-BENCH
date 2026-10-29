@@ -5,7 +5,7 @@
 | 기기 | 역할 | hw_id (자동 감지 예시) |
 |---|---|---|
 | M5 맥 (Apple M5, 24GB, macOS 26.4, Metal) | 성능 측정: v0.1, v0.3, v1.0 | `apple-m5-24gb` |
-| 노트북 (Core Ultra 9, 32GB, RTX 5070 Ti Laptop 12GB, Windows 네이티브 또는 Linux/WSL2) | 품질 평가 v0.2, 하드웨어 비교 | `nvidia-geforce-rtx-5070-ti-laptop-gpu-12gb` 형태 |
+| 노트북 (Core Ultra 9 275HX, 32GB, RTX 5070 Laptop 8GB, Windows 11 네이티브 또는 Linux/WSL2) | 품질 평가 v0.2, 하드웨어 비교 | `nvidia-geforce-rtx-5070-laptop-gpu-8gb` |
 
 hw_id는 `python src/common.py hwid`로 확인합니다. 고정하려면 `config/experiment.yaml`의 `hardware.id`를 설정하세요.
 
@@ -88,7 +88,7 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 # v0.2  7B 7종 quant: perplexity + MMLU/GSM8K/HumanEval (추정 2~4시간)
 ./scripts/run_all.sh --stage quality
 
-# 하드웨어 비교용 성능 측정 (12GB VRAM 초과 조합은 자동 SKIP: 예) 7B F16)
+# 하드웨어 비교용 성능 측정 (VRAM 8GB 예산 초과 조합은 자동 SKIP: 7B F16, Q8_0)
 ./scripts/run_all.sh --stage perf
 ./scripts/run_all.sh --stage ctx        # 선택
 ```
