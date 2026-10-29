@@ -10,6 +10,10 @@ Task verdict:
   INCONCLUSIVE  neither (more items needed to decide)
 Overall: FAIL if any task FAILs, PASS if every task PASSes, else INCONCLUSIVE.
 
+Planning (per task): p_discordant = share of items whose correctness differs; n_needed = items for
+an 80% chance of PASS if the true difference is 0 at that discordance (Wald approximation for the
+paired design, cf. Connor 1987, Nam 1997). Discordance, not accuracy, sets the cost of certifying.
+
 CLI:
     python src/gate.py --model Qwen2.5-7B-Instruct --candidate Q3_K_M [--reference F16]
                        [--candidate-model Qwen2.5-14B-Instruct] [--hw HW_ID] [--margin 0.03] [--alpha 0.05]
@@ -31,20 +35,25 @@ from common import ROOT_DIR, load_config
 
 MARGIN = 0.03      # largest accuracy drop (absolute) still accepted as "no regression"
 ALPHA = 0.05
+POWER = 0.80
 N_BOOT = 10_000
 SEED = 0
 
 
-def load_items(quality_dir: Path) -> pd.DataFrame:
-    """Per-item correctness: hw_id, model, quant, task, id, correct."""
+def load_items(quality_dir: Path, extra: bool = False) -> pd.DataFrame:
+    """Per-item correctness: hw_id, model, quant, task, id, correct (+ pred, response if extra)."""
     rows = []
     for f in sorted(quality_dir.glob("*/*/*/*.jsonl")):
         hw, model, quant, task = f.parent.parent.parent.name, f.parent.parent.name, f.parent.name, f.stem
         for line in f.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 r = json.loads(line)
-                rows.append((hw, model, quant, task, r["id"], bool(r["correct"])))
-    return pd.DataFrame(rows, columns=["hw_id", "model", "quant", "task", "id", "correct"])
+                row = (hw, model, quant, task, r["id"], bool(r["correct"]))
+                if extra:
+                    row += (None if r.get("pred") is None else str(r["pred"]), r.get("response") or "")
+                rows.append(row)
+    cols = ["hw_id", "model", "quant", "task", "id", "correct"] + (["pred", "response"] if extra else [])
+    return pd.DataFrame(rows, columns=cols)
 
 
 def mcnemar_p(ref: np.ndarray, cand: np.ndarray) -> float:
@@ -63,6 +72,17 @@ def paired_diff_ci(ref: np.ndarray, cand: np.ndarray, n_boot: int = N_BOOT, seed
     return float(lo), float(hi)
 
 
+def items_needed(p_disc: float, margin: float = MARGIN, true_diff: float = 0.0,
+                 alpha: float = ALPHA / 2, power: float = POWER) -> float:
+    """Items for PASS (lower bound of the two-sided 1-2*alpha CI > -margin) with probability `power`.
+
+    Per-item difference d in {-1, 0, 1}: Var(d) = p_disc - true_diff^2 (p_disc = P(d != 0))."""
+    if margin + true_diff <= 0:
+        return float("inf")
+    z = stats.norm.ppf(1 - alpha) + stats.norm.ppf(power)
+    return float(np.ceil(z * z * max(p_disc - true_diff ** 2, 0.0) / (margin + true_diff) ** 2))
+
+
 def compare_task(ref: pd.Series, cand: pd.Series, margin: float, alpha: float) -> dict:
     """ref/cand: correctness indexed by item id. alpha is the per-task (already corrected) level."""
     both = pd.concat([ref.rename("ref"), cand.rename("cand")], axis=1, join="inner")
@@ -76,8 +96,10 @@ def compare_task(ref: pd.Series, cand: pd.Series, margin: float, alpha: float) -
         verdict = "PASS"
     else:
         verdict = "INCONCLUSIVE"
+    p_disc = float((r != c).mean()) if len(both) else 0.0
     return {"n": len(both), "ref_acc": float(r.mean()), "cand_acc": float(c.mean()), "diff": diff,
-            "diff_ci_low": lo, "diff_ci_high": hi, "p_mcnemar": p, "verdict": verdict}
+            "diff_ci_low": lo, "diff_ci_high": hi, "p_mcnemar": p, "verdict": verdict,
+            "p_discordant": p_disc, "n_needed": items_needed(p_disc, margin)}
 
 
 def overall(verdicts: list[str]) -> str:
