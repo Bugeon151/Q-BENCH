@@ -22,10 +22,12 @@ class Fake(BaseHTTPRequestHandler):
         if self.path == "/v1/chat/completions":
             if Fake.mode == "ok":
                 return self.reply(200, {"choices": [{"message": {"content": "The answer is 55"}}]})
-            return self.reply(500, PARSE_500 if Fake.mode == "parse" else {"error": {"message": "other"}})
+            return self.reply(500, PARSE_500 if Fake.mode in ("parse", "both") else {"error": {"message": "other"}})
         if self.path == "/apply-template":
             return self.reply(200, {"prompt": "<|im_start|>user\n" + body["messages"][0]["content"]})
         if self.path == "/completion":
+            if Fake.mode == "both":
+                return self.reply(500, PARSE_500)
             return self.reply(200, {"content": "(2) �orning\nThe answer is 55"})
         self.reply(404, {})
 
@@ -74,3 +76,11 @@ def test_chat_other_500_raises(cfg):
     Fake.mode = "other"
     with pytest.raises(urllib.error.HTTPError):
         qe.chat(cfg, "q", 16)
+
+
+def test_chat_unrecoverable_parse_error_returns_empty(cfg):
+    Fake.mode = "both"
+    errors = []
+    assert qe.chat(cfg, "q", 16, errors) == "" and len(errors) == 2
+    assert [p for p, _ in Fake.seen] == ["/v1/chat/completions", "/apply-template", "/completion"]
+    assert not qe.score("gsm8k", {"answer": "#### 55"}, "", 10)[1]

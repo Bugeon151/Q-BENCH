@@ -218,24 +218,38 @@ def post(cfg: dict, path: str, body: dict) -> dict:
 PARSE_ERROR = "does not match the expected"  # llama-server could not parse the reply into its chat format
 
 
+def parse_error(e: urllib.error.HTTPError) -> str | None:
+    """The server's message if llama-server rejected a generated reply as unparseable, else None."""
+    detail = e.read().decode("utf-8", "replace")
+    return detail[:300] if e.code == 500 and PARSE_ERROR in detail else None
+
+
 def chat(cfg: dict, prompt: str, max_tokens: int, errors: list | None = None) -> str:
-    """Chat completion. If llama-server rejects the generated reply because it does not fit the
-    model's chat-output format (HTTP 500, seen with collapsed low-bit quants), the same prompt is
-    rendered with /apply-template and regenerated with /completion, which returns the raw text;
-    the server error is appended to `errors` so the item records that the chat API failed."""
+    """Chat completion. llama-server answers HTTP 500 when the generated reply does not fit the
+    model's chat-output format (seen with collapsed low-bit quants: tool-call-like text, or broken
+    UTF-8 byte sequences). Then the same prompt is rendered with /apply-template and regenerated
+    with /completion (same sampling); if that is rejected as well, the client never gets an
+    answer and the reply is empty (scored wrong). Each server error is appended to `errors`."""
+    errors = errors if errors is not None else []
     sampling = {"temperature": cfg["inference"]["temperature"], "seed": cfg["inference"]["seed"], "cache_prompt": False}
     messages = [{"role": "user", "content": prompt}]
     try:
         r = post(cfg, "/v1/chat/completions", {"messages": messages, "max_tokens": max_tokens, **sampling})
         return r["choices"][0]["message"]["content"] or ""
     except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", "replace")
-        if e.code != 500 or PARSE_ERROR not in detail:
+        detail = parse_error(e)
+        if detail is None:
             raise
-        if errors is not None:
-            errors.append(detail[:300])
-    raw = post(cfg, "/apply-template", {"messages": messages})["prompt"]
-    return post(cfg, "/completion", {"prompt": raw, "n_predict": max_tokens, **sampling}).get("content") or ""
+        errors.append(detail)
+    try:
+        raw = post(cfg, "/apply-template", {"messages": messages})["prompt"]
+        return post(cfg, "/completion", {"prompt": raw, "n_predict": max_tokens, **sampling}).get("content") or ""
+    except urllib.error.HTTPError as e:
+        detail = parse_error(e)
+        if detail is None:
+            raise
+        errors.append(detail)
+        return ""
 
 # --------------------------------------------------------------------------- main
 
