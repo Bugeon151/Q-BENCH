@@ -5,19 +5,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VENV_DIR="$ROOT_DIR/.venv"
+source "$ROOT_DIR/scripts/common.sh"
 LLAMA_DIR="$ROOT_DIR/external/llama.cpp"
 LOG_FILE="$ROOT_DIR/logs/setup.log"
 mkdir -p "$ROOT_DIR/logs"
 
 log() { echo "[setup] $*" | tee -a "$LOG_FILE"; }
 
-if [ ! -x "$VENV_DIR/bin/python" ]; then
-  log "FAIL: .venv not found at $VENV_DIR. Create it first (python3 -m venv .venv)."
+if [ ! -x "$PYTHON" ]; then
+  log "FAIL: .venv not found at $ROOT_DIR/.venv. Create it first (python3 -m venv .venv; Windows: py -3 -m venv .venv)."
   exit 1
 fi
-
-PYTHON="$VENV_DIR/bin/python"
 
 log "Installing project requirements..."
 "$PYTHON" -m pip install -q -r "$ROOT_DIR/requirements.txt"
@@ -26,17 +24,17 @@ log "Installing llama.cpp GGUF conversion requirements..."
 "$PYTHON" -m pip install -q -r "$LLAMA_DIR/requirements/requirements-convert_hf_to_gguf.txt"
 
 log "Verifying llama.cpp binaries..."
-for bin in llama-quantize llama-bench llama-cli llama-perplexity llama-server; do
-  BIN_PATH="$LLAMA_DIR/build/bin/$bin"
-  if [ ! -x "$BIN_PATH" ]; then
-    log "FAIL: missing or non-executable binary: $BIN_PATH"
+for key in benchmark.llama_quantize_bin benchmark.llama_bench_bin benchmark.llama_cli_bin \
+           perplexity.llama_perplexity_bin quality.llama_server_bin; do
+  if ! BIN_PATH="$(py "$ROOT_DIR/src/common.py" bin "$key")" || [ ! -x "$BIN_PATH" ]; then
+    log "FAIL: missing or non-executable binary for $key: $BIN_PATH"
     exit 1
   fi
-  log "OK: $bin found at $BIN_PATH"
+  log "OK: $key -> $BIN_PATH"
 done
 
 log "Recording hardware profile..."
-HW_ID="$("$PYTHON" "$ROOT_DIR/src/common.py" hwid)"
+HW_ID="$(py "$ROOT_DIR/src/common.py" hwid)"
 HW_DIR="$ROOT_DIR/config/hardware/$HW_ID"
 mkdir -p "$HW_DIR"
 {
@@ -67,11 +65,21 @@ mkdir -p "$HW_DIR"
         echo "nvidia-smi: not found"
       fi
       ;;
+    MINGW*|MSYS*|CYGWIN*)
+      # Windows (Git Bash). No systeminfo: it prints host name and product ID.
+      py "$ROOT_DIR/src/common.py" hwinfo
+      echo
+      if command -v nvidia-smi >/dev/null 2>&1; then
+        nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv | tr -d '\r'
+      else
+        echo "nvidia-smi: not found"
+      fi
+      ;;
   esac
 } > "$HW_DIR/profile.txt"
 log "OK: ${HW_DIR#"$ROOT_DIR"/}/profile.txt updated"
 
-"$PYTHON" -m pip freeze > "$HW_DIR/requirements-lock.txt"
+py -m pip freeze > "$HW_DIR/requirements-lock.txt"
 log "OK: ${HW_DIR#"$ROOT_DIR"/}/requirements-lock.txt recorded (pip freeze)"
 
 log "Verifying llama.cpp commit pin..."

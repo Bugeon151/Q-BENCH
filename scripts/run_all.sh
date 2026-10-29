@@ -24,7 +24,7 @@ while [ $# -gt 0 ]; do
 done
 case "$STAGE" in perf|ctx|quality|all) ;; *) echo "invalid --stage: $STAGE" >&2; exit 2 ;; esac
 
-PY=".venv/bin/python"
+source scripts/common.sh
 MODEL_ARGS=()
 [ -n "$MODEL" ] && MODEL_ARGS=(--model "$MODEL")
 
@@ -41,20 +41,20 @@ bash scripts/quantize.sh "$MODEL"
 
 if [ "$STAGE" = perf ] || [ "$STAGE" = all ]; then
   log "Benchmark (v0.1, default ctx)"
-  "$PY" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts default
+  "$PYTHON" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts default
 fi
 if [ "$STAGE" = ctx ] || [ "$STAGE" = all ]; then
   log "Benchmark (v0.3, context sweep)"
-  "$PY" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts all
+  "$PYTHON" src/benchmark.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --contexts all
 fi
 if [ "$STAGE" = quality ] || [ "$STAGE" = all ]; then
   log "Perplexity (v0.2)"
-  "$PY" src/perplexity_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
+  "$PYTHON" src/perplexity_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
   log "Task accuracy (v0.2)"
-  "$PY" src/quality_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
+  "$PYTHON" src/quality_eval.py ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"}
 fi
 
 log "Analysis + Visualization + Report"
-"$PY" src/analyze.py
+"$PYTHON" src/analyze.py
 
 log "Q-Bench pipeline complete (stage=$STAGE)."
