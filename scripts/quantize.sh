@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-PYTHON="$ROOT_DIR/.venv/bin/python"
+source "$ROOT_DIR/scripts/common.sh"
 COMMON="$ROOT_DIR/src/common.py"
 LOG_FILE="$ROOT_DIR/logs/model_validation.log"
 mkdir -p "$ROOT_DIR/logs"
@@ -14,7 +14,7 @@ mkdir -p "$ROOT_DIR/logs"
 log() { echo "[quantize] $*" | tee -a "$LOG_FILE"; }
 
 read_cfg() {
-  "$PYTHON" - "$1" <<'EOF'
+  py - "$1" <<'EOF'
 import sys, yaml
 node = yaml.safe_load(open("config/experiment.yaml"))
 for part in sys.argv[1].split("."):
@@ -26,11 +26,11 @@ EOF
 HF_ROOT="$(read_cfg model_dirs.hf)"
 BASE_ROOT="$(read_cfg model_dirs.base)"
 QUANT_OUT_DIR="$(read_cfg quantization.output_dir)"
-LLAMA_QUANTIZE="$(read_cfg benchmark.llama_quantize_bin)"
-LLAMA_CLI="$(read_cfg benchmark.llama_cli_bin)"
+LLAMA_QUANTIZE="$(py "$COMMON" bin benchmark.llama_quantize_bin)"
+LLAMA_CLI="$(py "$COMMON" bin benchmark.llama_cli_bin)"
 
 QUANT_LEVELS=()
-while IFS= read -r lvl; do QUANT_LEVELS+=("$lvl"); done < <("$PYTHON" - <<'EOF'
+while IFS= read -r lvl; do QUANT_LEVELS+=("$lvl"); done < <(py - <<'EOF'
 import yaml
 for lvl in yaml.safe_load(open("config/experiment.yaml"))["quantization"]["levels"]:
     print(lvl)
@@ -38,7 +38,7 @@ EOF
 )
 
 MODEL_LINES=()
-while IFS= read -r line; do MODEL_LINES+=("$line"); done < <("$PYTHON" "$COMMON" models "${1:-}")
+while IFS= read -r line; do MODEL_LINES+=("$line"); done < <(py "$COMMON" models "${1:-}")
 
 mkdir -p "$QUANT_OUT_DIR"
 for LINE in "${MODEL_LINES[@]}"; do
@@ -91,7 +91,7 @@ EOF
   for ENTRY in "${ALL_GGUFS[@]}"; do
     LEVEL="${ENTRY%%:*}"
     GGUF="${ENTRY#*:}"
-    if ! WHY="$("$PYTHON" "$COMMON" fits "$MODEL" "$LEVEL" 512)"; then
+    if ! WHY="$(py "$COMMON" fits "$MODEL" "$LEVEL" 512)"; then
       log "SKIP smoke test $GGUF: over memory budget ($WHY)"
       continue
     fi
