@@ -57,8 +57,9 @@ def raw_csv_path(cfg: dict, hw_id: str) -> Path:
     return ROOT_DIR / cfg["paths"]["raw_dir"] / hw_id / "benchmark_raw.csv"
 
 
-def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float, vram_ms: int) -> tuple[str, int, int | None]:
-    """Runs llama-bench; returns (stdout, peak RSS bytes, peak VRAM delta bytes|None)."""
+def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float,
+                    vram_ms: int) -> tuple[str, int, int | None, dict]:
+    """Runs llama-bench; returns (stdout, peak RSS bytes, peak VRAM delta bytes|None, GPU telemetry)."""
     with VramMonitor(vram_ms) as vmon:
         proc = subprocess.Popen(
             cmd, stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
@@ -68,7 +69,14 @@ def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float, vram_ms: int
             stdout, stderr = proc.communicate()
     if proc.returncode != 0:
         raise RuntimeError(f"llama-bench failed ({' '.join(cmd)}):\n{stderr[-4000:]}")
-    return stdout or "", mon.peak_rss_bytes, vmon.peak_delta_bytes
+    return stdout or "", mon.peak_rss_bytes, vmon.peak_delta_bytes, vmon.telemetry
+
+
+def append_telemetry(path: Path, rec: dict) -> None:
+    """Sidecar JSONL next to benchmark_raw.csv (keeps the raw CSV schema unchanged)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8", newline="") as f:
+        f.write(json.dumps(rec) + "\n")
 
 
 def gpu_args(bcfg: dict, offload: bool) -> list[str]:
@@ -173,7 +181,7 @@ def main() -> None:
                                     bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
                     log(f"{tag}: measurement ({runs['measurement_runs']} runs)")
                     swap_before = swap_used_bytes()
-                    stdout, peak_rss, peak_vram = run_llama_bench(
+                    stdout, peak_rss, peak_vram, telemetry = run_llama_bench(
                         [*cmd, "-r", str(runs["measurement_runs"])], True,
                         bcfg["memory_poll_interval_sec"], bcfg["vram_poll_interval_ms"])
                     swap_after = swap_used_bytes()
@@ -191,6 +199,10 @@ def main() -> None:
                         for r in rows:
                             r["n_gpu_layers"] = f"fit:{bcfg['offload']['fit_target_mib']}MiB"
                     append_rows(raw_csv, rows)
+                    if telemetry:
+                        append_telemetry(raw_csv.with_name("gpu_telemetry.jsonl"), {
+                            "hw_id": hw["hw_id"], "model": name, "quant": quant, "ctx": ctx,
+                            "test_type": test_type, "timestamp": base["timestamp"], **telemetry})
                     if swap_after > swap_before:
                         log(f"WARN {tag}: swap grew {(swap_after - swap_before) / 1e9:.2f} GB during measurement")
                     log(f"{tag}: wrote {len(rows)} raw rows")
