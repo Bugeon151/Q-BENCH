@@ -12,7 +12,7 @@ Overall: FAIL if any task FAILs, PASS if every task PASSes, else INCONCLUSIVE.
 
 CLI:
     python src/gate.py --model Qwen2.5-7B-Instruct --candidate Q3_K_M [--reference F16]
-                       [--hw HW_ID] [--margin 0.03] [--alpha 0.05]
+                       [--candidate-model Qwen2.5-14B-Instruct] [--hw HW_ID] [--margin 0.03] [--alpha 0.05]
 Exit code: 0 PASS, 1 FAIL, 2 INCONCLUSIVE (usable as a CI check).
 """
 
@@ -87,24 +87,28 @@ def overall(verdicts: list[str]) -> str:
 
 
 def gate(items: pd.DataFrame, hw: str, model: str, candidate: str, reference: str = "F16",
-         margin: float = MARGIN, alpha: float = ALPHA) -> pd.DataFrame:
-    """One row per task plus an 'overall' row. Tasks need complete results for both quants."""
-    d = items[(items.hw_id == hw) & (items.model == model)]
-    tasks = sorted(set(d[d.quant == reference].task) & set(d[d.quant == candidate].task))
+         margin: float = MARGIN, alpha: float = ALPHA, candidate_model: str | None = None) -> pd.DataFrame:
+    """One row per task plus an 'overall' row. Tasks need complete results for both sides.
+
+    candidate_model compares across models (e.g. upgrading 7B F16 to 14B Q4_K_M) on the same items."""
+    cand_model = candidate_model or model
+    d = items[items.hw_id == hw]
+    ref_d = d[(d.model == model) & (d.quant == reference)]
+    cand_d = d[(d.model == cand_model) & (d.quant == candidate)]
+    tasks = sorted(set(ref_d.task) & set(cand_d.task))
     rows = []
     for t in tasks:
-        sel = d[d.task == t].set_index("id")
-        res = compare_task(sel[sel.quant == reference].correct, sel[sel.quant == candidate].correct,
-                           margin, alpha / len(tasks))
+        res = compare_task(ref_d[ref_d.task == t].set_index("id").correct,
+                           cand_d[cand_d.task == t].set_index("id").correct, margin, alpha / len(tasks))
         rows.append({"task": t, **res})
     out = pd.DataFrame(rows)
-    out.insert(0, "candidate", candidate)
-    out.insert(0, "reference", reference)
-    out.insert(0, "model", model)
-    out.insert(0, "hw_id", hw)
+    head = {"hw_id": hw, "model": model, "reference": reference, "candidate": candidate}
+    if candidate_model:
+        head["candidate_model"] = cand_model
+    for i, (k, v) in enumerate(head.items()):
+        out.insert(i, k, v)
     if not out.empty:
-        out = pd.concat([out, pd.DataFrame([{"hw_id": hw, "model": model, "reference": reference,
-                                             "candidate": candidate, "task": "overall",
+        out = pd.concat([out, pd.DataFrame([{**head, "task": "overall",
                                              "verdict": overall(out.verdict.tolist())}])], ignore_index=True)
     return out
 
@@ -130,6 +134,7 @@ def main() -> int:
     ap.add_argument("--model", required=True)
     ap.add_argument("--candidate", required=True)
     ap.add_argument("--reference", default="F16")
+    ap.add_argument("--candidate-model", help="compare against another model (default: same --model)")
     ap.add_argument("--hw", help="quality hw_id (default: the only one present)")
     ap.add_argument("--margin", type=float, default=MARGIN)
     ap.add_argument("--alpha", type=float, default=ALPHA)
@@ -140,7 +145,7 @@ def main() -> int:
     hw = args.hw or (hws[0] if len(hws) == 1 else None)
     if hw is None:
         raise SystemExit(f"--hw required, one of {hws}")
-    res = gate(items, hw, args.model, args.candidate, args.reference, args.margin, args.alpha)
+    res = gate(items, hw, args.model, args.candidate, args.reference, args.margin, args.alpha, args.candidate_model)
     if res.empty:
         raise SystemExit("no shared complete tasks for reference and candidate")
     with pd.option_context("display.width", 200, "display.float_format", "{:.4f}".format):
