@@ -3,6 +3,14 @@
 > Quantization Benchmark for Local LLM Inference
 > 신규 하드웨어(Apple M5) 성능 프로파일링 관점 벤치마크
 
+> **범위 변경 (2026-10-30)** — 소유자 결정으로 M5(맥북)에서는 더 이상 실행하지 않는다.
+> M5 데이터는 v0.1 결과(7B, ctx 4096)만 `legacy_v0.1`로 유지하고, v0.2–v1.0(품질, context,
+> 1.5B/3B/7B/14B)은 RTX 5070 Laptop 8 GB(Windows 11, CUDA)에서 측정했다. 14B F16은 이 노트북의
+> RAM 31 GiB + VRAM 8 GB에 들어가지 않아(스왑 발생) 품질 평가에서 제외하고 14B는 Q8_0을 기준으로
+> 비교한다. PRD 이후 추가된 분석·도구(회귀 게이트, 답변 뒤집힘과 재실행 노이즈, 크기 대 비트,
+> perplexity 스크린, 동시 사용자 용량, 디코드 속도 예측, imatrix 복구, 배포 키트)는
+> `docs/REPORT.md`에 정리한다.
+
 ## 1. 프로젝트 개요
 
 Q-Bench는 **신규 하드웨어(Apple M5)에서 로컬 LLM 추론의 양자화 수준별 성능 특성을 프로파일링**하기 위한 벤치마크 프로젝트이다.

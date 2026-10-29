@@ -4,8 +4,8 @@
 
 | 기기 | 역할 | hw_id (자동 감지 예시) |
 |---|---|---|
-| M5 맥 (Apple M5, 24GB, macOS 26.4, Metal) | 성능 측정: v0.1, v0.3, v1.0 | `apple-m5-24gb` |
-| 노트북 (Core Ultra 9 275HX, 32GB, RTX 5070 Laptop 8GB, Windows 11 네이티브 또는 Linux/WSL2) | 품질 평가 v0.2, 하드웨어 비교 | `nvidia-geforce-rtx-5070-laptop-gpu-8gb` |
+| M5 맥 (Apple M5, 24GB, macOS 26.4, Metal) | v0.1 legacy 데이터만 (2026-10-30부터 실행하지 않음) | `apple-m5-24gb` / `legacy_v0.1` |
+| 노트북 (Core Ultra 9 275HX, 32GB, RTX 5070 Laptop 8GB, Windows 11 네이티브 또는 Linux/WSL2) | v0.2–v1.0 전체: 성능, context, 품질, 1.5B–14B, 부하 테스트, 배포 데모 | `nvidia-geforce-rtx-5070-laptop-gpu-8gb` |
 
 hw_id는 `python src/common.py hwid`로 확인합니다. 고정하려면 `config/experiment.yaml`의 `hardware.id`를 설정하세요.
 
@@ -109,6 +109,29 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 ```
 
 출력: `results/tables/{summary,quality,hardware_comparison}.csv`, `results/figures/<hw_id>/<model>/`, `results/figures/quality/`, `results/figures/hardware/`, `results/summary.json`.
+
+### 추가 측정과 도구 (노트북)
+
+```bash
+# 재실행 노이즈 floor: 같은 설정 2회 (data/quality_rerun/)
+.venv/bin/python src/quality_eval.py --model Qwen2.5-7B-Instruct --quants Q4_K_M --out-root data/quality_rerun
+# 붕괴한 저비트 양자화 진단(CPU 대조) + imatrix 재양자화 -> <quant>-imat 레벨
+.venv/bin/python src/imatrix_fix.py
+.venv/bin/python src/perplexity_eval.py --model Qwen2.5-3B-Instruct --quants Q2_K-imat Q3_K_M-imat
+.venv/bin/python src/quality_eval.py --model Qwen2.5-3B-Instruct --quants Q2_K-imat Q3_K_M-imat
+# 동시 사용자 용량 (MLPerf v5.0 TTFT/TPOT 기준, config loadtest.targets)
+.venv/bin/python src/loadtest.py
+# 배포: 추천 -> 해시 검증 -> 인수 테스트 -> 용량 -> 감사 매니페스트 (deploy/*.json)
+.venv/bin/python src/deploy.py --items 20 --capacity [--serve]
+# 교체 판정 (CI 게이트로 사용 가능: exit 0 PASS / 1 FAIL / 2 INCONCLUSIVE)
+.venv/bin/python src/gate.py --model Qwen2.5-7B-Instruct --candidate Q4_K_M
+.venv/bin/python src/gate.py --model Qwen2.5-7B-Instruct --reference Q8_0 --candidate Q4_K_M --candidate-model Qwen2.5-14B-Instruct
+# 하드웨어 맞춤 추천 (측정 기기 또는 미측정 GPU의 대역폭)
+.venv/bin/python src/recommend.py --vram-gb 7.6 [--min-tps 30]
+.venv/bin/python src/recommend.py --vram-gb 24 --bandwidth-gbs 1008
+```
+
+분석 순서(`run_all.sh` 마지막에 자동): `analyze.py` → `perfmodel.py` → `consistency.py` → `frontier.py` → `loadtest.py --summarize-only` → `report.py`(`docs/RESULTS.md`).
 
 ## 4. Claude에 결과 공유할 때 (토큰 절약)
 
