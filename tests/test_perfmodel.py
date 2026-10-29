@@ -35,3 +35,18 @@ def test_leave_one_hardware_out():
     assert fit.efficiency.tolist() == pytest.approx([0.75, 0.75])
     assert fit.loho_mape_max.tolist() == pytest.approx([0, 0], abs=1e-12)
     assert perfmodel.predict_tps(1000, 5e9, [0.7, 0.8]) == pytest.approx((140.0, 160.0))
+
+
+def test_calibrate_from_smallest_model():
+    """Two points of the small model recover (BW, t0) exactly and predict the big model."""
+    bw, t0 = 370e9, 0.0016
+    rows = [{"hw_id": "h", "model": m, "ctx": 4096, "quant": q, "bytes_per_token": b,
+             "generation_throughput_tps": 1 / (b / bw + t0)}
+            for m, q, b in [("Q-1.5B", "F16", 3.2e9), ("Q-1.5B", "Q4_K_M", 1.1e9), ("Q-1.5B", "Q8_0", 1.7e9),
+                            ("Q-7B", "Q4_K_M", 4.9e9), ("Q-7B", "Q6_K", 6.4e9)]]
+    c = perfmodel.calibrate(pd.DataFrame(rows)).iloc[0]
+    assert c.calib_model == "Q-1.5B" and c.calib_n_pred == 2
+    assert c.calib_bw_gbs == pytest.approx(370) and c.calib_t0_ms == pytest.approx(1.6)
+    assert c.calib_mape == pytest.approx(0, abs=1e-9)
+    one_model = pd.DataFrame(rows[:3])
+    assert perfmodel.calibrate(one_model).empty
