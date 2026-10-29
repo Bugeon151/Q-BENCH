@@ -33,7 +33,7 @@ from scipy import stats  # noqa: E402
 import gate  # noqa: E402
 from common import ROOT_DIR, load_config  # noqa: E402
 
-QUANT_ORDER = ["F16", "Q8_0", "Q6_K", "Q5_K_M", "Q4_K_M", "Q3_K_M", "Q2_K"]
+QUANT_ORDER = ["F16", "Q8_0", "Q6_K", "Q5_K_M", "Q4_K_M", "Q3_K_M", "Q3_K_M-imat", "Q2_K", "Q2_K-imat"]  # -imat: src/imatrix_fix.py
 LEGACY_HW_ID = "legacy_v0.1"
 LEGACY_MODEL = "Qwen2.5-7B-Instruct"
 KEYS = ["hw_id", "model", "ctx", "quant"]
@@ -311,6 +311,8 @@ def quality_figure(q: pd.DataFrame, out: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
     if "ppl" in q:
         axes[0].bar(q.quant, q.ppl, yerr=q.ppl_err, capsize=4)
+        if q.ppl.max() > 10 * q.ppl.min():  # a collapsed quant (e.g. PPL 2e4) would flatten the rest
+            axes[0].set_yscale("log")
     axes[0].set(title="Perplexity (wikitext-2, lower is better)", xlabel="Quantization", ylabel="PPL")
     x = np.arange(len(q))
     for i, t in enumerate(tasks):

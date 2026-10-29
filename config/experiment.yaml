@@ -74,6 +74,18 @@ perplexity:
   chunks: null             # null = full test set
   n_gpu_layers: "auto"     # auto lets llama.cpp --fit offload partially when VRAM is short
 
+imatrix:                   # src/imatrix_fix.py: re-quantize collapsed low-bit levels with an importance matrix
+  llama_imatrix_bin: "external/llama.cpp/build/bin/llama-imatrix"
+  train_file: "data/datasets/wikitext-2-raw/wiki.train.raw"   # calibration text; perplexity uses the test split
+  chunks: 128              # x perplexity.ctx tokens
+  dir: "models/imatrix"
+  check_chunks: 20         # CPU-only perplexity prefix to rule out a GPU kernel fault
+  targets:
+    - [Qwen2.5-3B-Instruct, Q2_K]
+    - [Qwen2.5-3B-Instruct, Q3_K_M]
+    - [Qwen2.5-7B-Instruct, Q2_K]
+    - [Qwen2.5-7B-Instruct, Q3_K_M]
+
 quality:
   llama_server_bin: "external/llama.cpp/build/bin/llama-server"
   sample_file: "prompts/quality.json"
