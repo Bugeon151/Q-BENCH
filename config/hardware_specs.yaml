@@ -1,0 +1,11 @@
+# Published peak memory bandwidth per measured hw_id (GB/s), used by src/perfmodel.py.
+# A list means published sources disagree; each value is evaluated.
+legacy_v0.1:  # Apple M5, 24 GB unified memory (v0.1 run)
+  bandwidth_gbs: [153]
+  sources:
+    - "https://www.apple.com/newsroom/2025/10/apple-unleashes-m5-the-next-big-leap-in-ai-performance-for-apple-silicon/"
+nvidia-geforce-rtx-5070-laptop-gpu-8gb:  # 128-bit GDDR7
+  bandwidth_gbs: [384, 512]
+  sources:
+    - "https://laptopmedia.com/?p=1714197"  # 384 GB/s
+    - "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5070-Laptop-Benchmarks-and-Specs.934942.0.html"  # 512 GB/s

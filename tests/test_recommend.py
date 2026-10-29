@@ -1,5 +1,6 @@
 """Hardware-fit recommendation from measured tables."""
 import pandas as pd
+import pytest
 
 from common import GIB
 from recommend import candidates, kv_bytes_per_token, recommend
@@ -7,7 +8,7 @@ from recommend import candidates, kv_bytes_per_token, recommend
 QWEN7B = {"num_hidden_layers": 28, "num_attention_heads": 28, "num_key_value_heads": 4, "hidden_size": 3584}
 
 
-def tables():
+def _inputs():
     hw = "nvidia-x-8gb"
     summary = pd.DataFrame([
         # model, quant, size GB, peak VRAM GB (None = not measured on GPU), tps, offloaded
@@ -25,7 +26,12 @@ def tables():
                          columns=["model", "candidate", "task", "verdict"])
     cfgs = {"m7": QWEN7B, "m14": {"num_hidden_layers": 48, "num_attention_heads": 40,
                                   "num_key_value_heads": 8, "hidden_size": 5120}}
-    return candidates(summary, quality, gates, cfgs, 4096, 256, 0.75, hw)
+    return summary, quality, gates, cfgs, 4096, 256, 0.75, None
+
+
+def tables():
+    summary, quality, gates, cfgs, ctx, n_gen, overhead, _ = _inputs()
+    return candidates(summary, quality, gates, cfgs, ctx, n_gen, overhead, "nvidia-x-8gb")
 
 
 def test_kv_bytes_per_token():
@@ -49,3 +55,16 @@ def test_recommend_with_offload_and_min_tps():
     assert (rec.model.iloc[0], rec.quant.iloc[0]) == ("m14", "Q4_K_M")  # best quality, speed unmeasured
     rec = recommend(tables(), vram_gb=8, ram_gb=24, min_tps=30, allow_offload=True)
     assert ("m7", "F16") not in set(zip(rec.model, rec.quant))  # 7.2 tok/s < 30
+
+
+def test_predicted_speed_for_unmeasured_hardware():
+    from recommend import candidates
+    t = tables()
+    hw_less = candidates(*_inputs(), bandwidth_gbs=1000, efficiencies=[0.6, 0.8])
+    r = hw_less.set_index(["model", "quant"]).loc[("m7", "Q4_K_M")]
+    b = 4.7 * GIB + kv_bytes_per_token(QWEN7B) * 4096
+    assert r.tps_pred_low == pytest.approx(0.6e12 / b) and r.tps_pred_high == pytest.approx(0.8e12 / b)
+    assert pd.isna(r.tps)  # no measured speed on the unmeasured target
+    rec = recommend(hw_less, vram_gb=24, min_tps=0.6e12 / b + 1)  # filter uses the low end of the range
+    assert ("m7", "Q4_K_M") not in set(zip(rec.model, rec.quant))
+    assert len(t)
