@@ -44,6 +44,16 @@ cmake --build external/llama.cpp/build --config Release -j
 .venv/Scripts/python.exe src/common.py bin benchmark.llama_bench_bin   # 경로 확인, 없으면 exit 1
 ```
 
+빌드 대신 공식 릴리스 바이너리를 쓸 수도 있습니다(CUDA Toolkit, VS Build Tools 불필요). 소스 체크아웃은 그대로 필요합니다.
+
+```bash
+bash scripts/install_llama_win.sh   # b11007 CUDA 13.4, CUDA 장치가 안 보이면 12.4로 대체
+```
+
+- 릴리스 b11007은 커밋 2f3fd02이고, 고정 커밋 c6824a9의 부모입니다. 둘의 차이는 `.github/workflows` 파일 6개뿐이라 코드는 같습니다. 이 경우 llama-bench 결과의 `build_commit`은 `2f3fd02`로 기록됩니다.
+- zip은 SHA256을 확인한 뒤 `external/llama.cpp/build/bin`에 풉니다(기존 내용은 교체). 사용한 파일과 해시는 `build/bin/PREBUILT.txt`에 남습니다.
+- CUDA 13.4 빌드는 Blackwell(sm_120) 네이티브 코드를 포함하고 R580 이상 드라이버가 필요합니다. 12.4 빌드는 PTX를 JIT 컴파일해서 실행합니다.
+
 - Visual Studio 생성기는 바이너리를 `build/bin/Release/*.exe`에 둡니다. `src/common.py`의 `resolve_bin`이 `.exe`와 `Release/`를 자동으로 찾으므로 config는 그대로 둡니다.
 - 스크립트는 `scripts/common.sh`에서 `.venv/Scripts/python.exe`를 찾고, `PYTHONUTF8=1`로 실행되어 한글 Windows(cp949)에서도 UTF-8로 읽고 씁니다. Python 출력의 `\r`은 셸에서 제거합니다.
 - 하드웨어 프로필은 `systeminfo`를 쓰지 않습니다(호스트명·제품 ID가 들어감). CPU 이름은 레지스트리 `ProcessorNameString`에서 읽습니다.
