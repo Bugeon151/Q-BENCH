@@ -10,6 +10,9 @@ For each (model, quant) with complete quality results:
   tps_pred  with --bandwidth-gbs (unmeasured hardware): predicted range from src/perfmodel.py,
             efficiency of the measured devices x the given peak bandwidth (full-GPU configs only)
   quality   mean accuracy over the quality tasks; gate = regression verdict vs F16
+  flips     share of answers whose correctness differs from F16 (src/consistency.py), if measured
+  capacity_server / capacity_interactive  concurrent users within the latency SLAs on --hw
+            (src/loadtest.py), if measured
 Candidates must fit, must not FAIL the gate, and must reach --min-tps (measured speed, else the
 low end of the predicted range). Ranking: quality, then speed.
 
@@ -83,6 +86,25 @@ def recommend(c: pd.DataFrame, vram_gb: float, ram_gb: float = 0.0, min_tps: flo
         .drop(columns="_speed").reset_index(drop=True)
 
 
+def annotate(rec: pd.DataFrame, tables: Path, hw: str | None) -> pd.DataFrame:
+    """Adds answer flips vs F16 (flips.csv) and concurrent users within the server SLA on hw
+    (capacity.csv) when those tables exist."""
+    if rec.empty:
+        return rec
+    f = tables / "flips.csv"
+    if f.exists():
+        fl = pd.read_csv(f)
+        fl = fl[(fl.kind == "vs_F16") & (fl.task == "all")].drop_duplicates(["model", "quant"])
+        rec = rec.merge(fl[["model", "quant", "flips"]], on=["model", "quant"], how="left")
+        rec.loc[rec.quant == "F16", "flips"] = 0.0
+    c = tables / "capacity.csv"
+    if c.exists() and hw:
+        cap = pd.read_csv(c)
+        cap = cap[cap.hw_id == hw][["model", "quant", "capacity_server", "capacity_interactive"]]
+        rec = rec.merge(cap, on=["model", "quant"], how="left")
+    return rec
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--vram-gb", type=float, required=True,
@@ -114,7 +136,7 @@ def main() -> None:
         effs = None
     c = candidates(summary, quality, gates, load_model_cfgs(), ctx, cfg["inference"]["max_output_tokens"],
                    cfg["memory_budget"]["overhead_gb"], hw, args.bandwidth_gbs, effs)
-    rec = recommend(c, args.vram_gb, args.ram_gb, args.min_tps, allow_offload=args.ram_gb > 0)
+    rec = annotate(recommend(c, args.vram_gb, args.ram_gb, args.min_tps, allow_offload=args.ram_gb > 0), tables, hw)
     src = (f"speeds predicted for {args.bandwidth_gbs} GB/s from efficiencies {effs}" if args.bandwidth_gbs
            else f"speeds measured on {hw}")
     print(f"budget: {args.vram_gb} GiB VRAM + {args.ram_gb} GiB RAM, ctx {ctx}, min {args.min_tps} tok/s; {src}")

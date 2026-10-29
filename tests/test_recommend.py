@@ -3,6 +3,7 @@ import pandas as pd
 import pytest
 
 from common import GIB
+import recommend as rc
 from recommend import candidates, kv_bytes_per_token, recommend
 
 QWEN7B = {"num_hidden_layers": 28, "num_attention_heads": 28, "num_key_value_heads": 4, "hidden_size": 3584}
@@ -68,3 +69,17 @@ def test_predicted_speed_for_unmeasured_hardware():
     rec = recommend(hw_less, vram_gb=24, min_tps=0.6e12 / b + 1)  # filter uses the low end of the range
     assert ("m7", "Q4_K_M") not in set(zip(rec.model, rec.quant))
     assert len(t)
+
+
+def test_annotate_flips_and_capacity(tmp_path):
+    rec = pd.DataFrame({"model": ["m", "m"], "quant": ["F16", "Q4_K_M"], "quality": [0.8, 0.79]})
+    pd.DataFrame([{"kind": "vs_F16", "task": "all", "model": "m", "quant": "Q4_K_M", "flips": 0.04},
+                  {"kind": "rerun", "task": "all", "model": "m", "quant": "Q4_K_M", "flips": 0.01}]) \
+        .to_csv(tmp_path / "flips.csv", index=False)
+    pd.DataFrame([{"hw_id": "gpu", "model": "m", "quant": "Q4_K_M", "capacity_server": 8, "capacity_interactive": 2},
+                  {"hw_id": "other", "model": "m", "quant": "F16", "capacity_server": 1, "capacity_interactive": 0}]) \
+        .to_csv(tmp_path / "capacity.csv", index=False)
+    out = rc.annotate(rec, tmp_path, "gpu").set_index("quant")
+    assert out.loc["F16", "flips"] == 0 and out.loc["Q4_K_M", "flips"] == 0.04
+    assert out.loc["Q4_K_M", "capacity_server"] == 8 and pd.isna(out.loc["F16", "capacity_server"])
+    assert rc.annotate(rec, tmp_path / "missing", "gpu").columns.tolist() == rec.columns.tolist()
