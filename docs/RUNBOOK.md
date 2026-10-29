@@ -5,7 +5,7 @@
 | 기기 | 역할 | hw_id (자동 감지 예시) |
 |---|---|---|
 | M5 맥 (Apple M5, 24GB, macOS 26.4, Metal) | 성능 측정: v0.1, v0.3, v1.0 | `apple-m5-24gb` |
-| 노트북 (Core Ultra 9, 32GB, RTX 5070 Ti Laptop 12GB) | 품질 평가 v0.2, 하드웨어 비교 | `nvidia-geforce-rtx-5070-ti-laptop-gpu-12gb` 형태 |
+| 노트북 (Core Ultra 9, 32GB, RTX 5070 Ti Laptop 12GB, Windows 네이티브 또는 Linux/WSL2) | 품질 평가 v0.2, 하드웨어 비교 | `nvidia-geforce-rtx-5070-ti-laptop-gpu-12gb` 형태 |
 
 hw_id는 `python src/common.py hwid`로 확인합니다. 고정하려면 `config/experiment.yaml`의 `hardware.id`를 설정하세요.
 
@@ -30,6 +30,25 @@ cmake --build external/llama.cpp/build --config Release -j
 cmake -S external/llama.cpp -B external/llama.cpp/build -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build external/llama.cpp/build --config Release -j
 ```
+
+### Windows 네이티브 (노트북)
+
+직접 설치할 것: Git for Windows(Git Bash), Python 3.11 이상(`py` 런처), Visual Studio 2022 Build Tools의 "C++를 사용한 데스크톱 개발"(CMake 포함), CUDA Toolkit 12.8 이상. CUDA는 VS Build Tools **다음에** 설치해야 VS용 CUDA 빌드 통합이 함께 설치됩니다.
+
+명령은 모두 **Git Bash**에서 실행합니다. PowerShell에서 `bash`를 부르면 WSL의 bash가 실행될 수 있습니다.
+
+```bash
+py -3 -m venv .venv
+cmake -S external/llama.cpp -B external/llama.cpp/build -DGGML_CUDA=ON
+cmake --build external/llama.cpp/build --config Release -j
+.venv/Scripts/python.exe src/common.py bin benchmark.llama_bench_bin   # 경로 확인, 없으면 exit 1
+```
+
+- Visual Studio 생성기는 바이너리를 `build/bin/Release/*.exe`에 둡니다. `src/common.py`의 `resolve_bin`이 `.exe`와 `Release/`를 자동으로 찾으므로 config는 그대로 둡니다.
+- 스크립트는 `scripts/common.sh`에서 `.venv/Scripts/python.exe`를 찾고, `PYTHONUTF8=1`로 실행되어 한글 Windows(cp949)에서도 UTF-8로 읽고 씁니다. Python 출력의 `\r`은 셸에서 제거합니다.
+- 하드웨어 프로필은 `systeminfo`를 쓰지 않습니다(호스트명·제품 ID가 들어감). CPU 이름은 레지스트리 `ProcessorNameString`에서 읽습니다.
+- 같은 노트북을 Windows와 WSL2에서 모두 측정하면 hw_id가 같아집니다. 섞지 않으려면 `config/experiment.yaml`의 `hardware.id`를 바꾸세요(`os` 열에는 구분되어 기록됨).
+- 노트북 GPU는 전원 상태에 따라 클럭이 달라집니다. 측정 중에는 충전기를 연결하고 같은 전원 모드를 유지하세요.
 
 `scripts/setup.sh`가 확인하는 바이너리는 llama-quantize, llama-bench, llama-cli, llama-perplexity, llama-server입니다.
 setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)와 `requirements-lock.txt`(pip freeze)를 기록합니다.
