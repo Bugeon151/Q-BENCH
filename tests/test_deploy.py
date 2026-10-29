@@ -48,7 +48,7 @@ class FakeServer:
         return 0
 
 
-def test_main_writes_manifest(tmp_path, monkeypatch):
+def setup_main(tmp_path, monkeypatch, argv):
     gguf, server_bin = tmp_path / "models/m-Q4_K_M.gguf", tmp_path / "bin/llama-server"
     for p in (gguf, server_bin):
         p.parent.mkdir(parents=True)
@@ -66,10 +66,25 @@ def test_main_writes_manifest(tmp_path, monkeypatch):
     monkeypatch.setattr(deploy.qe, "load_sample", lambda cfg, log: {"seed": 42, "datasets": {"mmlu": {"n": 1, "ids": [0]}}})
     monkeypatch.setattr(deploy.qe, "start_server", lambda cfg, path, log_path: server)
     patch_eval(monkeypatch, True)
-    monkeypatch.setattr(sys, "argv", ["deploy.py", "--model", "m", "--quant", "Q4_K_M", "--items", "10"])
+    monkeypatch.setattr(sys, "argv", ["deploy.py", "--model", "m", "--quant", "Q4_K_M", "--items", "10", *argv])
     assert deploy.main() == 0
     (out,) = (tmp_path / "deploy").glob("*.json")
-    m = json.loads(out.read_text())
+    return json.loads(out.read_text()), gguf, server
+
+
+def test_main_writes_manifest(tmp_path, monkeypatch):
+    m, gguf, server = setup_main(tmp_path, monkeypatch, [])
     assert m["status"] == "VERIFIED" and m["model"]["sha256"] == deploy.sha256(gguf)
     assert m["acceptance"]["verdict"] == "OK" and m["smoke"]["reply"] == "ready" and server.stopped
     assert m["runtime"]["llama_cpp_commit"] == "c6824a9" and "ids" not in m["sample"]["datasets"]["mmlu"]
+
+
+def test_main_capacity(tmp_path, monkeypatch):
+    levels = pd.DataFrame([{"hw_id": "gpu", "model": "m", "quant": "Q4_K_M", "level": c, "n": 16,
+                            "out_tps_total": 40.0 * c, "ttft_p95_s": 0.1 * c, "tpot_p95_s": 0.02 * c,
+                            "meets_server": c <= 4, "meets_interactive": c <= 2} for c in (1, 2, 4, 8)])
+    calls = []
+    monkeypatch.setattr(deploy.loadtest, "measure", lambda cfg, hw, model, quant, log: calls.append(model) or levels)
+    m, _, _ = setup_main(tmp_path, monkeypatch, ["--capacity"])
+    assert calls == ["m"] and m["capacity"]["users"] == {"server": 4, "interactive": 2}
+    assert m["capacity"]["levels"][0]["meets_server"] is True and m["status"] == "VERIFIED"
