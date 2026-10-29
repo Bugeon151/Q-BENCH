@@ -92,7 +92,7 @@ quality:
 loadtest:                  # src/loadtest.py: concurrent users within a latency SLA
   levels: [1, 2, 4, 8, 16] # concurrent users (closed loop); the sweep stops after the first level that misses the server SLA
   slots: 16                # llama-server -np (>= max level, so no request waits for a slot)
-  ctx_per_slot: 2048       # GSM8K question (~150-300 tokens) + max_tokens
+  ctx_per_slot: 1024       # GSM8K prompt (< 400 tokens) + max_tokens; 16 slots of 7B Q6_K KV (0.9 GiB) still fit 8 GB with the weights
   max_tokens: 256          # natural output length up to this
   requests_per_user: 4     # requests per level = max(min_requests, level x requests_per_user)
   min_requests: 16
