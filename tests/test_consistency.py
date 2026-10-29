@@ -17,7 +17,7 @@ def test_flips_with_unchanged_accuracy():
     ref = [True] * 50 + [False] * 50
     cand = [False] * 10 + [True] * 40 + [True] * 10 + [False] * 40  # 10 c->w, 10 w->c
     t = cs.flip_table(pd.DataFrame(run("F16", ref) + run("Q4", cand), columns=COLS))
-    r = t[(t.task == "mmlu") & (t.kind == "vs_F16")].iloc[0]
+    r = t[(t.task == "mmlu") & (t.kind == "vs_ref")].iloc[0]
     assert r.acc_diff == 0 and r.flips == pytest.approx(0.2) and (r.c2w, r.w2c) == (10, 10)
     assert r.flips_ci_low < 0.2 < r.flips_ci_high and r.pred_changed == pytest.approx(0.2)
     assert set(t.task) == {"mmlu", "all"} and np.isnan(r.attributable)
@@ -31,8 +31,8 @@ def test_noise_floor_and_attributable():
     rerun = pd.DataFrame(run("Q4", q4_again), columns=COLS)
     t = cs.flip_table(items, rerun).set_index(["kind", "task"])
     assert t.loc[("rerun", "mmlu"), "flips"] == pytest.approx(0.02)
-    assert t.loc[("vs_F16", "mmlu"), "noise_floor"] == pytest.approx(0.02)
-    assert t.loc[("vs_F16", "mmlu"), "attributable"] == pytest.approx(t.loc[("vs_F16", "mmlu"), "flips"] - 0.02)
+    assert t.loc[("vs_ref", "mmlu"), "noise_floor"] == pytest.approx(0.02)
+    assert t.loc[("vs_ref", "mmlu"), "attributable"] == pytest.approx(t.loc[("vs_ref", "mmlu"), "flips"] - 0.02)
 
 
 def test_incomplete_runs_and_pooling():
@@ -43,3 +43,12 @@ def test_incomplete_runs_and_pooling():
     assert set(t.quant) == {"Q8"}
     pooled = t[t.task == "all"].iloc[0]
     assert pooled.n == 140 and pooled.flips == pytest.approx((50 + 40) / 140)
+
+
+def test_q8_reference_when_f16_missing():
+    ref = [True] * 80 + [False] * 20
+    items = pd.DataFrame(run("Q8_0", ref, model="big") + run("Q4_K_M", [False] * 4 + [True] * 96, model="big"),
+                         columns=COLS)
+    t = cs.flip_table(items)
+    r = t[(t.task == "mmlu")].iloc[0]
+    assert (r.quant, r.reference, r.kind) == ("Q4_K_M", "Q8_0", "vs_ref") and r.flips == pytest.approx(0.24)

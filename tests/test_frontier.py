@@ -17,14 +17,14 @@ def tables():
         for quant, (size, ppl, acc) in d.items():
             ppl_f16 = d["F16"][1]
             q.append({"quality_hw_id": HW, "model": m, "quant": quant, "mmlu": acc, "gsm8k": acc, "humaneval": acc,
-                      "ppl": ppl, "ppl_ratio_vs_f16": ppl / ppl_f16})
+                      "ppl": ppl, "ppl_ratio_vs_ref": ppl / ppl_f16})
             s.append({"hw_id": HW, "model": m, "quant": quant, "ctx": 4096, "model_size_bytes": size})
             for task in ("mmlu", "gsm8k", "humaneval"):
                 n_ok = int(round(acc * 200))
                 items += [(HW, m, quant, task, i, i < n_ok) for i in range(200)]
-    flips = pd.DataFrame([{"kind": "vs_F16", "task": "all", "model": "S-1.5B", "quant": "Q4_K_M", "flips": 0.01},
-                          {"kind": "vs_F16", "task": "all", "model": "L-7B", "quant": "Q4_K_M", "flips": 0.03},
-                          {"kind": "vs_F16", "task": "all", "model": "L-7B", "quant": "Q2_K", "flips": 0.2}])
+    flips = pd.DataFrame([{"kind": "vs_ref", "task": "all", "model": "S-1.5B", "quant": "Q4_K_M", "flips": 0.01},
+                          {"kind": "vs_ref", "task": "all", "model": "L-7B", "quant": "Q4_K_M", "flips": 0.03},
+                          {"kind": "vs_ref", "task": "all", "model": "L-7B", "quant": "Q2_K", "flips": 0.2}])
     gates = pd.DataFrame([{"model": "L-7B", "candidate": "Q2_K", "task": "overall", "verdict": "FAIL"}])
     return (pd.DataFrame(q), pd.DataFrame(s),
             pd.DataFrame(items, columns=["hw_id", "model", "quant", "task", "id", "correct"]), flips, gates)

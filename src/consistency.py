@@ -1,7 +1,8 @@
 """Answer consistency: how many answers change when only the quantization changes.
 
 Accuracy can stay flat while individual answers flip (Dutta et al. 2024, arXiv:2407.09141).
-Per (hw, model, quant, task), against the reference (F16) on the same items:
+Per (hw, model, quant, task), against the reference on the same items (F16; Q8_0 for a model whose
+F16 was not evaluated, see gate.pick_reference):
   flips         share of items whose correctness differs (correct->wrong + wrong->correct)
   c2w, w2c      item counts per direction
   pred_changed  share whose extracted answer differs (mmlu letter, gsm8k number; blank for humaneval)
@@ -25,6 +26,7 @@ import pandas as pd  # noqa: E402
 
 import gate  # noqa: E402
 from analyze import QUANT_ORDER, wilson_ci  # noqa: E402
+from gate import pick_reference  # noqa: E402
 from common import ROOT_DIR, load_config  # noqa: E402
 
 KEY = ["hw_id", "model", "quant", "task"]
@@ -63,27 +65,28 @@ def pooled(rows: pd.DataFrame) -> dict:
 
 
 def compare_runs(a: pd.DataFrame, b: pd.DataFrame, kind: str, same_quant: bool) -> list[dict]:
-    """same_quant=False: every quant of b vs the reference quant 'F16' of a (same hw, model).
+    """same_quant=False: every quant of b vs the reference quant of a (same hw, model).
     same_quant=True: each (hw, model, quant) of b vs the same run key of a (re-run)."""
     out = []
+    refs = {k: pick_reference(d.quant) for k, d in a.groupby(["hw_id", "model"])}
     for (hw, model, quant), cb in b.groupby(["hw_id", "model", "quant"]):
-        ref_quant = quant if same_quant else "F16"
-        if not same_quant and quant == "F16":
+        ref_quant = quant if same_quant else refs.get((hw, model))
+        if ref_quant is None or (not same_quant and quant == ref_quant):
             continue
         ca = a[(a.hw_id == hw) & (a.model == model) & (a.quant == ref_quant)]
         rows = []
         for task in sorted(set(ca.task) & set(cb.task)):
             rows.append({"hw_id": hw, "model": model, "quant": quant, "task": task, "kind": kind,
-                         **pair(ca[ca.task == task], cb[cb.task == task])})
+                         "reference": ref_quant, **pair(ca[ca.task == task], cb[cb.task == task])})
         if rows:
             out += rows + [{"hw_id": hw, "model": model, "quant": quant, "task": "all", "kind": kind,
-                            **pooled(pd.DataFrame(rows))}]
+                            "reference": ref_quant, **pooled(pd.DataFrame(rows))}]
     return out
 
 
 def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None) -> pd.DataFrame:
     items = complete(items)
-    rows = compare_runs(items, items, "vs_F16", same_quant=False)
+    rows = compare_runs(items, items, "vs_ref", same_quant=False)
     if rerun is not None and not rerun.empty:
         rows += compare_runs(items, complete(rerun), "rerun", same_quant=True)
     t = pd.DataFrame(rows)
@@ -91,14 +94,14 @@ def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None) -> pd.Dat
         return t
     noise = t[t.kind == "rerun"].groupby(["hw_id", "model", "task"]).flips.mean().rename("noise_floor")
     t = t.join(noise, on=["hw_id", "model", "task"])
-    t["attributable"] = np.where(t.kind == "vs_F16", t.flips - t.noise_floor, np.nan)
+    t["attributable"] = np.where(t.kind == "vs_ref", t.flips - t.noise_floor, np.nan)
     order = {q: i for i, q in enumerate(QUANT_ORDER)}
     return t.assign(_q=t.quant.map(order)).sort_values(["kind", "hw_id", "model", "_q", "task"]) \
         .drop(columns="_q").reset_index(drop=True)
 
 
 def figure(t: pd.DataFrame, model: str, out) -> None:
-    d = t[(t.kind == "vs_F16") & (t.model == model) & (t.task != "all")]
+    d = t[(t.kind == "vs_ref") & (t.model == model) & (t.task != "all")]
     tasks = [x for x in ("mmlu", "gsm8k", "humaneval") if x in set(d.task)]
     if not tasks:
         return
@@ -121,7 +124,8 @@ def figure(t: pd.DataFrame, model: str, out) -> None:
             ax.spines[s].set_visible(False)
     np.atleast_1d(axes)[0].set_ylabel("% of items", color=INK2)
     np.atleast_1d(axes)[0].legend(frameon=False, fontsize=8, loc="upper left")
-    fig.suptitle(f"{model}: accuracy change vs answers flipped, each quant vs F16 (95% Wilson CI)", color=INK, fontsize=11)
+    fig.suptitle(f"{model}: accuracy change vs answers flipped, each quant vs {e.reference.iloc[0]} (95% Wilson CI)",
+                 color=INK, fontsize=11)
     fig.tight_layout()
     fig.savefig(out, dpi=150)
     plt.close(fig)
@@ -135,7 +139,7 @@ def main() -> None:
     rerun = gate.load_items(rerun_dir, extra=True) if rerun_dir.exists() else None
     t = flip_table(items, rerun)
     if t.empty:
-        print("no complete quality runs with an F16 reference")
+        print("no complete quality runs with a reference (F16 or Q8_0)")
         return
     tables, figs = ROOT_DIR / paths["tables_dir"], ROOT_DIR / paths["figures_dir"]
     tables.mkdir(parents=True, exist_ok=True)

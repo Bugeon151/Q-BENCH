@@ -72,14 +72,14 @@ def accuracy_section(t: dict, ref: dict, n_items: dict, errors: dict | None = No
             lo, hi = q.loc[(r.model, r.quant), f"{task}_ci_low"], q.loc[(r.model, r.quant), f"{task}_ci_high"]
             row[task] = f"{pct(getattr(r, task))} ({pct(lo)}-{pct(hi)})"
         row.update({"mean": pct(r.quality), "PPL": f"{r.ppl:.3f}" if pd.notna(r.ppl) else "",
-                    "gate vs F16": getattr(r, "gate", ""), "Pareto": "yes" if r.pareto else ""})
+                    "gate vs ref": getattr(r, "gate", ""), "Pareto": "yes" if r.pareto else ""})
         if errors:
             row["chat API errors"] = errors.get((r.model, r.quant), "")
         rows.append(row)
-        if r.quant == "F16" and r.model in ref["scores"]:
+        if r.quant == getattr(r, "reference", "F16") and r.model in ref["scores"]:
             s = ref["scores"][r.model]
             rows.append({"model": short(r.model), "quant": "published", "GiB": "", "bits/w": "",
-                         **{t_: f"{s[t_]:.1f}" for t_ in TASKS}, "mean": "", "PPL": "", "gate vs F16": "", "Pareto": "",
+                         **{t_: f"{s[t_]:.1f}" for t_ in TASKS}, "mean": "", "PPL": "", "gate vs ref": "", "Pareto": "",
                          **({"chat API errors": ""} if errors else {})})
     sizes = ", ".join(f"{k} {v}" for k, v in n_items.items())
     return ["## 1. Accuracy (95% Wilson CI) and the published scores", "",
@@ -114,13 +114,14 @@ def gate_section(t: dict) -> list[str]:
         return []
     overall = g[g.task == "overall"].set_index(["model", "candidate"]).verdict
     g = qsort(g[g.task != "overall"], quant="candidate")
-    rows = [{"model": short(r.model), "candidate": r.candidate, "task": r.task, "n": int(r.n),
+    rows = [{"model": short(r.model), "reference": r.reference, "candidate": r.candidate, "task": r.task, "n": int(r.n),
              "diff %p": pp(r.diff), "95% CI %p": f"{pp(r.diff_ci_low)} to {pp(r.diff_ci_high)}",
              "McNemar p": f"{r.p_mcnemar:.2g}", "discordant %": pct(r.p_discordant),
              "items needed": "" if not math.isfinite(r.n_needed) else f"{r.n_needed:.0f}",
              "task verdict": r.verdict, "overall": overall.get((r.model, r.candidate), "")}
             for r in g.itertuples()]
-    return ["## 3. Regression gate vs F16 and items needed", "",
+    return ["## 3. Regression gate vs the reference and items needed", "",
+            "Reference: F16, or Q8_0 for a model whose F16 does not fit this machine.", "",
             "PASS: lower 95% CI bound above -3 %p; FAIL: significantly worse (McNemar, Bonferroni over tasks). "
             "`items needed`: items for an 80% chance of PASS if the true difference is 0, at the observed "
             "discordance (src/gate.py).", "", md(pd.DataFrame(rows)), ""]
@@ -130,11 +131,13 @@ def flips_section(t: dict) -> list[str]:
     f = t.get("flips")
     if f is None or f.empty:
         return []
-    out = ["## 4. Answer flips vs F16 and the re-run noise floor", "",
-           "Flips: items whose correctness differs from F16 (Dutta et al. 2024). Noise floor: the same "
+    out = ["## 4. Answer flips vs the reference and the re-run noise floor", "",
+           "Flips: items whose correctness differs from the reference (F16; Q8_0 where F16 was not evaluated; "
+           "Dutta et al. 2024). Noise floor: the same "
            "configuration run twice with identical settings. attributable = flips - noise floor.", ""]
-    v = qsort(f[f.kind == "vs_F16"])
-    rows = [{"model": short(r.model), "quant": r.quant, "task": r.task, "n": int(r.n), "accuracy diff %p": pp(r.acc_diff),
+    v = qsort(f[f.kind == "vs_ref"])
+    rows = [{"model": short(r.model), "quant": r.quant, "vs": r.reference, "task": r.task, "n": int(r.n),
+             "accuracy diff %p": pp(r.acc_diff),
              "flips %": f"{pct(r.flips)} ({pct(r.flips_ci_low)}-{pct(r.flips_ci_high)})",
              "noise floor %": pct(r.noise_floor), "attributable %p": pp(r.attributable)} for r in v.itertuples()]
     out += [md(pd.DataFrame(rows)), ""]
@@ -161,7 +164,7 @@ def duel_section(t: dict) -> list[str]:
                 "Each configuration of a bigger model vs the closest-size configuration of each smaller model "
                 "(size ratio 0.8-1.25), on the same items pooled over the three tasks.", "", md(pd.DataFrame(rows)), ""]
     if s is not None and not s.empty:
-        rows = [{"ln(PPL/PPL_F16) vs": r.metric, "n configs": int(r.n), "Spearman rho": f"{r.spearman_rho:.2f}",
+        rows = [{"ln(PPL/PPL_ref) vs": r.metric, "n configs": int(r.n), "Spearman rho": f"{r.spearman_rho:.2f}",
                  "p": f"{r.p:.2g}"} for r in s.itertuples()]
         out += ["## 6. Perplexity as a screen", "", md(pd.DataFrame(rows)), ""]
     return out

@@ -176,7 +176,8 @@ def summarize(stats_df: pd.DataFrame, cv_threshold: float) -> pd.DataFrame:
 
 def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame, items: pd.DataFrame | None = None) -> pd.DataFrame:
     """Per (quality_hw_id, model, quant): PPL, accuracy per task with Wilson 95% CI,
-    retention vs F16, and exact McNemar p-value vs F16 on the same items."""
+    retention vs the reference (F16, else Q8_0: gate.pick_reference) and exact McNemar p-value vs
+    the reference on the same items."""
     parts = []
     if not acc.empty:
         acc = acc[acc.n == acc.expected_n].copy()  # complete tasks only
@@ -194,12 +195,13 @@ def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame, items: pd.DataFrame | No
             items = items[keep]
             per = items.set_index("id")
             pv = {}
+            refq = {k: gate.pick_reference(d.quant) for k, d in items.groupby(["hw_id", "model"])}
             for (hw, model, task), g in per.groupby(["hw_id", "model", "task"]):
-                ref = g[g.quant == "F16"].correct
+                ref = g[g.quant == refq.get((hw, model))].correct
                 if ref.empty:
                     continue
                 for quant, gq in g.groupby("quant"):
-                    pv.setdefault((hw, model, quant), {})[f"{task}_p_vs_f16"] = mcnemar_p(ref, gq.correct)
+                    pv.setdefault((hw, model, quant), {})[f"{task}_p_vs_ref"] = mcnemar_p(ref, gq.correct)
             if pv:
                 parts.append(pd.DataFrame.from_dict(pv, orient="index").rename_axis(idx))
     if not ppl.empty:
@@ -208,18 +210,20 @@ def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame, items: pd.DataFrame | No
         return pd.DataFrame()
     q = pd.concat(parts, axis=1).reset_index().rename(columns={"hw_id": "quality_hw_id"})
     tasks = [t for t in TASKS if t in q]
-    ref = q[q.quant == "F16"].set_index(["quality_hw_id", "model"])
+    refq = {k: gate.pick_reference(d.quant) for k, d in q.groupby(["quality_hw_id", "model"])}
+    q.insert(3, "reference", [refq[k] for k in zip(q.quality_hw_id, q.model)])
+    ref = q[q.quant == q.reference].set_index(["quality_hw_id", "model"])
     key = list(zip(q.quality_hw_id, q.model))
     for t in tasks:
         q[f"{t}_retention"] = q[t].values / ref[t].reindex(key).values
     if "ppl" in q:
-        q["ppl_ratio_vs_f16"] = q.ppl.values / ref["ppl"].reindex(key).values
+        q["ppl_ratio_vs_ref"] = q.ppl.values / ref["ppl"].reindex(key).values
     ret = [f"{t}_retention" for t in tasks]
     q["quality_retention"] = q[ret].mean(axis=1) if ret else np.nan
     q["retention_basis"] = np.where(q.quality_retention.notna(), "task_accuracy", "")
-    if "ppl_ratio_vs_f16" in q:  # fallback when no complete task data: F16 PPL / PPL
-        fb = q.quality_retention.isna() & q.ppl_ratio_vs_f16.notna()
-        q.loc[fb, "quality_retention"] = 1 / q.loc[fb, "ppl_ratio_vs_f16"]
+    if "ppl_ratio_vs_ref" in q:  # fallback when no complete task data: F16 PPL / PPL
+        fb = q.quality_retention.isna() & q.ppl_ratio_vs_ref.notna()
+        q.loc[fb, "quality_retention"] = 1 / q.loc[fb, "ppl_ratio_vs_ref"]
         q.loc[fb, "retention_basis"] = "perplexity"
     return sort_keys(q, ["quality_hw_id", "model"])
 

@@ -3,12 +3,13 @@
 Dettmers & Zettlemoyer (ICML 2023) found 4-bit almost universally optimal for zero-shot accuracy
 per total model bits. This checks the question on downstream tasks for the measured models:
   frontier.csv      per (model, quant): GGUF GiB, bits/weight (16 x size / F16 size), task accuracy,
-                    mean of tasks, PPL ratio vs F16, flips vs F16, gate verdict, Pareto-optimal
+                    mean of tasks, PPL ratio / flips / gate verdict vs the model's reference (F16,
+                    Q8_0 when F16 was not evaluated), Pareto-optimal
                     (no other config is both smaller and more accurate)
   size_vs_bits.csv  matched-memory duels on the same items: each config of a larger model vs the
                     closest-size config of every smaller model (size ratio within 0.8-1.25);
                     per task and pooled: accuracy difference, paired bootstrap 95% CI, McNemar p
-  ppl_screen.csv    Spearman correlation of ln(PPL / PPL_F16) with flips and with the drop in mean
+  ppl_screen.csv    Spearman correlation of ln(PPL / PPL_ref) with flips and with the drop in mean
                     accuracy: can a perplexity run (minutes) stand in for task evaluation (hours)?
 Figures: frontier.png, ppl_screen.png.  Run after analyze.py and consistency.py.
 """
@@ -43,19 +44,22 @@ def frontier_table(quality: pd.DataFrame, summary: pd.DataFrame, flips: pd.DataF
     f16 = {m: size.get((m, "F16")) for m in q.model.unique()}
     q["bpw"] = [16 * size[(m, qq)] / f16[m] if f16[m] else np.nan for m, qq in zip(q.model, q.quant)]
     q["quality"] = q[tasks].mean(axis=1)
+    if "reference" not in q:
+        q["reference"] = "F16"
+    is_ref = q.quant == q.reference
     if flips is not None and not flips.empty:
-        f = flips[(flips.kind == "vs_F16") & (flips.task == "all")].set_index(["model", "quant"]).flips
-        q["flips"] = [0.0 if qq == "F16" else f.get((m, qq), np.nan) for m, qq in zip(q.model, q.quant)]
+        f = flips[(flips.kind == "vs_ref") & (flips.task == "all")].set_index(["model", "quant"]).flips
+        q["flips"] = [0.0 if r else f.get((m, qq), np.nan) for m, qq, r in zip(q.model, q.quant, is_ref)]
     if gates is not None and not gates.empty:
         g = gates[gates.task == "overall"].set_index(["model", "candidate"]).verdict
-        q["gate"] = ["REFERENCE" if qq == "F16" else g.get((m, qq), "") for m, qq in zip(q.model, q.quant)]
+        q["gate"] = ["REFERENCE" if r else g.get((m, qq), "") for m, qq, r in zip(q.model, q.quant, is_ref)]
     q["params_b"] = q.model.map(params_b)
     q["pareto"] = False
     for hw, d in q.groupby("quality_hw_id"):
         q.loc[d.index, "pareto"] = pareto_mask(-d.size_gib.to_numpy(), d.quality.to_numpy())  # small and accurate
     order = {k: i for i, k in enumerate(QUANT_ORDER)}
-    cols = ["quality_hw_id", "model", "params_b", "quant", "size_gib", "bpw", *tasks, "quality", "ppl",
-            "ppl_ratio_vs_f16", *[c for c in ("flips", "gate") if c in q], "pareto"]
+    cols = ["quality_hw_id", "model", "params_b", "quant", "reference", "size_gib", "bpw", *tasks, "quality", "ppl",
+            "ppl_ratio_vs_ref", *[c for c in ("flips", "gate") if c in q], "pareto"]
     return q.assign(_q=q.quant.map(order)).sort_values(["quality_hw_id", "params_b", "_q"])[cols] \
         .reset_index(drop=True)
 
@@ -101,10 +105,10 @@ def size_vs_bits(front: pd.DataFrame, items: pd.DataFrame, lo: float = 0.8, hi: 
 
 
 def ppl_screen(front: pd.DataFrame) -> pd.DataFrame:
-    d = front[(front.quant != "F16") & front.ppl_ratio_vs_f16.notna()].copy()
-    f16 = front[front.quant == "F16"].set_index(["quality_hw_id", "model"]).quality
-    d["quality_drop"] = [f16.get(k, np.nan) - v for k, v in zip(zip(d.quality_hw_id, d.model), d.quality)]
-    x = np.log(d.ppl_ratio_vs_f16)
+    d = front[(front.quant != front.reference) & front.ppl_ratio_vs_ref.notna()].copy()
+    ref = front[front.quant == front.reference].set_index(["quality_hw_id", "model"]).quality
+    d["quality_drop"] = [ref.get(k, np.nan) - v for k, v in zip(zip(d.quality_hw_id, d.model), d.quality)]
+    x = np.log(d.ppl_ratio_vs_ref)
     rows = []
     for name in [c for c in ("flips", "quality_drop") if c in d]:
         ok = x.notna() & d[name].notna()
@@ -139,7 +143,7 @@ def frontier_figure(front: pd.DataFrame, out) -> None:
                         fontsize=6.5, color=INK2)
     p = front[front.pareto].sort_values("size_gib")
     ax.step(p.size_gib, p.quality * 100, where="post", color=INK2, ls=":", lw=1.2, label="Pareto frontier")
-    ax.scatter([], [], s=90, facecolor="none", edgecolor=FAIL_RED, lw=1.5, label="gate FAIL vs own F16")
+    ax.scatter([], [], s=90, facecolor="none", edgecolor=FAIL_RED, lw=1.5, label="gate FAIL vs own reference")
     ax.set_xscale("log")
     ax.set_xlabel("GGUF size (GiB, log scale)", color=INK2)
     ax.set_ylabel("mean accuracy, MMLU/GSM8K/HumanEval (%)", color=INK2)
@@ -153,7 +157,7 @@ def frontier_figure(front: pd.DataFrame, out) -> None:
 def screen_figure(front: pd.DataFrame, out) -> None:
     if "flips" not in front:
         return
-    d = front[(front.quant != "F16") & front.ppl_ratio_vs_f16.notna() & front.flips.notna()]
+    d = front[(front.quant != front.reference) & front.ppl_ratio_vs_ref.notna() & front.flips.notna()]
     if d.empty:
         return
     fig, ax = plt.subplots(figsize=(6.5, 4.2), facecolor=SURFACE)
@@ -162,14 +166,14 @@ def screen_figure(front: pd.DataFrame, out) -> None:
     colors = dict(zip(models, RAMP[-len(models):] if len(models) <= len(RAMP) else RAMP))
     for m in models:
         e = d[d.model == m]
-        ax.scatter((e.ppl_ratio_vs_f16 - 1) * 100, e.flips * 100, s=36, color=colors[m], edgecolor=SURFACE,
+        ax.scatter((e.ppl_ratio_vs_ref - 1) * 100, e.flips * 100, s=36, color=colors[m], edgecolor=SURFACE,
                    lw=1.5, label=m.replace("-Instruct", ""), zorder=3)
         for r in e.itertuples():
-            ax.annotate(r.quant, ((r.ppl_ratio_vs_f16 - 1) * 100, r.flips * 100), xytext=(4, 3),
+            ax.annotate(r.quant, ((r.ppl_ratio_vs_ref - 1) * 100, r.flips * 100), xytext=(4, 3),
                         textcoords="offset points", fontsize=6.5, color=INK2)
     ax.set_xscale("log")
-    ax.set_xlabel("perplexity increase vs F16 (%, log scale)", color=INK2)
-    ax.set_ylabel("answers flipped vs F16 (% of all items)", color=INK2)
+    ax.set_xlabel("perplexity increase vs reference (%, log scale)", color=INK2)
+    ax.set_ylabel("answers flipped vs reference (% of all items)", color=INK2)
     ax.set_title("A perplexity run predicts how many answers change", color=INK, fontsize=11)
     ax.legend(frameon=False, fontsize=8)
     fig.tight_layout()
