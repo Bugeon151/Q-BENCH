@@ -83,6 +83,8 @@ def compute_stats(raw: pd.DataFrame) -> pd.DataFrame:
     pg = raw[raw.test_type == "pg"]
     raw = pd.concat([raw[raw.test_type != "pg"], pg[(pg.n_prompt > 0) & (pg.n_gen > 0)]])
     raw = raw.assign(swap_growth_bytes=raw.swap_used_after_bytes - raw.swap_used_before_bytes)
+    if "n_gpu_layers" not in raw:  # legacy v0.1 schema
+        raw = raw.assign(n_gpu_layers=np.nan)
     by = [*KEYS, "test_type"]
     grouped = raw.groupby(by, sort=False)
     stats_df = grouped.agg(
@@ -97,6 +99,7 @@ def compute_stats(raw: pd.DataFrame) -> pd.DataFrame:
         peak_vram_bytes=("peak_vram_bytes", "max"),
         swap_growth_bytes=("swap_growth_bytes", "max"),
         n_samples=("latency_ms", "count"),
+        partial_offload=("n_gpu_layers", lambda s: s.astype(str).str.startswith("fit:").any()),
     ).reset_index()
     ci = pd.DataFrame({
         "latency_ms_ci95": grouped["latency_ms"].apply(ci95),
@@ -131,6 +134,7 @@ def summarize(stats_df: pd.DataFrame, cv_threshold: float) -> pd.DataFrame:
                *[c for c in out.columns if c.endswith("_ci95")]]]
     out["peak_vram_bytes"] = g.peak_vram_bytes.max()
     out["swap_growth_bytes"] = g.swap_growth_bytes.max()
+    out["partial_offload"] = g.partial_offload.any()  # GPU+CPU split via llama-bench -fitt
     cv = stats_df.pivot_table(index=KEYS, columns="test_type", values="tokens_per_sec_cv")
     for tt in ("pp", "tg", "pg"):
         out[f"{tt}_cv"] = cv[tt] if tt in cv else np.nan

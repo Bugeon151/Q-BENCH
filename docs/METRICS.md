@@ -25,6 +25,7 @@ Q-Bench 지표 정의서 (v0.1 성능, v0.2 품질, v0.3 context, v1.0 통합).
 |---|---|
 | Prompt Processing Throughput | prompt 처리 속도 (tokens/s) — llama-bench `-p ctx -n 0` |
 | Generation Throughput | 토큰 생성 속도 (tokens/s) — llama-bench `-d ctx -p 0 -n 256`. **KV depth = ctx(기본 4096)** 상태에서 256 토큰 생성 |
+| Partial offload | VRAM 예산을 넘는 CUDA 조합의 실사용 속도. 기본 ctx에서만 llama-bench `-fitt 1024`(1 GiB 여유를 두고 GPU에 들어가는 만큼 올리고 나머지는 CPU)로 측정하고, raw의 `n_gpu_layers`=`fit:1024MiB`, summary의 `partial_offload`=True로 표시. 반복 수가 적어(측정 3회) CI가 넓음 |
 | TTFT | 첫 토큰까지 시간 (ms) — `pp` 1회 런에서 ctx 토큰을 처리한 latency |
 | Total Generation Latency | 전체 생성 레이턴시 (ms) — llama-bench `-pg ctx,256 -p 0 -n 0` |
 

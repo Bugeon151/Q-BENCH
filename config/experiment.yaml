@@ -41,6 +41,10 @@ benchmark:
   warmup_runs: 3
   measurement_runs: 10
   n_gpu_layers: 99                # >= layer count = all layers (v0.1 used llama-bench default -1 = all)
+  # CUDA combos over the VRAM budget but within VRAM + host RAM: measured at the default
+  # ctx only, with llama-bench -fitt (llama.cpp places what fits on the GPU, rest on CPU).
+  # Fewer runs: these are slow (a few tok/s). Rows are marked n_gpu_layers "fit:<MiB>MiB".
+  offload: {enabled: true, fit_target_mib: 1024, warmup_runs: 1, measurement_runs: 3}
   flash_attn: "auto"              # on|off|auto (v0.1 used the llama-bench default: auto)
   llama_bench_bin: "external/llama.cpp/build/bin/llama-bench"
   llama_quantize_bin: "external/llama.cpp/build/bin/llama-quantize"
