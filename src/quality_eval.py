@@ -31,7 +31,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from common import (ROOT_DIR, check_budget, detect_hw, gguf_path, load_config, make_logger,
-                    quant_levels, select_models)
+                    quant_levels, resolve_bin, select_models)
 
 TASKS = ("mmlu", "gsm8k", "humaneval")
 _NO_PROXY = urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -99,11 +99,13 @@ def humaneval_program(row: dict, completion: str) -> str:
 
 def run_program(program: str, timeout: float) -> bool:
     """Executes untrusted code in an isolated interpreter with a timeout."""
-    with tempfile.TemporaryDirectory() as d:
+    # ignore_cleanup_errors: on Windows a timed-out program's leftover child can keep files locked
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as d:
         path = Path(d) / "prog.py"
-        path.write_text(program)
+        path.write_text(program, encoding="utf-8")  # Python reads source as UTF-8 (PEP 3120)
         try:
-            r = subprocess.run([sys.executable, "-I", str(path)], cwd=d, capture_output=True, timeout=timeout)
+            r = subprocess.run([sys.executable, "-I", str(path)], cwd=d, stdin=subprocess.DEVNULL,
+                               capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             return False
     return r.returncode == 0
@@ -164,11 +166,11 @@ def build_sample(cfg: dict) -> dict:
 
 def load_sample(cfg: dict, log) -> dict:
     path = ROOT_DIR / cfg["quality"]["sample_file"]
-    if path.exists() and path.stat().st_size and "datasets" in json.loads(path.read_text()):
-        return json.loads(path.read_text())
+    if path.exists() and path.stat().st_size and "datasets" in json.loads(path.read_text(encoding="utf-8")):
+        return json.loads(path.read_text(encoding="utf-8"))
     log(f"building fixed sample (seed {cfg['quality']['sample_seed']}) -> {path}")
     sample = build_sample(cfg)
-    path.write_text(json.dumps(sample, indent=1))
+    path.write_text(json.dumps(sample, indent=1), encoding="utf-8")
     return sample
 
 
@@ -182,7 +184,7 @@ def load_items(sample: dict, task: str) -> list[dict]:
 
 def start_server(cfg: dict, model_path: Path, log_path: Path) -> subprocess.Popen:
     q = cfg["quality"]
-    cmd = [str(ROOT_DIR / q["llama_server_bin"]), "-m", str(model_path), "--host", "127.0.0.1",
+    cmd = [str(resolve_bin(q["llama_server_bin"])), "-m", str(model_path), "--host", "127.0.0.1",
            "--port", str(q["port"]), "-np", str(q["n_parallel"]), "-c", str(q["n_parallel"] * q["ctx_per_slot"]),
            "-ngl", str(q["n_gpu_layers"]), "--seed", str(cfg["inference"]["seed"])]
     proc = subprocess.Popen(cmd, stdout=open(log_path, "w"), stderr=subprocess.STDOUT)
@@ -219,21 +221,21 @@ def chat(cfg: dict, prompt: str, max_tokens: int) -> str:
 def read_done(path: Path) -> set[int]:
     if not path.exists():
         return set()
-    return {json.loads(line)["id"] for line in path.read_text().splitlines() if line.strip()}
+    return {json.loads(line)["id"] for line in path.read_text(encoding="utf-8").splitlines() if line.strip()}
 
 
 def write_summary(qdir: Path, hw_id: str, sample: dict) -> Path:
     rows = []
     for f in sorted(qdir.glob("*/*/*.jsonl")):
         model, quant, task = f.parent.parent.name, f.parent.name, f.stem
-        recs = [json.loads(line) for line in f.read_text().splitlines() if line.strip()]
+        recs = [json.loads(line) for line in f.read_text(encoding="utf-8").splitlines() if line.strip()]
         n, correct = len(recs), sum(r["correct"] for r in recs)
         rows.append({"hw_id": hw_id, "model": model, "quant": quant, "task": task, "n": n,
                      "expected_n": sample["datasets"][task]["n"], "correct": correct,
                      "accuracy": correct / n if n else None})
     qdir.mkdir(parents=True, exist_ok=True)
     out = qdir / "quality.csv"
-    with open(out, "w", newline="") as fh:
+    with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["hw_id", "model", "quant", "task", "n", "expected_n", "correct", "accuracy"])
         w.writeheader()
         w.writerows(rows)
@@ -289,7 +291,7 @@ def main() -> None:
                         text = chat(cfg, PROMPTS[task](row), spec["max_tokens"])
                         pred, correct = score(task, row, text, q["exec_timeout_sec"])
                         rec = {"id": row["id"], "pred": pred, "correct": bool(correct), "response": text}
-                        with lock, open(out_file, "a") as fh:
+                        with lock, open(out_file, "a", encoding="utf-8") as fh:
                             fh.write(json.dumps(rec) + "\n")
 
                     with ThreadPoolExecutor(q["n_parallel"]) as ex:

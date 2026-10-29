@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from common import (ROOT_DIR, check_budget, detect_hw, gguf_path, load_config, make_logger,
-                    quant_levels, select_models)
+                    quant_levels, resolve_bin, select_models)
 
 PPL_RE = re.compile(r"Final estimate: PPL = ([0-9.]+) \+/- ([0-9.]+)")
 FIELDS = ["hw_id", "model", "quant", "ctx", "chunks", "ppl", "ppl_err", "n_gpu_layers",
@@ -34,7 +34,7 @@ def parse_ppl(output: str) -> tuple[float, float]:
 
 def pinned_commit() -> str:
     p = ROOT_DIR / "config" / "llama_cpp_commit.txt"  # verified against external/llama.cpp by setup.sh
-    return p.read_text().strip() if p.exists() else ""
+    return p.read_text(encoding="utf-8").strip() if p.exists() else ""
 
 
 def ensure_dataset(url: str, dest: Path) -> Path:
@@ -62,7 +62,7 @@ def main() -> None:
 
     done = set()
     if out_csv.exists():
-        with open(out_csv) as f:
+        with open(out_csv, encoding="utf-8") as f:
             done = {(r["model"], r["quant"]) for r in csv.DictReader(f)}
 
     for model in select_models(cfg, args.model):
@@ -76,15 +76,15 @@ def main() -> None:
             if not ok:
                 log(f"SKIP {tag}: over memory budget ({why})")
                 continue
-            cmd = [str(ROOT_DIR / pcfg["llama_perplexity_bin"]), "-m", str(gguf_path(cfg, name, quant)),
+            cmd = [str(resolve_bin(pcfg["llama_perplexity_bin"])), "-m", str(gguf_path(cfg, name, quant)),
                    "-f", str(text), "-c", str(pcfg["ctx"]), "-ngl", str(pcfg["n_gpu_layers"])]
             if pcfg.get("chunks"):
                 cmd += ["--chunks", str(pcfg["chunks"])]
             log(f"{tag}: running llama-perplexity")
             t0 = time.time()
-            proc = subprocess.run(cmd, capture_output=True, text=True)
+            proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
             output = proc.stdout + proc.stderr
-            (ROOT_DIR / cfg["paths"]["logs_dir"] / f"perplexity_{name}_{quant}.log").write_text(output)
+            (ROOT_DIR / cfg["paths"]["logs_dir"] / f"perplexity_{name}_{quant}.log").write_text(output, encoding="utf-8")
             if proc.returncode != 0:
                 raise SystemExit(f"FAIL {tag}: llama-perplexity exit {proc.returncode}\n{output[-4000:]}")
             ppl, err = parse_ppl(output)
@@ -96,7 +96,7 @@ def main() -> None:
             }
             out_csv.parent.mkdir(parents=True, exist_ok=True)
             new = not out_csv.exists()
-            with open(out_csv, "a", newline="") as f:
+            with open(out_csv, "a", newline="", encoding="utf-8") as f:
                 w = csv.DictWriter(f, fieldnames=FIELDS)
                 if new:
                     w.writeheader()

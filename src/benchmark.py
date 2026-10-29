@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from common import (ROOT_DIR, check_budget, detect_hw, gguf_path, load_config, make_logger,
-                    quant_levels, select_models)
+                    quant_levels, resolve_bin, select_models)
 from memory_monitor import MemoryMonitor, VramMonitor, swap_used_bytes
 
 TEST_GROUPS = {
@@ -57,7 +57,7 @@ def run_llama_bench(cmd: list[str], capture: bool, poll_sec: float, vram_ms: int
     with VramMonitor(vram_ms) as vmon:
         proc = subprocess.Popen(
             cmd, stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-            stderr=subprocess.PIPE, text=True,
+            stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace",
         )
         with MemoryMonitor(proc.pid, poll_interval_sec=poll_sec) as mon:
             stdout, stderr = proc.communicate()
@@ -87,14 +87,14 @@ def to_raw_rows(bench_rows: list[dict], base: dict) -> list[dict]:
 def done_keys(raw_csv: Path) -> set[tuple[str, str, str, str]]:
     if not raw_csv.exists():
         return set()
-    with open(raw_csv) as f:
+    with open(raw_csv, encoding="utf-8") as f:
         return {(r["model"], r["quant"], r["ctx"], r["test_type"]) for r in csv.DictReader(f)}
 
 
 def append_rows(raw_csv: Path, rows: list[dict]) -> None:
     raw_csv.parent.mkdir(parents=True, exist_ok=True)
     write_header = not raw_csv.exists()
-    with open(raw_csv, "a", newline="") as f:
+    with open(raw_csv, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=RAW_CSV_FIELDS)
         if write_header:
             writer.writeheader()
@@ -115,7 +115,7 @@ def main() -> None:
     raw_csv = raw_csv_path(cfg, hw["hw_id"])
     contexts = cfg["inference"]["contexts"] if args.contexts == "all" else [cfg["inference"]["context_length"]]
     n_gen = cfg["inference"]["max_output_tokens"]
-    bin_path = str(ROOT_DIR / bcfg["llama_bench_bin"])
+    bin_path = str(resolve_bin(bcfg["llama_bench_bin"]))
     common_args = ["-ngl", str(bcfg["n_gpu_layers"]), "-fa", str(bcfg["flash_attn"]), "--no-warmup", "-o", "jsonl"]
     log(f"hw_id={hw['hw_id']} backend={hw['backend']} os={hw['os']} -> {raw_csv}")
 
