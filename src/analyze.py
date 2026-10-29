@@ -11,6 +11,7 @@ Outputs
   results/tables/summary.csv            per (hw_id, model, ctx, quant), CV warnings
   results/tables/quality.csv            PPL / accuracy (Wilson 95% CI) / retention / McNemar p vs F16
   results/tables/hardware_comparison.csv
+  results/tables/gate.csv               regression gate per quant vs F16 (src/gate.py)
   results/figures/<hw_id>/<model>/      PRD figures 1-5, 7 and v0.3 context plots
   results/figures/quality/              PRD figure 6
   results/summary.json
@@ -29,6 +30,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
+import gate  # noqa: E402
 from common import ROOT_DIR, load_config  # noqa: E402
 
 QUANT_ORDER = ["F16", "Q8_0", "Q6_K", "Q5_K_M", "Q4_K_M", "Q3_K_M", "Q2_K"]
@@ -78,14 +80,7 @@ def load_telemetry(cfg: dict) -> pd.DataFrame:
 
 def load_items(cfg: dict) -> pd.DataFrame:
     """Per-item correctness: hw_id, model, quant, task, id, correct."""
-    rows = []
-    for f in sorted((ROOT_DIR / cfg["paths"]["quality_dir"]).glob("*/*/*/*.jsonl")):
-        hw, model, quant, task = f.parent.parent.parent.name, f.parent.parent.name, f.parent.name, f.stem
-        for line in f.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                r = json.loads(line)
-                rows.append((hw, model, quant, task, r["id"], bool(r["correct"])))
-    return pd.DataFrame(rows, columns=["hw_id", "model", "quant", "task", "id", "correct"])
+    return gate.load_items(ROOT_DIR / cfg["paths"]["quality_dir"])
 
 
 def wilson_ci(correct: int, n: int) -> tuple[float, float]:
@@ -98,9 +93,7 @@ def wilson_ci(correct: int, n: int) -> tuple[float, float]:
 def mcnemar_p(a: pd.Series, b: pd.Series) -> float:
     """Exact two-sided McNemar test on paired per-item correctness (aligned by id)."""
     both = pd.concat([a, b], axis=1, join="inner").dropna()
-    n01 = int((~both.iloc[:, 0] & both.iloc[:, 1]).sum())
-    n10 = int((both.iloc[:, 0] & ~both.iloc[:, 1]).sum())
-    return 1.0 if n01 + n10 == 0 else float(stats.binomtest(min(n01, n10), n01 + n10, 0.5).pvalue)
+    return gate.mcnemar_p(both.iloc[:, 0].to_numpy(bool), both.iloc[:, 1].to_numpy(bool))
 
 
 def load_quality(cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -197,7 +190,8 @@ def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame, items: pd.DataFrame | No
             parts.append(w)
         if items is not None and not items.empty:
             done = set(zip(acc.hw_id, acc.model, acc.quant, acc.task))
-            items = items[[k in done for k in zip(items.hw_id, items.model, items.quant, items.task)]]
+            keep = np.array([k in done for k in zip(items.hw_id, items.model, items.quant, items.task)], dtype=bool)
+            items = items[keep]
             per = items.set_index("id")
             pv = {}
             for (hw, model, task), g in per.groupby(["hw_id", "model", "task"]):
@@ -401,7 +395,9 @@ def main() -> None:
         tg = tele[tele.test_type == "tg"].groupby(KEYS)[["gpu_temp_max_c", "gpu_sm_clock_median_mhz"]].last()
         summary = summary.merge(tg.add_prefix("tg_").reset_index(), on=KEYS, how="left")
     ppl, acc = load_quality(cfg)
-    quality = quality_table(ppl, acc, load_items(cfg))
+    items = load_items(cfg)
+    quality = quality_table(ppl, acc, items)
+    gates = gate.gate_all(items, acc.groupby("task").expected_n.first().to_dict()) if not acc.empty else pd.DataFrame()
     hwcmp = hardware_comparison(summary)
 
     tables = ROOT_DIR / paths["tables_dir"]
@@ -414,6 +410,8 @@ def main() -> None:
         quality.to_csv(tables / "quality.csv", index=False)
     if not hwcmp.empty:
         hwcmp.to_csv(tables / "hardware_comparison.csv", index=False)
+    if not gates.empty:
+        gates.to_csv(tables / "gate.csv", index=False)
 
     default_ctx = cfg["inference"]["context_length"]
     for (hw, model), s in summary.groupby(["hw_id", "model"]):
@@ -443,6 +441,9 @@ def main() -> None:
         "llama_cpp_commit": commit_file.read_text(encoding="utf-8").strip() if commit_file.exists() else None,
         "per_quant_summary": summary.replace({np.nan: None}).to_dict(orient="records"),
         "quality": quality.replace({np.nan: None}).to_dict(orient="records") if not quality.empty else [],
+        "gate": {"margin": gate.MARGIN, "alpha": gate.ALPHA,
+                 "overall": gates[gates.task == "overall"][["hw_id", "model", "candidate", "verdict"]]
+                 .to_dict(orient="records") if not gates.empty else []},
     }
     with open(ROOT_DIR / paths["summary_json"], "w", encoding="utf-8") as f:
         json.dump(summary_json, f, indent=2, default=str)
