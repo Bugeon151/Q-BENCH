@@ -63,8 +63,12 @@ memory_budget:
   # "<backend>/<model>/<quant>" fnmatch patterns, always skipped.
   # 14B Q8_0 (~15.7 GB, estimate) is close to 7B F16 (15.24 GB measured), which
   # already showed memory-pressure signs on M5 24 GB (RSS < file size, tg CV 8%).
+  # 14B F16 (29.5 GB) on the 8 GB laptop with 31 GiB RAM: llama-bench tg grew swap by 3.06 GB;
+  # token-by-token decoding for the quality sample would page weights from disk and not finish.
+  # 14B is evaluated against Q8_0 instead (7B Q8_0 vs F16: PPL +0.09 %, 1.1 % of answers flipped).
   exclude:
     - "Metal/Qwen2.5-14B-Instruct/Q8_0"
+    - "CUDA/Qwen2.5-14B-Instruct/F16"
 
 perplexity:
   llama_perplexity_bin: "external/llama.cpp/build/bin/llama-perplexity"
