@@ -57,5 +57,8 @@ fi
 log "Analysis + Visualization + Report"
 "$PYTHON" src/analyze.py
 "$PYTHON" src/perfmodel.py
+"$PYTHON" src/consistency.py
+"$PYTHON" src/frontier.py
+"$PYTHON" src/loadtest.py --summarize-only
 
 log "Q-Bench pipeline complete (stage=$STAGE)."
