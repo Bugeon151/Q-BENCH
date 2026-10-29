@@ -245,7 +245,7 @@ def write_summary(qdir: Path, hw_id: str, sample: dict) -> Path:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--model", help="model name from config, or 'all' (default: default_model)")
-    ap.add_argument("--quants", nargs="+", help="subset of quant levels (default: all)")
+    ap.add_argument("--quants", nargs="+", help="quant levels in run order (default: all, F16 first)")
     ap.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     ap.add_argument("--build-sample-only", action="store_true", help="write prompts/quality.json and exit")
     args = ap.parse_args()

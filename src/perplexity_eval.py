@@ -51,6 +51,7 @@ def ensure_dataset(url: str, dest: Path) -> Path:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--model", help="model name from config, or 'all' (default: default_model)")
+    ap.add_argument("--quants", nargs="+", help="quant levels in run order (default: all, F16 first)")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -67,7 +68,7 @@ def main() -> None:
 
     for model in select_models(cfg, args.model):
         name = model["name"]
-        for quant in quant_levels(cfg):
+        for quant in args.quants or quant_levels(cfg):
             tag = f"{name}/{quant}"
             if (name, quant) in done:
                 log(f"SKIP {tag}: already in {out_csv}")

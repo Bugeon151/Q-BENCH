@@ -78,7 +78,7 @@ quality:
   ctx_per_slot: 4096
   n_gpu_layers: "auto"
   port: 8089
-  request_timeout_sec: 600
+  request_timeout_sec: 3600     # per request; CPU-offloaded runs (14B on 8 GB VRAM) generate at a few tok/s per slot
   exec_timeout_sec: 10     # HumanEval per-problem test timeout
   datasets:
     mmlu: {repo: "cais/mmlu", prefix: "all/test-", per_subject: 10, max_tokens: 16}
