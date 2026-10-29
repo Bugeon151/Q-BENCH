@@ -3,11 +3,13 @@
 Inputs
   data/raw/benchmark_raw.csv            v0.1 legacy schema (hw_id "legacy_v0.1")
   data/raw/<hw_id>/benchmark_raw.csv    current schema, one dir per hardware
+  data/raw/<hw_id>/gpu_telemetry.jsonl  GPU temperature / SM clock / power per measurement (CUDA)
   data/quality/<hw_id>/{perplexity,quality}.csv   v0.2 quality results
+  data/quality/<hw_id>/<model>/<quant>/<task>.jsonl  per-item results (paired tests vs F16)
 Outputs
   data/processed/benchmark_stats.csv    per (hw_id, model, ctx, quant, test_type)
   results/tables/summary.csv            per (hw_id, model, ctx, quant), CV warnings
-  results/tables/quality.csv            PPL / accuracy / retention vs F16
+  results/tables/quality.csv            PPL / accuracy (Wilson 95% CI) / retention / McNemar p vs F16
   results/tables/hardware_comparison.csv
   results/figures/<hw_id>/<model>/      PRD figures 1-5, 7 and v0.3 context plots
   results/figures/quality/              PRD figure 6
@@ -66,6 +68,39 @@ def load_raw(cfg: dict) -> pd.DataFrame:
         if col not in raw:
             raw[col] = np.nan
     return raw
+
+
+def load_telemetry(cfg: dict) -> pd.DataFrame:
+    files = sorted((ROOT_DIR / cfg["paths"]["raw_dir"]).glob("*/gpu_telemetry.jsonl"))
+    recs = [json.loads(line) for f in files for line in f.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return pd.DataFrame(recs)
+
+
+def load_items(cfg: dict) -> pd.DataFrame:
+    """Per-item correctness: hw_id, model, quant, task, id, correct."""
+    rows = []
+    for f in sorted((ROOT_DIR / cfg["paths"]["quality_dir"]).glob("*/*/*/*.jsonl")):
+        hw, model, quant, task = f.parent.parent.parent.name, f.parent.parent.name, f.parent.name, f.stem
+        for line in f.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                r = json.loads(line)
+                rows.append((hw, model, quant, task, r["id"], bool(r["correct"])))
+    return pd.DataFrame(rows, columns=["hw_id", "model", "quant", "task", "id", "correct"])
+
+
+def wilson_ci(correct: int, n: int) -> tuple[float, float]:
+    if not n:
+        return np.nan, np.nan
+    ci = stats.binomtest(int(correct), int(n)).proportion_ci(confidence_level=0.95, method="wilson")
+    return ci.low, ci.high
+
+
+def mcnemar_p(a: pd.Series, b: pd.Series) -> float:
+    """Exact two-sided McNemar test on paired per-item correctness (aligned by id)."""
+    both = pd.concat([a, b], axis=1, join="inner").dropna()
+    n01 = int((~both.iloc[:, 0] & both.iloc[:, 1]).sum())
+    n10 = int((both.iloc[:, 0] & ~both.iloc[:, 1]).sum())
+    return 1.0 if n01 + n10 == 0 else float(stats.binomtest(min(n01, n10), n01 + n10, 0.5).pvalue)
 
 
 def load_quality(cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -146,12 +181,33 @@ def summarize(stats_df: pd.DataFrame, cv_threshold: float) -> pd.DataFrame:
     return sort_keys(out.reset_index())
 
 
-def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame) -> pd.DataFrame:
-    """Per (quality_hw_id, model, quant): PPL, accuracy per task, retention vs F16."""
+def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame, items: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Per (quality_hw_id, model, quant): PPL, accuracy per task with Wilson 95% CI,
+    retention vs F16, and exact McNemar p-value vs F16 on the same items."""
     parts = []
     if not acc.empty:
-        acc = acc[acc.n == acc.expected_n]  # complete tasks only
-        parts.append(acc.pivot_table(index=["hw_id", "model", "quant"], columns="task", values="accuracy"))
+        acc = acc[acc.n == acc.expected_n].copy()  # complete tasks only
+        ci = [wilson_ci(c, n) for c, n in zip(acc.correct, acc.n)]
+        acc["ci_low"], acc["ci_high"] = [c[0] for c in ci], [c[1] for c in ci]
+        idx = ["hw_id", "model", "quant"]
+        parts.append(acc.pivot_table(index=idx, columns="task", values="accuracy"))
+        for col in ("ci_low", "ci_high"):
+            w = acc.pivot_table(index=idx, columns="task", values=col)
+            w.columns = [f"{t}_{col}" for t in w.columns]
+            parts.append(w)
+        if items is not None and not items.empty:
+            done = set(zip(acc.hw_id, acc.model, acc.quant, acc.task))
+            items = items[[k in done for k in zip(items.hw_id, items.model, items.quant, items.task)]]
+            per = items.set_index("id")
+            pv = {}
+            for (hw, model, task), g in per.groupby(["hw_id", "model", "task"]):
+                ref = g[g.quant == "F16"].correct
+                if ref.empty:
+                    continue
+                for quant, gq in g.groupby("quant"):
+                    pv.setdefault((hw, model, quant), {})[f"{task}_p_vs_f16"] = mcnemar_p(ref, gq.correct)
+            if pv:
+                parts.append(pd.DataFrame.from_dict(pv, orient="index").rename_axis(idx))
     if not ppl.empty:
         parts.append(ppl.set_index(["hw_id", "model", "quant"])[["ppl", "ppl_err"]])
     if not parts:
@@ -175,13 +231,17 @@ def quality_table(ppl: pd.DataFrame, acc: pd.DataFrame) -> pd.DataFrame:
 
 
 def hardware_comparison(summary: pd.DataFrame) -> pd.DataFrame:
-    s = summary[summary.hw_id != LEGACY_HW_ID]
+    """Same (model, ctx, quant) across hardware. legacy_v0.1 is the Apple M5 v0.1 run
+    (7B, ctx 4096; same llama-bench test definitions), kept as the M5 reference."""
+    s = summary
     if s.hw_id.nunique() < 2:
         return pd.DataFrame()
     metrics = ["generation_throughput_tps", "prompt_throughput_tps", "ttft_ms", "peak_mem_bytes", "peak_vram_bytes"]
     wide = s.pivot_table(index=["model", "ctx", "quant"], columns="hw_id", values=metrics)
+    gen = wide["generation_throughput_tps"]
+    wide = wide[gen.notna().sum(axis=1) >= 2]  # only configurations measured on 2+ hardware
     wide.columns = [f"{m}@{hw}" for m, hw in wide.columns]
-    return wide.reset_index()
+    return sort_keys(wide.reset_index(), ("model", "ctx"))
 
 # --------------------------------------------------------------------------- figures
 
@@ -336,8 +396,12 @@ def main() -> None:
     raw = load_raw(cfg)
     stats_df = compute_stats(raw)
     summary = summarize(stats_df, cfg["analysis"]["cv_warn_threshold"])
+    tele = load_telemetry(cfg)
+    if not tele.empty:
+        tg = tele[tele.test_type == "tg"].groupby(KEYS)[["gpu_temp_max_c", "gpu_sm_clock_median_mhz"]].last()
+        summary = summary.merge(tg.add_prefix("tg_").reset_index(), on=KEYS, how="left")
     ppl, acc = load_quality(cfg)
-    quality = quality_table(ppl, acc)
+    quality = quality_table(ppl, acc, load_items(cfg))
     hwcmp = hardware_comparison(summary)
 
     tables = ROOT_DIR / paths["tables_dir"]
@@ -366,7 +430,7 @@ def main() -> None:
     for (qhw, model), q in (quality.groupby(["quality_hw_id", "model"]) if not quality.empty else []):
         quality_figure(q, figs / "quality" / f"{qhw}_{model}.png")
     if not hwcmp.empty:
-        for model, s in summary[(summary.hw_id != LEGACY_HW_ID) & (summary.ctx == default_ctx)].groupby("model"):
+        for model, s in summary[summary.ctx == default_ctx].groupby("model"):
             if s.hw_id.nunique() > 1:
                 (figs / "hardware").mkdir(parents=True, exist_ok=True)
                 hardware_figure(s, figs / "hardware" / f"{model}_generation_throughput.png",
