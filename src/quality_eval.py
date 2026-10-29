@@ -170,7 +170,7 @@ def load_sample(cfg: dict, log) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     log(f"building fixed sample (seed {cfg['quality']['sample_seed']}) -> {path}")
     sample = build_sample(cfg)
-    path.write_text(json.dumps(sample, indent=1), encoding="utf-8")
+    path.write_text(json.dumps(sample, indent=1), encoding="utf-8", newline="\n")  # LF on every OS (committed)
     return sample
 
 
@@ -291,7 +291,7 @@ def main() -> None:
                         text = chat(cfg, PROMPTS[task](row), spec["max_tokens"])
                         pred, correct = score(task, row, text, q["exec_timeout_sec"])
                         rec = {"id": row["id"], "pred": pred, "correct": bool(correct), "response": text}
-                        with lock, open(out_file, "a", encoding="utf-8") as fh:
+                        with lock, open(out_file, "a", encoding="utf-8", newline="") as fh:
                             fh.write(json.dumps(rec) + "\n")
 
                     with ThreadPoolExecutor(q["n_parallel"]) as ex:
