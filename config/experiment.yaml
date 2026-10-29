@@ -97,6 +97,7 @@ quality:
   n_parallel: 4            # llama-server -np slots
   ctx_per_slot: 4096
   n_gpu_layers: "auto"
+  fit_target_mib: 2048     # VRAM headroom for -ngl auto (default 1024 hit CUDA OOM with 14B Q6_K after 7 min)
   port: 8089
   request_timeout_sec: 3600     # per request; CPU-offloaded runs (14B on 8 GB VRAM) generate at a few tok/s per slot
   exec_timeout_sec: 10     # HumanEval per-problem test timeout
