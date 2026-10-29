@@ -56,5 +56,6 @@ fi
 
 log "Analysis + Visualization + Report"
 "$PYTHON" src/analyze.py
+"$PYTHON" src/perfmodel.py
 
 log "Q-Bench pipeline complete (stage=$STAGE)."
