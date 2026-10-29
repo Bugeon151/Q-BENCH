@@ -11,6 +11,7 @@ expose, or skip the task with --tasks mmlu gsm8k.
 
 Per-item results: data/quality/<hw_id>/<model>/<quant>/<task>.jsonl (resume).
 Summary:          data/quality/<hw_id>/quality.csv
+--out-root DIR writes the same layout under DIR (identical re-runs for the noise floor).
 """
 
 from __future__ import annotations
@@ -182,10 +183,12 @@ def load_items(sample: dict, task: str) -> list[dict]:
 # --------------------------------------------------------------------------- server
 
 
-def start_server(cfg: dict, model_path: Path, log_path: Path) -> subprocess.Popen:
+def start_server(cfg: dict, model_path: Path, log_path: Path, n_parallel: int | None = None,
+                 ctx_per_slot: int | None = None) -> subprocess.Popen:
     q = cfg["quality"]
+    n_parallel, ctx_per_slot = n_parallel or q["n_parallel"], ctx_per_slot or q["ctx_per_slot"]
     cmd = [str(resolve_bin(q["llama_server_bin"])), "-m", str(model_path), "--host", "127.0.0.1",
-           "--port", str(q["port"]), "-np", str(q["n_parallel"]), "-c", str(q["n_parallel"] * q["ctx_per_slot"]),
+           "--port", str(q["port"]), "-np", str(n_parallel), "-c", str(n_parallel * ctx_per_slot),
            "-ngl", str(q["n_gpu_layers"]), "--seed", str(cfg["inference"]["seed"])]
     proc = subprocess.Popen(cmd, stdout=open(log_path, "w"), stderr=subprocess.STDOUT)
     deadline = time.time() + 900
@@ -248,6 +251,7 @@ def main() -> None:
     ap.add_argument("--quants", nargs="+", help="quant levels in run order (default: all, F16 first)")
     ap.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     ap.add_argument("--build-sample-only", action="store_true", help="write prompts/quality.json and exit")
+    ap.add_argument("--out-root", help="results root instead of paths.quality_dir (e.g. data/quality_rerun)")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -257,7 +261,7 @@ def main() -> None:
     if args.build_sample_only:
         return
     hw = detect_hw()
-    qdir = ROOT_DIR / cfg["paths"]["quality_dir"] / hw["hw_id"]
+    qdir = ROOT_DIR / (args.out_root or cfg["paths"]["quality_dir"]) / hw["hw_id"]
     items = {t: load_items(sample, t) for t in args.tasks}
     lock = threading.Lock()
 
