@@ -1,0 +1,10 @@
+# Published scores of the instruction-tuned models, for a sanity check of our F16 numbers.
+# Different protocol: the blog reports MMLU-Redux, we run a 570-item subject-stratified MMLU
+# sample; prompts, sample and scoring (src/quality_eval.py) are ours, so expect a few points apart.
+source: "Qwen blog, Qwen2.5-LLM post, instruction-tuned model performance tables"
+url: "https://qwenlm.github.io/blog/qwen2.5-llm/"
+scores:   # mmlu = MMLU-Redux
+  Qwen2.5-1.5B-Instruct: {mmlu: 50.7, gsm8k: 73.2, humaneval: 61.6}
+  Qwen2.5-3B-Instruct: {mmlu: 64.4, gsm8k: 86.7, humaneval: 74.4}
+  Qwen2.5-7B-Instruct: {mmlu: 75.4, gsm8k: 91.6, humaneval: 84.8}
+  Qwen2.5-14B-Instruct: {mmlu: 80.0, gsm8k: 94.8, humaneval: 83.5}
