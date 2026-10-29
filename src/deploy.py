@@ -8,11 +8,13 @@ Steps (no network needed when models/ and the Hugging Face dataset cache are alr
                 (prompts/quality.json) on this machine and compare item by item with the
                 results recorded for the same (model, quant) in data/quality (src/gate.py);
                 a significant drop (FAIL) blocks the deployment
-  5. serve      start llama-server on 127.0.0.1 (OpenAI-compatible) and send one smoke request;
-                with --serve it keeps running, otherwise it is stopped after the check
-  6. manifest   deploy/<UTC time>_<model>_<quant>.json with everything above
+  5. serve      start llama-server on 127.0.0.1 (OpenAI-compatible) and send one smoke request
+  6. capacity   with --capacity: concurrent users within the MLPerf-derived latency SLAs on this
+                machine (src/loadtest.py; reuses an existing measurement of the same configuration)
+  7. manifest   deploy/<UTC time>_<model>_<quant>.json with everything above
+With --serve the server is started again after the checks and keeps running.
 
-    python src/deploy.py [--vram-gb N] [--min-tps T] [--model M --quant Q] [--items 20] [--serve]
+    python src/deploy.py [--vram-gb N] [--min-tps T] [--model M --quant Q] [--items 20] [--capacity] [--serve]
 Exit code: 0 deployed (or verified), 1 acceptance FAIL, 2 nothing fits / missing files.
 """
 
@@ -30,6 +32,7 @@ import numpy as np
 import pandas as pd
 
 import gate
+import loadtest
 import quality_eval as qe
 from common import GIB, ROOT_DIR, detect_hw, gguf_path, load_config, make_logger, resolve_bin
 from recommend import candidates, load_model_cfgs, recommend
@@ -97,6 +100,7 @@ def main() -> int:
     ap.add_argument("--model")
     ap.add_argument("--quant")
     ap.add_argument("--items", type=int, default=20, help="acceptance items per task (0 = skip)")
+    ap.add_argument("--capacity", action="store_true", help="measure concurrent users within the SLAs (src/loadtest.py)")
     ap.add_argument("--serve", action="store_true", help="keep llama-server running after the checks")
     args = ap.parse_args()
 
@@ -143,34 +147,50 @@ def main() -> int:
     manifest["sample"] = {"seed": sample.get("seed"),
                           "datasets": {t: {k: v for k, v in d.items() if k != "ids"} for t, d in sample["datasets"].items()}}
     log_path = ROOT_DIR / cfg["paths"]["logs_dir"] / f"deploy_server_{model}_{quant}.log"
-    t0 = time.time()
-    server = qe.start_server(cfg, path, log_path)
     status = 0
     try:
-        manifest["server"] = {"url": f"http://127.0.0.1:{cfg['quality']['port']}/v1", "load_sec": round(time.time() - t0, 1),
-                              "args": {"n_parallel": cfg["quality"]["n_parallel"],
-                                       "ctx_per_slot": cfg["quality"]["ctx_per_slot"],
-                                       "n_gpu_layers": cfg["quality"]["n_gpu_layers"]}}
-        if args.items > 0:
-            manifest["acceptance"] = acceptance(cfg, sample, model, quant, args.items, log)
-            if manifest["acceptance"]["verdict"] == "FAIL":
-                status = 1
-        t1 = time.time()
-        reply = qe.chat(cfg, "Reply with the single word: ready", 8)
-        manifest["smoke"] = {"reply": reply.strip()[:40], "sec": round(time.time() - t1, 2)}
-        log(f"smoke reply {reply.strip()[:40]!r}")
+        t0 = time.time()
+        server = qe.start_server(cfg, path, log_path)
+        try:
+            manifest["server"] = {"url": f"http://127.0.0.1:{cfg['quality']['port']}/v1",
+                                  "load_sec": round(time.time() - t0, 1),
+                                  "args": {"n_parallel": cfg["quality"]["n_parallel"],
+                                           "ctx_per_slot": cfg["quality"]["ctx_per_slot"],
+                                           "n_gpu_layers": cfg["quality"]["n_gpu_layers"]}}
+            if args.items > 0:
+                manifest["acceptance"] = acceptance(cfg, sample, model, quant, args.items, log)
+                status = int(manifest["acceptance"]["verdict"] == "FAIL")
+            t1 = time.time()
+            reply = qe.chat(cfg, "Reply with the single word: ready", 8)
+            manifest["smoke"] = {"reply": reply.strip()[:40], "sec": round(time.time() - t1, 2)}
+            log(f"smoke reply {reply.strip()[:40]!r}")
+        finally:
+            server.terminate()
+            server.wait(timeout=30)
+        # 6. capacity (own server with loadtest.slots)
+        if args.capacity and status == 0:
+            lt = cfg["loadtest"]
+            levels = loadtest.measure(cfg, hw, model, quant, log)
+            cap = loadtest.capacity(levels, lt["sla"]).iloc[0]
+            manifest["capacity"] = {
+                "slots": lt["slots"], "ctx_per_slot": lt["ctx_per_slot"], "max_tokens": lt["max_tokens"],
+                "sla_percentile": lt["sla_percentile"], "sla": lt["sla"],
+                "users": {name: int(cap[f"capacity_{name}"]) for name in lt["sla"]},
+                "levels": json.loads(levels.drop(columns=["hw_id", "model", "quant"]).to_json(orient="records"))}
+            log("capacity: " + ", ".join(f"{k} SLA {v} users" for k, v in manifest["capacity"]["users"].items()))
         manifest["status"] = "FAILED_ACCEPTANCE" if status else ("SERVING" if args.serve else "VERIFIED")
     finally:
         out = ROOT_DIR / "deploy" / f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}_{model}_{quant}.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(manifest, indent=2, default=str), encoding="utf-8", newline="\n")
         log(f"manifest {out.relative_to(ROOT_DIR).as_posix()} status={manifest.get('status', 'ERROR')}")
-        if not (args.serve and status == 0):
-            server.terminate()
-            server.wait(timeout=30)
     if args.serve and status == 0:
+        server = qe.start_server(cfg, path, log_path)
         log(f"serving at {manifest['server']['url']} (Ctrl+C to stop)")
-        server.wait()
+        try:
+            server.wait()
+        finally:
+            server.terminate()
     return status
 
 
