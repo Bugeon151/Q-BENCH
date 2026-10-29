@@ -372,11 +372,11 @@ def main() -> None:
     summary_json = {
         "experiment_config": cfg,
         "hardware": hardware_meta(raw, cfg),
-        "llama_cpp_commit": commit_file.read_text().strip() if commit_file.exists() else None,
+        "llama_cpp_commit": commit_file.read_text(encoding="utf-8").strip() if commit_file.exists() else None,
         "per_quant_summary": summary.replace({np.nan: None}).to_dict(orient="records"),
         "quality": quality.replace({np.nan: None}).to_dict(orient="records") if not quality.empty else [],
     }
-    with open(ROOT_DIR / paths["summary_json"], "w") as f:
+    with open(ROOT_DIR / paths["summary_json"], "w", encoding="utf-8") as f:
         json.dump(summary_json, f, indent=2, default=str)
 
     warns = summary[summary.cv_warning != ""]
