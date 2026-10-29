@@ -25,18 +25,12 @@ from scipy import stats  # noqa: E402
 
 import gate  # noqa: E402
 from analyze import QUANT_ORDER, pareto_mask  # noqa: E402
-from common import GIB, ROOT_DIR, load_config  # noqa: E402
+from common import GIB, ROOT_DIR, load_config, params_b  # noqa: E402
 
 TASKS = ["mmlu", "gsm8k", "humaneval"]
 INK, INK2, SURFACE, GRID = "#0b0b0b", "#52514e", "#fcfcfb", "#e5e4df"
 RAMP = ["#86b6ef", "#3987e5", "#256abf", "#0d366b"]  # ordinal blue, small -> large model
 FAIL_RED = "#e34948"
-
-
-def params_b(model: str) -> float:
-    """'Qwen2.5-14B-Instruct' -> 14.0 (billions, from the name; used only for ordering)."""
-    tok = next(t for t in model.split("-") if t.endswith("B") and t[:-1].replace(".", "").isdigit())
-    return float(tok[:-1])
 
 
 def frontier_table(quality: pd.DataFrame, summary: pd.DataFrame, flips: pd.DataFrame | None,

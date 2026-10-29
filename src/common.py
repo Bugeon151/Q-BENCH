@@ -52,6 +52,12 @@ def quant_levels(cfg: dict) -> list[str]:
     return ["F16", *cfg["quantization"]["levels"]]
 
 
+def params_b(model: str) -> float:
+    """'Qwen2.5-14B-Instruct' -> 14.0 (billions, from the name; used for ordering)."""
+    tok = next(t for t in model.split("-") if t.endswith("B") and t[:-1].replace(".", "").isdigit())
+    return float(tok[:-1])
+
+
 def hf_dir(cfg: dict, model: str) -> Path:
     return ROOT_DIR / cfg["model_dirs"]["hf"] / model
 

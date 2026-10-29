@@ -9,6 +9,8 @@ Fits use full-GPU tg rows of results/tables/summary.csv (partial offload exclude
 Leave-one-hardware-out: each device is predicted from the other devices' efficiency
 (BW_eff / published peak) times its own published peak bandwidth
 (config/hardware_specs.yaml; every published value is evaluated when sources disagree).
+Calibration: two runs of the smallest model on the device itself (F16 and Q4_K_M at the default
+ctx) fit the 2-parameter model, which predicts the bigger models (calib_* columns).
 
 Outputs results/tables/perf_model.csv, perf_model_points.csv, figures/perf_model.png.
 """
@@ -25,7 +27,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import yaml  # noqa: E402
 
-from common import ROOT_DIR, load_config  # noqa: E402
+from common import ROOT_DIR, load_config, params_b  # noqa: E402
 
 GB = 1e9
 
@@ -90,6 +92,26 @@ def evaluate(points: pd.DataFrame, specs: dict) -> tuple[pd.DataFrame, pd.DataFr
     return out, pd.concat(pts, ignore_index=True) if pts else pd.DataFrame()
 
 
+def calibrate(points: pd.DataFrame, quants: tuple[str, str] = ("F16", "Q4_K_M"), ctx: int = 4096) -> pd.DataFrame:
+    """On-site calibration instead of a spec-sheet bandwidth: two quick llama-bench runs of the
+    smallest model (`quants` at `ctx`) give the 2-parameter fit, which then predicts every other
+    model measured on the same device."""
+    rows = []
+    for hw, d in points.groupby("hw_id"):
+        models = sorted(d.model.unique(), key=params_b)
+        cal = d[(d.model == models[0]) & d.quant.isin(quants) & (d.ctx == ctx)]
+        rest = d[d.model != models[0]]
+        if len(models) < 2 or cal.quant.nunique() < 2 or rest.empty:
+            continue
+        bw, t0 = fit_2p(cal.bytes_per_token.to_numpy(float), cal.generation_throughput_tps.to_numpy(float))
+        tps = rest.generation_throughput_tps.to_numpy(float)
+        e = ape(1 / (rest.bytes_per_token.to_numpy(float) / bw + t0), tps)
+        rows.append({"hw_id": hw, "calib_model": models[0], "calib_points": "+".join(quants) + f"@{ctx}",
+                     "calib_bw_gbs": bw / GB, "calib_t0_ms": t0 * 1e3, "calib_n_pred": len(rest),
+                     "calib_mape": e.mean(), "calib_max_ape": e.max()})
+    return pd.DataFrame(rows)
+
+
 def predict_tps(peak_bw_gbs: float, bytes_per_token: float, efficiencies: list[float]) -> tuple[float, float]:
     """Range of predicted tokens/s on unmeasured hardware from the measured efficiencies."""
     v = [e * peak_bw_gbs * GB / bytes_per_token for e in efficiencies]
@@ -117,7 +139,11 @@ def main() -> None:
     model_cfgs = {p.stem: json.loads(p.read_text(encoding="utf-8"))
                   for p in sorted((ROOT_DIR / "config" / "model_configs").glob("*.json"))}
     specs = yaml.safe_load((ROOT_DIR / "config" / "hardware_specs.yaml").read_text(encoding="utf-8")) or {}
-    fit, pts = evaluate(decode_points(summary, model_cfgs), specs)
+    points = decode_points(summary, model_cfgs)
+    fit, pts = evaluate(points, specs)
+    cal = calibrate(points, ctx=cfg["inference"]["context_length"])
+    if not cal.empty:
+        fit = fit.merge(cal, on="hw_id", how="left")
     tables, figs = ROOT_DIR / paths["tables_dir"], ROOT_DIR / paths["figures_dir"]
     fit.to_csv(tables / "perf_model.csv", index=False)
     pts.to_csv(tables / "perf_model_points.csv", index=False)
