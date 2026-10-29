@@ -64,3 +64,12 @@ def test_gate_all_skips_incomplete():
 def test_gate_all_empty():
     empty = pd.DataFrame(columns=["hw_id", "model", "quant", "task", "id", "correct"])
     assert gate.gate_all(empty, {"mmlu": 10}).empty
+
+
+def test_cross_model_upgrade():
+    ref = [True] * 150 + [False] * 50          # 7B F16: 75%
+    better = [True] * 190 + [False] * 10       # 14B Q4: 95%
+    df = pd.concat([items({"F16": ref}, model="7b"), items({"Q4_K_M": better}, model="14b")])
+    res = gate.gate(df, "gpu", "7b", "Q4_K_M", candidate_model="14b").set_index("task")
+    assert res.loc["mmlu", "diff"] == pytest.approx(0.2) and res.loc["overall", "verdict"] == "PASS"
+    assert res.loc["overall", "candidate_model"] == "14b"
