@@ -1,5 +1,6 @@
 """Cross-platform helpers: llama.cpp binary resolution, Git Bash shell helpers, UTF-8 I/O."""
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -49,13 +50,22 @@ def test_common_cli_bin_exit_code():
 def run_sh(tmp_path: Path, venv_rel: str, body: str) -> subprocess.CompletedProcess:
     """Sources scripts/common.sh with ROOT_DIR=tmp_path and a fake venv python."""
     fake = touch(tmp_path / ".venv" / venv_rel)
-    fake.write_text('#!/usr/bin/env bash\nprintf "a b\\r\\nQ4_K_M\\r\\n"; exit "${1:-0}"\n')
+    fake.write_text('#!/usr/bin/env bash\nprintf "a b\\r\\nQ4_K_M\\r\\n"; exit "${1:-0}"\n', newline="\n")
     fake.chmod(0o755)
     script = f'set -euo pipefail\nROOT_DIR="{tmp_path}"\nsource "{ROOT_DIR}/scripts/common.sh"\n{body}'
-    return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+    # PATH lookup: on Windows CreateProcess would try System32\\bash.exe (WSL) before PATH
+    return subprocess.run([BASH, "-c", script], capture_output=True, text=True)
 
 
-@pytest.mark.parametrize("venv_rel", ["bin/python", "Scripts/python.exe"])
+BASH = shutil.which("bash")
+needs_bash = pytest.mark.skipif(BASH is None, reason="bash not found")
+# On Windows an .exe must be a PE binary, so the shell-script stand-in cannot fake Scripts/python.exe;
+# that layout is exercised by the real pipeline run.
+WIN_EXE = pytest.param("Scripts/python.exe", marks=pytest.mark.skipif(os.name == "nt", reason="needs a PE binary"))
+
+
+@needs_bash
+@pytest.mark.parametrize("venv_rel", ["bin/python", WIN_EXE])
 def test_common_sh_venv_and_crlf(tmp_path, venv_rel):
     r = run_sh(tmp_path, venv_rel, 'while IFS= read -r l; do printf "[%s]" "$l"; done < <(py 0)\n'
                                     'printf "|%s" "$PYTHON" "$PYTHONUTF8"')
@@ -63,6 +73,7 @@ def test_common_sh_venv_and_crlf(tmp_path, venv_rel):
     assert r.stdout == f"[a b][Q4_K_M]|{tmp_path}/.venv/{venv_rel}|1"
 
 
+@needs_bash
 def test_common_sh_keeps_exit_status(tmp_path):
     r = run_sh(tmp_path, "bin/python", 'if ! OUT="$(py 3)"; then echo "failed:$OUT"; fi')
     assert r.stdout.strip().replace("\n", " ") == "failed:a b Q4_K_M"
