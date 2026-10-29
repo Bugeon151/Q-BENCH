@@ -191,6 +191,8 @@ def start_server(cfg: dict, model_path: Path, log_path: Path, n_parallel: int | 
     cmd = [str(resolve_bin(q["llama_server_bin"])), "-m", str(model_path), "--host", "127.0.0.1",
            "--port", str(q["port"]), "-np", str(n_parallel), "-c", str(n_parallel * ctx_per_slot),
            "-ngl", str(q["n_gpu_layers"]), "--seed", str(cfg["inference"]["seed"])]
+    if q.get("fit_target_mib"):  # free VRAM llama.cpp's fit keeps per device when -ngl auto offloads
+        cmd += ["--fit-target", str(q["fit_target_mib"])]
     proc = subprocess.Popen(cmd, stdout=open(log_path, "w"), stderr=subprocess.STDOUT)
     deadline = time.time() + 900
     while time.time() < deadline:
@@ -278,6 +280,36 @@ def write_summary(qdir: Path, hw_id: str, sample: dict) -> Path:
     return out
 
 
+SERVER_RESTARTS = 2  # llama-server crashes (e.g. CUDA out of memory with CPU offload) are retried
+
+
+def run_tasks(cfg: dict, items: dict, tasks: list[str], out_dir: Path, tag: str, lock, log) -> None:
+    """Runs the items of each task not yet in out_dir/<task>.jsonl (resumable)."""
+    q = cfg["quality"]
+    for task in tasks:
+        out_file = out_dir / f"{task}.jsonl"
+        seen = read_done(out_file)
+        pending = [it for it in items[task] if it["id"] not in seen]
+        if not pending:
+            continue
+        spec = q["datasets"][task]
+        log(f"{tag}/{task}: {len(pending)} items")
+
+        def work(row: dict, task=task, spec=spec, out_file=out_file) -> None:
+            errors: list[str] = []
+            text = chat(cfg, PROMPTS[task](row), spec["max_tokens"], errors)
+            pred, correct = score(task, row, text, q["exec_timeout_sec"])
+            rec = {"id": row["id"], "pred": pred, "correct": bool(correct), "response": text}
+            if errors:
+                rec["api_error"] = errors[0]
+            with lock, open(out_file, "a", encoding="utf-8", newline="") as fh:
+                fh.write(json.dumps(rec) + "\n")
+
+        with ThreadPoolExecutor(q["n_parallel"]) as ex:
+            list(ex.map(work, pending))
+        log(f"{tag}/{task}: done")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--model", help="model name from config, or 'all' (default: default_model)")
@@ -315,31 +347,27 @@ def main() -> None:
                 log(f"SKIP {tag}: over memory budget ({why})")
                 continue
             out_dir.mkdir(parents=True, exist_ok=True)
-            log(f"{tag}: starting llama-server ({why})")
-            server = start_server(cfg, gguf_path(cfg, name, quant), ROOT_DIR / cfg["paths"]["logs_dir"] / f"server_{name}_{quant}.log")
-            try:
-                for task, pending in todo.items():
-                    if not pending:
-                        continue
-                    spec, out_file = q["datasets"][task], out_dir / f"{task}.jsonl"
-                    log(f"{tag}/{task}: {len(pending)} items")
-
-                    def work(row: dict, task=task, spec=spec, out_file=out_file) -> None:
-                        errors: list[str] = []
-                        text = chat(cfg, PROMPTS[task](row), spec["max_tokens"], errors)
-                        pred, correct = score(task, row, text, q["exec_timeout_sec"])
-                        rec = {"id": row["id"], "pred": pred, "correct": bool(correct), "response": text}
-                        if errors:
-                            rec["api_error"] = errors[0]
-                        with lock, open(out_file, "a", encoding="utf-8", newline="") as fh:
-                            fh.write(json.dumps(rec) + "\n")
-
-                    with ThreadPoolExecutor(q["n_parallel"]) as ex:
-                        list(ex.map(work, pending))
-                    log(f"{tag}/{task}: done")
-            finally:
-                server.terminate()
-                server.wait(timeout=30)
+            for attempt in range(1 + SERVER_RESTARTS):
+                log(f"{tag}: starting llama-server ({why})")
+                suffix = f".restart{attempt}" if attempt else ""  # keep the crashed server's log
+                server = start_server(cfg, gguf_path(cfg, name, quant),
+                                      ROOT_DIR / cfg["paths"]["logs_dir"] / f"server_{name}_{quant}{suffix}.log")
+                try:
+                    run_tasks(cfg, items, args.tasks, out_dir, tag, lock, log)
+                    break
+                except (ConnectionError, urllib.error.URLError) as e:
+                    if isinstance(e, urllib.error.HTTPError) or attempt == SERVER_RESTARTS:
+                        raise
+                    try:
+                        server.wait(timeout=15)  # a crashed server is exiting
+                    except subprocess.TimeoutExpired:
+                        raise e from None  # server still running: not a crash
+                    log(f"{tag}: llama-server exited with {server.returncode} ({e!r}); restart {attempt + 1}/"
+                        f"{SERVER_RESTARTS}, resuming the remaining items")
+                finally:
+                    if server.poll() is None:
+                        server.terminate()
+                        server.wait(timeout=30)
 
     log(f"Quality complete. Summary: {write_summary(qdir, hw['hw_id'], sample)}")
 

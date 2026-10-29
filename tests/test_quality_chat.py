@@ -84,3 +84,73 @@ def test_chat_unrecoverable_parse_error_returns_empty(cfg):
     assert qe.chat(cfg, "q", 16, errors) == "" and len(errors) == 2
     assert [p for p, _ in Fake.seen] == ["/v1/chat/completions", "/apply-template", "/completion"]
     assert not qe.score("gsm8k", {"answer": "#### 55"}, "", 10)[1]
+
+
+class Proc:
+    def __init__(self, crash):
+        self.crash, self.returncode = crash, None
+
+    def poll(self):
+        return self.returncode
+
+    def wait(self, timeout=None):
+        if self.returncode is not None:
+            return self.returncode
+        if self.crash:
+            self.returncode = 1
+            return 1
+        raise qe.subprocess.TimeoutExpired("llama-server", timeout)
+
+    def terminate(self):
+        self.returncode = 0
+
+
+def main_with(monkeypatch, tmp_path, crashes):
+    """Runs quality_eval.main with fakes; run_tasks raises ConnectionResetError while crashes remain."""
+    procs, calls = [], []
+    cfg = {"quality": {"n_parallel": 1, "ctx_per_slot": 64}, "paths": {"quality_dir": "q", "logs_dir": "logs"}}
+    monkeypatch.setattr(qe, "ROOT_DIR", tmp_path)
+    monkeypatch.setattr(qe, "load_config", lambda: cfg)
+    monkeypatch.setattr(qe, "make_logger", lambda c, t: lambda m: None)
+    monkeypatch.setattr(qe, "load_sample", lambda c, log: {})
+    monkeypatch.setattr(qe, "detect_hw", lambda: {"hw_id": "gpu"})
+    monkeypatch.setattr(qe, "load_items", lambda sample, t: [{"id": 1}])
+    monkeypatch.setattr(qe, "select_models", lambda c, m: [{"name": "m"}])
+    monkeypatch.setattr(qe, "check_budget", lambda *a, **k: (True, "ok"))
+    monkeypatch.setattr(qe, "gguf_path", lambda c, m, q: tmp_path / "m.gguf")
+    monkeypatch.setattr(qe, "write_summary", lambda *a: "summary")
+
+    def start(cfg_, path, log_path):
+        procs.append(Proc(crash=len(procs) < crashes))
+        calls.append(log_path.name)
+        return procs[-1]
+
+    def run(*a):
+        if len(calls) <= crashes:
+            raise ConnectionResetError(10054, "reset")
+
+    monkeypatch.setattr(qe, "start_server", start)
+    monkeypatch.setattr(qe, "run_tasks", run)
+    monkeypatch.setattr(qe.sys, "argv", ["quality_eval.py", "--quants", "Q6_K", "--tasks", "mmlu"])
+    return calls
+
+
+def test_server_crash_is_restarted(monkeypatch, tmp_path):
+    calls = main_with(monkeypatch, tmp_path, crashes=1)
+    qe.main()
+    assert calls == ["server_m_Q6_K.log", "server_m_Q6_K.restart1.log"]
+
+
+def test_repeated_crash_gives_up(monkeypatch, tmp_path):
+    main_with(monkeypatch, tmp_path, crashes=3)
+    with pytest.raises(ConnectionResetError):
+        qe.main()
+
+
+def test_connection_error_with_live_server_is_not_retried(monkeypatch, tmp_path):
+    """A connection error while llama-server keeps running is not a crash: no restart."""
+    calls = main_with(monkeypatch, tmp_path, crashes=0)
+    monkeypatch.setattr(qe, "run_tasks", lambda *a: (_ for _ in ()).throw(ConnectionResetError(10054, "reset")))
+    with pytest.raises(ConnectionResetError):
+        qe.main()
+    assert calls == ["server_m_Q6_K.log"]
