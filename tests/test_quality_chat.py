@@ -154,3 +154,36 @@ def test_connection_error_with_live_server_is_not_retried(monkeypatch, tmp_path)
     with pytest.raises(ConnectionResetError):
         qe.main()
     assert calls == ["server_m_Q6_K.log"]
+
+
+def test_post_retries_connect_timeout_but_not_refused(monkeypatch):
+    calls, sleeps = [], []
+
+    class Resp:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def read(self): return b'{"ok": 1}'
+
+    class Opener:
+        def __init__(self, errors): self.errors = list(errors)
+        def open(self, req, timeout):
+            calls.append(timeout)
+            if self.errors:
+                raise self.errors.pop(0)
+            return Resp()
+
+    cfg = {"quality": {"port": 1, "request_timeout_sec": 7}}
+    monkeypatch.setattr(qe.time, "sleep", sleeps.append)
+    monkeypatch.setattr(qe, "_NO_PROXY", Opener([urllib.error.URLError(TimeoutError(10060))] * 2))
+    assert qe.post(cfg, "/x", {}) == {"ok": 1} and sleeps == [5, 15] and len(calls) == 3
+
+    sleeps.clear()
+    monkeypatch.setattr(qe, "_NO_PROXY", Opener([urllib.error.URLError(ConnectionRefusedError(10061))]))
+    with pytest.raises(urllib.error.URLError):
+        qe.post(cfg, "/x", {})
+    assert sleeps == []
+
+    monkeypatch.setattr(qe, "_NO_PROXY", Opener([urllib.error.URLError(TimeoutError(10060))] * 9))
+    with pytest.raises(urllib.error.URLError):
+        qe.post(cfg, "/x", {})
+    assert sleeps == [5, 15, 45, 120]

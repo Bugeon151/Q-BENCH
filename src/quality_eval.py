@@ -210,12 +210,24 @@ def start_server(cfg: dict, model_path: Path, log_path: Path, n_parallel: int | 
     raise SystemExit(f"FAIL: llama-server not healthy after 900 s; see {log_path}")
 
 
+CONNECT_RETRY_WAITS = (5, 15, 45, 120)  # seconds; a refused connection (server down) is not retried here
+
+
 def post(cfg: dict, path: str, body: dict) -> dict:
+    """POST to llama-server. A connect that times out (WinError 10060 on a healthy local server, seen once
+    after ~6 min of one-slot requests) is retried with backoff; the request never reached the server, and
+    sampling is seeded with temperature 0 anyway. Refused connections and HTTP errors are raised at once."""
     q = cfg["quality"]
     req = urllib.request.Request(f"http://127.0.0.1:{q['port']}{path}", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
-    with _NO_PROXY.open(req, timeout=q["request_timeout_sec"]) as r:
-        return json.loads(r.read())
+    for wait in (*CONNECT_RETRY_WAITS, None):
+        try:
+            with _NO_PROXY.open(req, timeout=q["request_timeout_sec"]) as r:
+                return json.loads(r.read())
+        except urllib.error.URLError as e:
+            if wait is None or isinstance(e, urllib.error.HTTPError) or not isinstance(e.reason, TimeoutError):
+                raise
+            time.sleep(wait)
 
 
 PARSE_ERROR = "does not match the expected"  # llama-server could not parse the reply into its chat format
