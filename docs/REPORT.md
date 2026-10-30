@@ -17,7 +17,7 @@ this page interprets them.
 * **Accuracy hides answer churn; concurrent batching hides irreproducibility.** 7B Q4_K_M moves
   mean accuracy by −0.5 points but flips 4.4 % of answers between right and wrong. Separately,
   re-running an identical quantized configuration under concurrent batching changes 24–31 % of
-  response texts (F16: 1.6 %); with one server slot, two runs are byte-identical <!-- TLDR_NP1 -->.
+  response texts (F16: 1.6 %); with one server slot, two runs are byte-identical (984 of 984 records, 1.5B and 7B).
   The deterministic run shows the flips are the quantization's (7B: 4.6 %); subtracting a re-run
   noise floor, the usual correction, would have understated them by more than half.
 * **A 164-problem benchmark can certify Q8_0 but not Q4.** The share of flipped items sets the
@@ -149,7 +149,7 @@ batch (Thinking Machines Lab, 2025). The same configurations with one slot
 | Q4_K_M | re-run, 4 slots: flipped / text changed | re-run, 1 slot: flipped / text changed | flips vs reference, 4-slot run | flips vs reference, 1-slot run |
 |---|---|---|---|---|
 | 1.5B | 4.1 % / 30.8 % | **0 / 0** (984 of 984 records identical) | 16.2 % | 14.8 % |
-| 7B | 2.5 % / 24.4 % | <!-- 7B_NP1 --> | 4.4 % | 4.6 % |
+| 7B | 2.5 % / 24.4 % | **0 / 0** (984 of 984 records identical) | 4.4 % | 4.6 % |
 
 With a fixed batch the server is deterministic on this machine and binary. And the deterministic
 run settles the question above: the flip rate against the reference is the quantization's, not
