@@ -2,7 +2,8 @@
 
 Steps (no network needed when models/ and the Hugging Face dataset cache are already present):
   1. detect     hardware via common.detect_hw (backend, VRAM, RAM)
-  2. select     (model, quant) with recommend.py from the measured tables, or --model/--quant
+  2. select     (model, quant) with recommend.py from the measured tables, or --model/--quant;
+                --users U keeps only configurations measured to serve U users within --sla here
   3. verify     SHA256 of the GGUF and of the llama-server binary
   4. accept     run the first --items items per task of the fixed quality sample
                 (prompts/quality.json) on this machine and compare item by item with the
@@ -14,7 +15,8 @@ Steps (no network needed when models/ and the Hugging Face dataset cache are alr
   7. manifest   deploy/<UTC time>_<model>_<quant>.json with everything above
 With --serve the server is started again after the checks and keeps running.
 
-    python src/deploy.py [--vram-gb N] [--min-tps T] [--model M --quant Q] [--items 20] [--capacity] [--serve]
+    python src/deploy.py [--vram-gb N] [--min-tps T] [--users U --sla server|interactive]
+                         [--model M --quant Q] [--items 20] [--capacity] [--serve]
 Exit code: 0 deployed (or verified), 1 acceptance FAIL, 2 nothing fits / missing files.
 """
 
@@ -35,7 +37,7 @@ import gate
 import loadtest
 import quality_eval as qe
 from common import GIB, ROOT_DIR, detect_hw, gguf_path, load_config, make_logger, resolve_bin
-from recommend import candidates, load_model_cfgs, recommend
+from recommend import annotate, candidates, load_model_cfgs, recommend, require_users
 
 TASKS = ("mmlu", "gsm8k", "humaneval")
 
@@ -48,8 +50,9 @@ def sha256(path: Path, chunk: int = 1 << 24) -> str:
     return h.hexdigest()
 
 
-def select(cfg: dict, hw: dict, vram_gib: float, min_tps: float) -> pd.DataFrame:
-    """Recommendation table for this machine from the committed result tables."""
+def select(cfg: dict, hw: dict, vram_gib: float, min_tps: float, users: int = 0, sla: str = "server") -> pd.DataFrame:
+    """Recommendation table for this machine from the committed result tables; with users > 0 only
+    configurations measured to serve that many concurrent users within the SLA on this hw_id."""
     tables = ROOT_DIR / cfg["paths"]["tables_dir"]
     summary = pd.read_csv(ROOT_DIR / cfg["paths"]["summary_table"])
     quality = pd.read_csv(tables / "quality.csv")
@@ -57,7 +60,8 @@ def select(cfg: dict, hw: dict, vram_gib: float, min_tps: float) -> pd.DataFrame
     measured_here = hw["hw_id"] if hw["hw_id"] in set(summary.hw_id) else None
     c = candidates(summary, quality, gates, load_model_cfgs(), cfg["inference"]["context_length"],
                    cfg["inference"]["max_output_tokens"], cfg["memory_budget"]["overhead_gb"], measured_here)
-    return recommend(c, vram_gib, min_tps=min_tps)
+    rec = recommend(c, vram_gib, min_tps=min_tps)
+    return require_users(annotate(rec, tables, hw["hw_id"]), users, sla) if users else rec
 
 
 def reference_items(cfg: dict, model: str, quant: str) -> pd.DataFrame:
@@ -97,6 +101,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--vram-gb", type=float, help="GPU memory budget, GiB (default: detected VRAM x 0.95)")
     ap.add_argument("--min-tps", type=float, default=0.0)
+    ap.add_argument("--users", type=int, default=0, help="concurrent users to serve within --sla (measured capacity)")
+    ap.add_argument("--sla", choices=["server", "interactive"], default="server")
     ap.add_argument("--model")
     ap.add_argument("--quant")
     ap.add_argument("--items", type=int, default=20, help="acceptance items per task (0 = skip)")
@@ -117,12 +123,14 @@ def main() -> int:
         model, quant = args.model, args.quant
         manifest["selection"] = {"mode": "manual"}
     else:
-        rec = select(cfg, hw, vram, args.min_tps)
+        rec = select(cfg, hw, vram, args.min_tps, args.users, args.sla)
         if rec.empty:
-            log(f"no measured configuration fits {vram:.2f} GiB with >= {args.min_tps} tok/s")
+            need = f" and {args.users} users within the {args.sla} SLA" if args.users else ""
+            log(f"no measured configuration fits {vram:.2f} GiB with >= {args.min_tps} tok/s{need}")
             return 2
         model, quant = rec.model.iloc[0], rec.quant.iloc[0]
         manifest["selection"] = {"mode": "recommend", "vram_gib": round(vram, 3), "min_tps": args.min_tps,
+                                 "users": args.users, "sla": args.sla,
                                  "top": rec.head(3).replace({np.nan: None}).to_dict(orient="records")}
     log(f"selected {model} {quant} (budget {vram:.2f} GiB)")
 

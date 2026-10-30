@@ -83,3 +83,12 @@ def test_annotate_flips_and_capacity(tmp_path):
     assert out.loc["F16", "flips"] == 0 and out.loc["Q4_K_M", "flips"] == 0.04
     assert out.loc["Q4_K_M", "capacity_server"] == 8 and pd.isna(out.loc["F16", "capacity_server"])
     assert rc.annotate(rec, tmp_path / "missing", "gpu").columns.tolist() == rec.columns.tolist()
+
+
+def test_require_users():
+    rec = pd.DataFrame({"model": ["m7"] * 3, "quant": ["Q6_K", "Q4_K_M", "Q5_K_M"], "quality": [0.83, 0.82, 0.82],
+                        "capacity_server": [8, 16, None], "capacity_interactive": [1, 4, None]})
+    assert rc.require_users(rec, 0) is rec
+    assert rc.require_users(rec, 4, "interactive").quant.tolist() == ["Q4_K_M"]  # unmeasured Q5_K_M dropped
+    assert rc.require_users(rec, 8).quant.tolist() == ["Q6_K", "Q4_K_M"]
+    assert rc.require_users(rec[["model", "quant"]], 1).empty

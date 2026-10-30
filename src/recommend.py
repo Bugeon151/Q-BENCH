@@ -15,9 +15,12 @@ For each (model, quant) with complete quality results:
   capacity_server / capacity_interactive  concurrent users within the latency SLAs on --hw
             (src/loadtest.py), if measured
 Candidates must fit, must not FAIL the gate, and must reach --min-tps (measured speed, else the
-low end of the predicted range). Ranking: quality, then speed.
+low end of the predicted range). With --users N they must also serve N concurrent users within the
+--sla latency limits on --hw (measured capacity; configurations without a measurement are dropped,
+since nothing shows they meet it). Ranking: quality, then speed.
 
     python src/recommend.py --vram-gb 8 [--ram-gb 32] [--min-tps 30] [--ctx 4096] [--hw HW_ID]
+    python src/recommend.py --vram-gb 7.5 --users 4 --sla interactive    # multi-user serving
     python src/recommend.py --vram-gb 24 --bandwidth-gbs 1008 --min-tps 60   # unmeasured GPU
 """
 
@@ -109,6 +112,16 @@ def annotate(rec: pd.DataFrame, tables: Path, hw: str | None) -> pd.DataFrame:
     return rec
 
 
+def require_users(rec: pd.DataFrame, users: int, sla: str = "server") -> pd.DataFrame:
+    """Keep configurations whose measured capacity under the SLA (annotate) is at least `users`."""
+    if not users or rec.empty:
+        return rec
+    col = f"capacity_{sla}"
+    if col not in rec:
+        return rec.iloc[0:0]
+    return rec[rec[col].fillna(-1) >= users].reset_index(drop=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--vram-gb", type=float, required=True,
@@ -119,6 +132,8 @@ def main() -> None:
     ap.add_argument("--hw", help="hw_id whose measured speeds to report (default: first CUDA hw)")
     ap.add_argument("--bandwidth-gbs", type=float,
                     help="peak memory bandwidth of unmeasured target hardware: predict speed instead")
+    ap.add_argument("--users", type=int, default=0, help="concurrent users the configuration must serve (measured)")
+    ap.add_argument("--sla", choices=["server", "interactive"], default="server", help="latency SLA for --users")
     ap.add_argument("--top", type=int, default=5)
     args = ap.parse_args()
 
@@ -141,9 +156,11 @@ def main() -> None:
     c = candidates(summary, quality, gates, load_model_cfgs(), ctx, cfg["inference"]["max_output_tokens"],
                    cfg["memory_budget"]["overhead_gb"], hw, args.bandwidth_gbs, effs)
     rec = annotate(recommend(c, args.vram_gb, args.ram_gb, args.min_tps, allow_offload=args.ram_gb > 0), tables, hw)
+    rec = require_users(rec, args.users, args.sla)
     src = (f"speeds predicted for {args.bandwidth_gbs} GB/s from efficiencies {effs}" if args.bandwidth_gbs
            else f"speeds measured on {hw}")
-    print(f"budget: {args.vram_gb} GiB VRAM + {args.ram_gb} GiB RAM, ctx {ctx}, min {args.min_tps} tok/s; {src}")
+    users = f", >= {args.users} users within the {args.sla} SLA (measured)" if args.users else ""
+    print(f"budget: {args.vram_gb} GiB VRAM + {args.ram_gb} GiB RAM, ctx {ctx}, min {args.min_tps} tok/s{users}; {src}")
     with pd.option_context("display.width", 200, "display.float_format", "{:.3f}".format):
         print(rec.head(args.top).to_string(index=False) if not rec.empty else "no configuration fits")
 
