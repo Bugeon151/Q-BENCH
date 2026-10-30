@@ -52,3 +52,17 @@ def test_q8_reference_when_f16_missing():
     t = cs.flip_table(items)
     r = t[(t.task == "mmlu")].iloc[0]
     assert (r.quant, r.reference, r.kind) == ("Q4_K_M", "Q8_0", "vs_ref") and r.flips == pytest.approx(0.24)
+
+
+def test_noise_floor_same_config_or_quantized_proxy():
+    """Q4 uses its own re-run; Q6 (no re-run) uses the quantized re-runs, never the F16 re-run."""
+    ref = [True] * 80 + [False] * 20
+    items = pd.DataFrame(run("F16", ref) + run("Q4_K_M", [False] * 10 + [True] * 90) +
+                         run("Q6_K", [False] * 5 + [True] * 95), columns=COLS)
+    rerun = pd.DataFrame(run("F16", [False] + [True] * 79 + [False] * 20) +       # 1 % noise
+                         run("Q4_K_M", [False] * 6 + [True] * 94), columns=COLS)  # 4 % noise
+    t = cs.flip_table(items, rerun)
+    v = t[(t.kind == "vs_ref") & (t.task == "mmlu")].set_index("quant")
+    assert v.loc["Q4_K_M", "noise_basis"] == "same" and v.loc["Q4_K_M", "noise_floor"] == pytest.approx(0.04)
+    assert v.loc["Q6_K", "noise_basis"] == "proxy:Q4_K_M" and v.loc["Q6_K", "noise_floor"] == pytest.approx(0.04)
+    assert v.loc["Q6_K", "attributable"] == pytest.approx(v.loc["Q6_K", "flips"] - 0.04)
