@@ -1,0 +1,13 @@
+hw_id,model,quant,task,n,expected_n,correct,accuracy
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,F16,gsm8k,250,250,174,0.696
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,F16,humaneval,164,164,87,0.5304878048780488
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,F16,mmlu,570,570,309,0.5421052631578948
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,Q4_K_M,gsm8k,250,250,174,0.696
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,Q4_K_M,humaneval,164,164,82,0.5
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,Q4_K_M,mmlu,570,570,293,0.5140350877192983
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q4_K_M,gsm8k,250,250,220,0.88
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q4_K_M,humaneval,164,164,112,0.6829268292682927
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q4_K_M,mmlu,570,570,361,0.6333333333333333
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q4_K_M,gsm8k,250,250,232,0.928
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q4_K_M,humaneval,164,164,130,0.7926829268292683
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q4_K_M,mmlu,570,570,413,0.724561403508772

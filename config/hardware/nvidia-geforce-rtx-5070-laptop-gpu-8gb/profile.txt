@@ -1,0 +1,15 @@
+Q-Bench Experimental Environment (hw_id: nvidia-geforce-rtx-5070-laptop-gpu-8gb)
+
+Fri Oct 30 11:08:59     2026
+
+os: Windows 11 (build 10.0.26200)
+cpu: Intel(R) Core(TM) Ultra 9 275HX
+gpu: NVIDIA GeForce RTX 5070 Laptop GPU
+gpu_driver: 591.91
+memory_bytes: 33690697728
+vram_bytes: 8546942976
+backend: CUDA
+hw_id: nvidia-geforce-rtx-5070-laptop-gpu-8gb
+
+name, memory.total [MiB], driver_version
+NVIDIA GeForce RTX 5070 Laptop GPU, 8151 MiB, 591.91

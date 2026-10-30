@@ -1,0 +1,257 @@
+{
+  "created_utc": "2026-10-30T02:16:30.405915+00:00",
+  "hardware": {
+    "hw_id": "nvidia-geforce-rtx-5070-laptop-gpu-8gb",
+    "os": "Windows 11 (build 10.0.26200)",
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "gpu_driver": "591.91",
+    "backend": "CUDA",
+    "memory_bytes": 33690697728,
+    "vram_bytes": 8546942976
+  },
+  "selection": {
+    "mode": "recommend",
+    "vram_gib": 7.562,
+    "min_tps": 0.0,
+    "top": [
+      {
+        "model": "Qwen2.5-7B-Instruct",
+        "quant": "Q6_K",
+        "need_gib": 6.029296875,
+        "need_basis": "measured",
+        "quality": 0.8261563257737841,
+        "mmlu": 0.7192982456140351,
+        "gsm8k": 0.936,
+        "humaneval": 0.823170731707317,
+        "gate": "INCONCLUSIVE",
+        "tps": 49.172959999999996,
+        "tps_offloaded": false,
+        "fits": "gpu"
+      },
+      {
+        "model": "Qwen2.5-7B-Instruct",
+        "quant": "Q5_K_M",
+        "need_gib": 5.3994140625,
+        "need_basis": "measured",
+        "quality": 0.8206929111396377,
+        "mmlu": 0.7192982456140351,
+        "gsm8k": 0.944,
+        "humaneval": 0.7987804878048781,
+        "gate": "INCONCLUSIVE",
+        "tps": 60.98586,
+        "tps_offloaded": false,
+        "fits": "gpu"
+      },
+      {
+        "model": "Qwen2.5-7B-Instruct",
+        "quant": "Q4_K_M",
+        "need_gib": 4.7548828125,
+        "need_basis": "measured",
+        "quality": 0.8171139637712167,
+        "mmlu": 0.724561403508772,
+        "gsm8k": 0.928,
+        "humaneval": 0.7987804878048781,
+        "gate": "INCONCLUSIVE",
+        "tps": 69.30852999999999,
+        "tps_offloaded": false,
+        "fits": "gpu"
+      }
+    ]
+  },
+  "model": {
+    "name": "Qwen2.5-7B-Instruct",
+    "quant": "Q6_K",
+    "gguf": "models/quantized/Qwen2.5-7B-Instruct-Q6_K.gguf",
+    "bytes": 6254199360,
+    "sha256": "9a81764057b8a25a37a8c9ecff1e13bbb7deaf672bd777533fcfa404cc6fda80"
+  },
+  "runtime": {
+    "llama_server": "external/llama.cpp/build/bin/llama-server.exe",
+    "llama_server_sha256": "e209b447db886f335af0e615cb06323e42c22c3b852019a80efb17e029689044",
+    "llama_cpp_commit": "c6824a9e42ceeda5d58089fa274ddd816e59e68e",
+    "prebuilt": [
+      "release b11007",
+      "cuda 13.4",
+      "llama-b11007-bin-win-cuda-13.4-x64.zip b556f369a5429a84ab55dd262122a55e335ec90e88975d505d250bfdf4e5899a",
+      "cudart-llama-bin-win-cuda-13.4-x64.zip 738f8c251ac22b70c3ae6f83a10cf222725df0395246a2cf58f32bdb85fbe668"
+    ]
+  },
+  "sample": {
+    "seed": 42,
+    "datasets": {
+      "mmlu": {
+        "repo": "cais/mmlu",
+        "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+        "file": "all/test-00000-of-00001.parquet",
+        "n": 570
+      },
+      "gsm8k": {
+        "repo": "openai/gsm8k",
+        "revision": "740312add88f781978c0658806c59bc2815b9866",
+        "file": "main/test-00000-of-00001.parquet",
+        "n": 250
+      },
+      "humaneval": {
+        "repo": "openai/openai_humaneval",
+        "revision": "7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544",
+        "file": "openai_humaneval/test-00000-of-00001.parquet",
+        "n": 164
+      }
+    }
+  },
+  "server": {
+    "url": "http://127.0.0.1:8089/v1",
+    "load_sec": 4.6,
+    "args": {
+      "n_parallel": 4,
+      "ctx_per_slot": 4096,
+      "n_gpu_layers": "auto"
+    }
+  },
+  "acceptance": {
+    "items_per_task": 20,
+    "reference_hw_id": "nvidia-geforce-rtx-5070-laptop-gpu-8gb",
+    "tasks": {
+      "mmlu": {
+        "n": 20,
+        "ref_acc": 0.6,
+        "cand_acc": 0.6,
+        "diff": 0.0,
+        "diff_ci_low": 0.0,
+        "diff_ci_high": 0.0,
+        "p_mcnemar": 1.0,
+        "verdict": "PASS",
+        "p_discordant": 0.0,
+        "n_needed": 0.0
+      },
+      "gsm8k": {
+        "n": 20,
+        "ref_acc": 1.0,
+        "cand_acc": 1.0,
+        "diff": 0.0,
+        "diff_ci_low": 0.0,
+        "diff_ci_high": 0.0,
+        "p_mcnemar": 1.0,
+        "verdict": "PASS",
+        "p_discordant": 0.0,
+        "n_needed": 0.0
+      },
+      "humaneval": {
+        "n": 20,
+        "ref_acc": 1.0,
+        "cand_acc": 1.0,
+        "diff": 0.0,
+        "diff_ci_low": 0.0,
+        "diff_ci_high": 0.0,
+        "p_mcnemar": 1.0,
+        "verdict": "PASS",
+        "p_discordant": 0.0,
+        "n_needed": 0.0
+      }
+    },
+    "verdict": "OK"
+  },
+  "smoke": {
+    "reply": "ready",
+    "sec": 0.22
+  },
+  "capacity": {
+    "slots": 16,
+    "ctx_per_slot": 1024,
+    "max_tokens": 256,
+    "sla_percentile": 95,
+    "sla": {
+      "server": {
+        "ttft_s": 2.0,
+        "tpot_s": 0.2
+      },
+      "interactive": {
+        "ttft_s": 0.45,
+        "tpot_s": 0.04
+      }
+    },
+    "users": {
+      "server": 8,
+      "interactive": 1
+    },
+    "levels": [
+      {
+        "level": 1,
+        "n": 16,
+        "out_tps_total": 26.1245855869,
+        "tokens_mean": 222.1875,
+        "ttft_p50_s": 0.20808045,
+        "tpot_p50_s": 0.0373328081,
+        "ttft_p95_s": 0.273077325,
+        "tpot_p95_s": 0.0382680895,
+        "ttft_p99_s": 0.328079625,
+        "tpot_p99_s": 0.0390843374,
+        "user_tps_p50": 26.7860911414,
+        "meets_server": true,
+        "meets_interactive": true
+      },
+      {
+        "level": 2,
+        "n": 16,
+        "out_tps_total": 45.4989339944,
+        "tokens_mean": 219.8125,
+        "ttft_p50_s": 0.2776033499,
+        "tpot_p50_s": 0.0414073396,
+        "ttft_p95_s": 0.382607675,
+        "tpot_p95_s": 0.0425163506,
+        "ttft_p99_s": 0.3831370551,
+        "tpot_p99_s": 0.0430963605,
+        "user_tps_p50": 24.1503078619,
+        "meets_server": true,
+        "meets_interactive": false
+      },
+      {
+        "level": 4,
+        "n": 16,
+        "out_tps_total": 74.3528224713,
+        "tokens_mean": 232.75,
+        "ttft_p50_s": 0.51933175,
+        "tpot_p50_s": 0.0489991163,
+        "ttft_p95_s": 0.759893775,
+        "tpot_p95_s": 0.051197922,
+        "ttft_p99_s": 0.760131795,
+        "tpot_p99_s": 0.0519764613,
+        "user_tps_p50": 20.4085313376,
+        "meets_server": true,
+        "meets_interactive": false
+      },
+      {
+        "level": 8,
+        "n": 32,
+        "out_tps_total": 96.0592877769,
+        "tokens_mean": 230.65625,
+        "ttft_p50_s": 0.62150955,
+        "tpot_p50_s": 0.0742944639,
+        "ttft_p95_s": 1.244173765,
+        "tpot_p95_s": 0.0777594431,
+        "ttft_p99_s": 1.2458214631,
+        "tpot_p99_s": 0.0779464542,
+        "user_tps_p50": 13.4599531002,
+        "meets_server": true,
+        "meets_interactive": false
+      },
+      {
+        "level": 16,
+        "n": 64,
+        "out_tps_total": 115.5732485089,
+        "tokens_mean": 235.96875,
+        "ttft_p50_s": 0.75373915,
+        "tpot_p50_s": 0.1235666101,
+        "ttft_p95_s": 2.9817084151,
+        "tpot_p95_s": 0.1306838309,
+        "ttft_p99_s": 2.983165807,
+        "tpot_p99_s": 0.1308668083,
+        "user_tps_p50": 8.0928011157,
+        "meets_server": false,
+        "meets_interactive": false
+      }
+    ]
+  },
+  "status": "VERIFIED"
+}

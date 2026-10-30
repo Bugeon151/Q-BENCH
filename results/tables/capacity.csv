@@ -1,0 +1,6 @@
+hw_id,model,quant,capacity_server,out_tps_total_at_server,capacity_interactive,out_tps_total_at_interactive,max_out_tps_total
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-1.5B-Instruct,Q4_K_M,16,759.3382008791759,16,759.3382008791759,759.3382008791759
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-14B-Instruct,Q4_K_M,2,20.421830297376932,0,,30.744760201280197
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q4_K_M,16,590.3110365817631,8,493.01500033251665,590.3110365817631
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q4_K_M,16,237.64193271407325,4,151.89164868440335,237.64193271407325
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q6_K,8,96.05928777687367,1,26.124585586900213,115.57324850888044

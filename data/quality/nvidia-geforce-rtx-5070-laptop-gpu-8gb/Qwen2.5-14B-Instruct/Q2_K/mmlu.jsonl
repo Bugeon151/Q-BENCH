@@ -1,0 +1,570 @@
+{"id": 17, "pred": "D", "correct": false, "response": "D. (3,6)"}
+{"id": 14, "pred": "C", "correct": true, "response": "C\n\nThe maximum order of an element in the symmetric group \\(S_n\\)"}
+{"id": 3, "pred": "C", "correct": false, "response": "The correct answer is C. True, False.\n\nStatement 1 is true because"}
+{"id": 13, "pred": "B", "correct": false, "response": "B. (x + 1)(x + 4)(x \u2212 "}
+{"id": 28, "pred": "C", "correct": false, "response": "The correct answer is C. True, False.\n\nStatement 1 is true because"}
+{"id": 31, "pred": "B", "correct": true, "response": "B. abelian group\n\nHere's the reasoning: Given that (ab)^"}
+{"id": 35, "pred": "B", "correct": true, "response": "B. 4\n\nThe degree of the field extension Q(sqrt(2),"}
+{"id": 81, "pred": "D", "correct": true, "response": "The correct answer is D. False, True.\n\nExplanation:\nStatement 1 is"}
+{"id": 106, "pred": "A", "correct": true, "response": "A. Epigastric"}
+{"id": 86, "pred": "C", "correct": false, "response": "C. True, False\n\nExplanation:\nStatement 1 is true because the formula"}
+{"id": 107, "pred": "D", "correct": false, "response": "D. Saliva\n\nHowever, please note that while saliva is indeed part of"}
+{"id": 94, "pred": "A", "correct": false, "response": "The correct answer is:\n\nA. True, True\n\nStatement 1 is true"}
+{"id": 108, "pred": "B", "correct": false, "response": "B. Eight weeks post-fertilization. \n\nThis is the correct answer as"}
+{"id": 122, "pred": "C", "correct": false, "response": "C. left submandibular lymph node.\n\nPlease note that while I provide"}
+{"id": 155, "pred": "B", "correct": false, "response": "B. Outward"}
+{"id": 150, "pred": "C", "correct": false, "response": "C\n\nThe correct answer is C. The mental foramen, which is located"}
+{"id": 123, "pred": "C", "correct": false, "response": "C. Mesoderm formation and occurs before neurulation. (Note: The"}
+{"id": 208, "pred": "D", "correct": true, "response": "D. Respiration"}
+{"id": 159, "pred": "B", "correct": false, "response": "B. Temporalis\n\nThe temporalis muscle is primarily responsible for initiating the"}
+{"id": 236, "pred": "D", "correct": true, "response": "D. Its distance from you\n\nThe correct answer is D. With both the"}
+{"id": 229, "pred": "B", "correct": false, "response": "B. \n\nThe correct answer is B, as the cricopharynge"}
+{"id": 275, "pred": "C", "correct": true, "response": "C\n\nKepler's laws specifically describe the motion of planets around the Sun,"}
+{"id": 291, "pred": "D", "correct": true, "response": "D. Dione\n\nThe Galilean moons are the four largest moons of"}
+{"id": 306, "pred": "D", "correct": true, "response": "D. The Moon's umbra must touch the area where you are located."}
+{"id": 322, "pred": "B", "correct": true, "response": "B. H \u2192 He \u2192 C \u2192 O \u2192 Ne \u2192 Si \u2192 Fe\n\n"}
+{"id": 342, "pred": "D", "correct": false, "response": "D. A kilogram of bricks\n\nThe weight of objects on the moon depends"}
+{"id": 385, "pred": "C", "correct": true, "response": "C."}
+{"id": 343, "pred": "D", "correct": true, "response": "D. It's too diffuse\n\nThe Sun's corona is actually very hot"}
+{"id": 374, "pred": "C", "correct": true, "response": "C. \u03bd Neutrinos\n\nNeutrinos have the weakest interactions with other"}
+{"id": 349, "pred": "A", "correct": true, "response": "A. Io did have impact craters but they have all been buried in lava"}
+{"id": 398, "pred": "C", "correct": true, "response": "C. Independent, Perpetual, Owns its own assets\n\nExplanation:"}
+{"id": 399, "pred": "D", "correct": true, "response": "D. Public services, social, economic and environmental\n\nThe correct answer is D"}
+{"id": 400, "pred": "B", "correct": true, "response": "B. Deceptive pricing\n\nThe act of obscuring the true cost of an"}
+{"id": 406, "pred": null, "correct": false, "response": "The format of your question seems to be asking for a selection based on a list"}
+{"id": 414, "pred": "C", "correct": true, "response": "C. Environmental management systems, ISO14001, EMAS\n\n"}
+{"id": 432, "pred": "D", "correct": true, "response": "D. Locus of control"}
+{"id": 422, "pred": "C", "correct": true, "response": "C. Decision, Planned behaviour, Rationality\n\nThe correct answer is C."}
+{"id": 430, "pred": "B", "correct": true, "response": "B. Damaged relationships, Sullied reputation, Lost opportunities\n\nUnethical"}
+{"id": 435, "pred": "D", "correct": true, "response": "D. Huge power, Major contribution, Business malpractice\n\nThe correct answer reflects"}
+{"id": 484, "pred": "B", "correct": false, "response": "B. Professional, Individual, Personal, Organizational\n\nThe correct answer is B"}
+{"id": 509, "pred": "B", "correct": false, "response": "B. 90 minutes.\n\nAccording to the guidelines based on clinical knowledge as"}
+{"id": 527, "pred": "B", "correct": true, "response": "B. 60-100 bpm."}
+{"id": 622, "pred": "C", "correct": true, "response": "C. The general public."}
+{"id": 550, "pred": "D", "correct": true, "response": "D\n\nSystemic Sclerosis, also known as Systemic Lupus Ery"}
+{"id": 585, "pred": "B", "correct": true, "response": "B. 2 seconds.\n\nHowever, please note that the correct answer regarding the"}
+{"id": 680, "pred": "C", "correct": true, "response": "C."}
+{"id": 637, "pred": "D", "correct": true, "response": "D. Any patient who is acutely unwell pre-operatively or post-oper"}
+{"id": 663, "pred": "A", "correct": false, "response": "A. That the patient is able to swallow properly.\n\nThis is the correct answer"}
+{"id": 672, "pred": "D", "correct": true, "response": "D. 46\n\nSomatic cells in humans contain 46 chromosomes"}
+{"id": 722, "pred": "B", "correct": false, "response": "B. remains relatively unchanged.\n\nPlease note, based on the context of high intensity"}
+{"id": 763, "pred": "D", "correct": true, "response": "D. Chloroplast\n\nIn plant cells, proteins destined for chloroplasts require"}
+{"id": 769, "pred": "C", "correct": true, "response": "C. The correct answer is C. Both instinctive and learned. The experiment"}
+{"id": 772, "pred": "D", "correct": true, "response": "D. They lower the activation energy, thereby speeding up the conversion of reactants"}
+{"id": 811, "pred": "D", "correct": true, "response": "D. Capacity for long-distance dispersal"}
+{"id": 777, "pred": "D", "correct": true, "response": "D. primary succession\n\nPrimary succession refers to the ecological process that occurs on a"}
+{"id": 810, "pred": "B", "correct": true, "response": "B\n\nThe evolution of lung tissue capable of supporting respiration without additional gas exchange"}
+{"id": 823, "pred": "C", "correct": true, "response": "C. Tight junctions are typically involved in creating continuous \"seals\" along"}
+{"id": 826, "pred": null, "correct": false, "response": "The correct answer is none of the options provided that would be accurate when comparing air"}
+{"id": 849, "pred": "D", "correct": true, "response": "D. Reverse transcriptase\n\nThe correct answer is D. Reverse transcriptase."}
+{"id": 868, "pred": "C", "correct": true, "response": "C. The number of action potentials per second\n\nThe ability of the brain to"}
+{"id": 916, "pred": "D", "correct": true, "response": "D. Arsenic-doped silicon\n\nArsenic-doped silicon is classified"}
+{"id": 922, "pred": "C", "correct": false, "response": "C. I and III only\n\nExplanation:\nI. This statement is correct because"}
+{"id": 930, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. g = 1.950"}
+{"id": 941, "pred": "B", "correct": false, "response": "B\n\nThe difference in ppm values is calculated as follows: 128"}
+{"id": 942, "pred": "D", "correct": false, "response": "D\n\nThe answer is D. However, to adhere to the instruction of only"}
+{"id": 977, "pred": "B", "correct": true, "response": "B. 820\n\nThe correct answer is B, which corresponds to"}
+{"id": 943, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. 5.18 mT."}
+{"id": 981, "pred": "C", "correct": false, "response": "C. Bres for mI = -\u00bd = 333."}
+{"id": 1016, "pred": "D", "correct": true, "response": "D. One-time pad"}
+{"id": 983, "pred": "D", "correct": true, "response": "D. Potassium hydrogen phthalate\n\nThe correct answer is D. Pot"}
+{"id": 985, "pred": "C", "correct": false, "response": "C\n\nThe answer is C. Given the information provided, we can deduce"}
+{"id": 1005, "pred": "C", "correct": true, "response": "C. If the owner is allowed to delete a file, dangling links may result"}
+{"id": 1017, "pred": "B", "correct": true, "response": "B. Finding a shortest cycle in G\n\nThe correct answer is B. Here"}
+{"id": 1027, "pred": "D", "correct": true, "response": "D. I, II, and IV\n\nExplanation:\nI. True. In"}
+{"id": 1064, "pred": "B", "correct": true, "response": "B\n\nThe total time for the compilation on the diskless workstation would be the"}
+{"id": 1055, "pred": "D", "correct": true, "response": "D. I and II only\n\nExplanation:\nIn a finite directed acyclic graph"}
+{"id": 1089, "pred": "C", "correct": true, "response": "C."}
+{"id": 1073, "pred": "D", "correct": false, "response": "D\n\nThe correct answer is D: 1/w + 1/x <"}
+{"id": 1077, "pred": "C", "correct": true, "response": "C. Type compatibility\n\nHowever, to adhere strictly to your instruction and only provide"}
+{"id": 1078, "pred": "D", "correct": true, "response": "D. II and III\n\nExplanation:\nI. This statement is incorrect because dat"}
+{"id": 1137, "pred": "D", "correct": true, "response": "D."}
+{"id": 1124, "pred": "C", "correct": false, "response": "C. f has a relative minimum at (0, 0).\n\nTo determine"}
+{"id": 1130, "pred": "D", "correct": true, "response": "D\n\nSince A and B are similar matrices, we know there exists an invert"}
+{"id": 1167, "pred": "D", "correct": true, "response": "D. Every solution is a scalar multiple of (-5, 1, "}
+{"id": 1144, "pred": "B", "correct": false, "response": "B. Only (IV)\n\nThe interval (\u2212\u221e,\u221e) represents the"}
+{"id": 1177, "pred": "C", "correct": false, "response": "C\n\nExplanation:\nGiven that \\(f(2n) = n^2"}
+{"id": 1183, "pred": "D", "correct": false, "response": "D. \n\nThe answer is based on understanding that the cosine function oscillates between"}
+{"id": 1184, "pred": "C", "correct": true, "response": "C. The ring of continuous real-valued functions on [0, 1"}
+{"id": 1194, "pred": null, "correct": false, "response": "To solve this problem, we need to determine the size of set X based on"}
+{"id": 1204, "pred": "A", "correct": true, "response": "A. mRNA, tRNA and ribosomes."}
+{"id": 1195, "pred": "B", "correct": false, "response": "B. (-1, 4)\n\nHere's how we can determine this:\n\n"}
+{"id": 1210, "pred": "D", "correct": false, "response": "D. There is seizure-like activity in the dopamine brain areas.\n\nAgitation and"}
+{"id": 1212, "pred": "C", "correct": true, "response": "C. in the nucleus.\n\nTranscription, the process of synthesizing an mRNA"}
+{"id": 1250, "pred": "B", "correct": true, "response": "B. Attachment of more amino acids via peptide bonds.\n\nModification processes like lipidation"}
+{"id": 1254, "pred": "C", "correct": true, "response": "C. Depersonalization disorder\n\nThe description given matches the symptoms of dep"}
+{"id": 1264, "pred": "D", "correct": true, "response": "D. A lack of oxygen.\n\nPhosphocreatine resynthesis, or"}
+{"id": 1276, "pred": "D", "correct": true, "response": "D\n\nThe modification changes a single nucleotide from C to U in the sequence"}
+{"id": 1298, "pred": "C", "correct": false, "response": "C. in the tricarboxylic acid cycle (Krebs"}
+{"id": 1341, "pred": "D", "correct": true, "response": "D. uptake and oxidation by other tissues. \n\nLactate that leaves muscle"}
+{"id": 1363, "pred": "D", "correct": true, "response": "D. a single Y chromosome from the father.\n\nIn humans, sex is determined"}
+{"id": 1386, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. 0.38 mJ.\n\n"}
+{"id": 1387, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. Given the speed of the meter stick as"}
+{"id": 1400, "pred": "D", "correct": true, "response": "D. The orbits would remain unchanged.\n\nIn reality, the gravitational mass of a"}
+{"id": 1419, "pred": "D", "correct": false, "response": "The correct answer is D. 10,000.\n\nThe resolving"}
+{"id": 1402, "pred": "C", "correct": false, "response": "C\n\nThe correct answer is C. When the quantum efficiency of a detector is"}
+{"id": 1427, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. 0.1 V.\n\nTo calculate"}
+{"id": 1432, "pred": "D", "correct": true, "response": "D. The correct answer is D. In a single-electron atom when the"}
+{"id": 1451, "pred": "C", "correct": false, "response": "C\n\nThe correct answer is C. In a single-electron atom, when"}
+{"id": 1440, "pred": "B", "correct": false, "response": "The correct answer is B. c\n\nExplanation:\nGiven that the wavelengths observed in"}
+{"id": 1464, "pred": "A", "correct": false, "response": "A. 4.9 m\n\nThe correct answer is A. Given that"}
+{"id": 1488, "pred": "A", "correct": true, "response": "A. It is a scanner which works by injecting packets to a range of addresses"}
+{"id": 1499, "pred": "C", "correct": true, "response": "C. Compiling the program with address sanitizer (ASAN) will make the"}
+{"id": 1504, "pred": "C", "correct": true, "response": "C. Session layer\n\nBrute-force attacks targeting access credentials typically involve attempting to"}
+{"id": 1517, "pred": "B", "correct": true, "response": "B. backdoor\n\nA backdoor, in the context of computer security,"}
+{"id": 1522, "pred": "B", "correct": true, "response": "B. Encryption and decryption provide confidentiality (which is implied by the term \"Privacy"}
+{"id": 1525, "pred": "A", "correct": true, "response": "The correct answer is:\nA. It generates each different input by modifying a prior"}
+{"id": 1536, "pred": "C", "correct": true, "response": "The correct answer is C. True, False.\n\nStatement 1 is true because"}
+{"id": 1539, "pred": "B", "correct": true, "response": "B. Metasploit\n\nMetasploit is a cybersecurity tool that includes a"}
+{"id": 1545, "pred": "B", "correct": true, "response": "B. It is a sequence of nops preceding injected shellcode, useful when"}
+{"id": 1583, "pred": "B", "correct": true, "response": "B. 2 A\n\nIn a series circuit, the current remains the same"}
+{"id": 1566, "pred": "B", "correct": false, "response": "B. To locate live systems\n\n(Ping sweeps are typically used to discover which"}
+{"id": 1594, "pred": "C", "correct": true, "response": "C. remains unchanged\n\nIn the context of conservation of angular momentum, when a"}
+{"id": 1599, "pred": "B", "correct": false, "response": "B\n\nHowever, to provide a more accurate response based on the question's context"}
+{"id": 1611, "pred": "D", "correct": false, "response": "D. Need more information.\n\nIn reality, the current in the LED lamp and"}
+{"id": 1610, "pred": "A", "correct": true, "response": "A. electrons\n\nThermal conduction primarily involves the movement of electrons, as"}
+{"id": 1697, "pred": "A", "correct": false, "response": "A. gamma radiation.\n\nIn the context of a fusion reaction where hydrogen isotopes"}
+{"id": 1731, "pred": "B", "correct": true, "response": "B. The normal force on the ball is greater than mg always.\n\nIn this"}
+{"id": 1764, "pred": "D", "correct": true, "response": "D. Ejected neutrons\n\nIn a fission reactor, chain reactions are"}
+{"id": 1773, "pred": "A", "correct": true, "response": "A. heats water\n\nIn a typical nuclear fission reactor, the process involves"}
+{"id": 1791, "pred": "B", "correct": true, "response": "B. are parts of one whole.\n\nIn Einstein's theory of relativity,"}
+{"id": 1814, "pred": "C", "correct": false, "response": "C. (i), (ii), and (iii) only\n\nA G"}
+{"id": 1838, "pred": "D", "correct": false, "response": "D. Unbiased and consistent but inefficient coefficient estimates.\n\nIncluding relevant lagged values"}
+{"id": 1854, "pred": "B", "correct": true, "response": "B. (i) and (iii) only\n\nThe dependent variable in a"}
+{"id": 1855, "pred": "A", "correct": true, "response": "A. (ii) and (iv) only\n\nExplanation:\n- (ii"}
+{"id": 1860, "pred": "A", "correct": false, "response": "A. (ii) and (iv) only is incorrect because it doesn't"}
+{"id": 1865, "pred": "B", "correct": true, "response": "B. Zero skewness and a kurtosis of three\n\nThe Bera"}
+{"id": 1873, "pred": "A", "correct": true, "response": "A. (ii) and (iv) only\n\nExplanation:\n- Statement ("}
+{"id": 1876, "pred": "D", "correct": false, "response": "D. (i), (ii), (iii), and (iv)\n\nExplanation"}
+{"id": 1882, "pred": "A", "correct": true, "response": "A. (ii) and (iv) only\n\nThe correct answer is A"}
+{"id": 1893, "pred": "C", "correct": true, "response": "C. Biased and inconsistent\n\nWhen Ordinary Least Squares (OLS) is"}
+{"id": 1922, "pred": "A", "correct": true, "response": "A. NOR, NAND. \n\nThe correct answer is A because both NOR and"}
+{"id": 1948, "pred": "D", "correct": false, "response": "D\n\nThe correct answer is D, which corresponds to a duty cycle value of"}
+{"id": 1949, "pred": "C", "correct": true, "response": "C. \n\nThe binary number system uses only two digits, 0 and "}
+{"id": 1988, "pred": "C", "correct": true, "response": "C. \n\nA latch is primarily level sensitive, meaning its state can change based"}
+{"id": 1960, "pred": "B", "correct": false, "response": "B. The correct answer is B. Speed control by variation of field flux typically"}
+{"id": 2007, "pred": "A", "correct": false, "response": "A. and control unit on a single chip.\n\nThe correct answer is A."}
+{"id": 1995, "pred": "D", "correct": true, "response": "D. all of above. \n\nElectrode materials used in resistance welding need"}
+{"id": 2031, "pred": "A", "correct": true, "response": "A. Snubber circuit.\n\nIn an SCR (Silicon Controlled Rectifier)"}
+{"id": 2036, "pred": "C", "correct": true, "response": "C. \n\nThe correct answer is C, which indicates that a quartz crystal oscillator"}
+{"id": 2057, "pred": "B", "correct": false, "response": "B. 40.\n\nPlease note that while I'm designed to assist as"}
+{"id": 2066, "pred": "C", "correct": true, "response": "C\n\nMs. Perez drove a total of 40 miles over 5"}
+{"id": 2119, "pred": "B", "correct": true, "response": "B. divide both sides by 6"}
+{"id": 2199, "pred": "B", "correct": false, "response": "B. 144"}
+{"id": 2156, "pred": null, "correct": false, "response": "The correct answer is the ratio of 15 toucans to 6"}
+{"id": 2217, "pred": "B", "correct": false, "response": "B\n\nThe surface area S can be calculated using the given dimensions and the formula"}
+{"id": 2321, "pred": "B", "correct": true, "response": "B. 8 \u00d7 t = 56\n\nThe correct answer is B"}
+{"id": 2385, "pred": "B", "correct": false, "response": "B. 0.0406"}
+{"id": 2324, "pred": "D", "correct": true, "response": "D\n\nThe correct answer is D. (2x4)x6, because"}
+{"id": 2433, "pred": "A", "correct": true, "response": "A. 7 more than 2 times m\n\nThe correct answer is A"}
+{"id": 2462, "pred": "B", "correct": true, "response": "B. (\u2200x)(Ax \u2283 ~Px)"}
+{"id": 2434, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. To find the total number of pieces,"}
+{"id": 2490, "pred": "C", "correct": false, "response": "C"}
+{"id": 2463, "pred": null, "correct": false, "response": "To determine whether the given argument is valid or invalid, we first need to construct"}
+{"id": 2468, "pred": "C", "correct": false, "response": "C\n\nThe correct answer is C: Consistent. Consistent valuation when D"}
+{"id": 2507, "pred": null, "correct": false, "response": "None of the provided options correctly translate \"Sheena is a punk rocker\" into"}
+{"id": 2512, "pred": null, "correct": false, "response": "The correct answer would require identifying the logical structure and accurately translating it into natural language"}
+{"id": 2520, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. Here's the explanation:\n\n- \"Some"}
+{"id": 2524, "pred": null, "correct": false, "response": "To determine whether the given argument is valid or invalid, we first need to construct"}
+{"id": 2550, "pred": "A", "correct": true, "response": "A. ~(\u2200x)(Lx \u2283 Rx)"}
+{"id": 2540, "pred": "B", "correct": false, "response": "B\n\nExplanation:\nTo determine the validity of the given argument using indirect truth tables"}
+{"id": 2569, "pred": "D", "correct": false, "response": "D does not seem to be correct based on the provided options and the context of"}
+{"id": 2583, "pred": "B", "correct": true, "response": "B. 56%"}
+{"id": 2571, "pred": "B", "correct": false, "response": "B. 62% \n\nPlease note that as an assistant, my response"}
+{"id": 2608, "pred": "D", "correct": false, "response": "D. 81%\n\nPlease note that as an assistant, my responses related"}
+{"id": 2610, "pred": null, "correct": false, "response": "The correct answer is not provided directly in the question's context since it doesn't"}
+{"id": 2615, "pred": "A", "correct": true, "response": "A. 26% \n\nThe correct answer is A, which corresponds to"}
+{"id": 2631, "pred": "D", "correct": false, "response": "D\n\nPlease note that providing an exact percentage for such a sensitive topic like physical"}
+{"id": 2636, "pred": "B", "correct": true, "response": "B. Canada\n\nIn 2017, among the given options,"}
+{"id": 2645, "pred": "D", "correct": false, "response": "D\n\nThe correct answer is D, which represents 8%. However, it"}
+{"id": 2668, "pred": "B", "correct": false, "response": "B. 98%\n\nThis question pertains to public opinion during the Water"}
+{"id": 2698, "pred": "B", "correct": false, "response": "B. It is the best-studied bacteriophage, a virus that"}
+{"id": 2704, "pred": "C", "correct": true, "response": "C. 54%\n\nThe calculation involves understanding that homozygosity refers"}
+{"id": 2709, "pred": "A", "correct": true, "response": "A. Divergent evolution\n\nIn this case, the process being described is"}
+{"id": 2712, "pred": "A", "correct": true, "response": "A. humans and chimpanzees share a relatively recent common ancestor.\n\nThis is"}
+{"id": 2733, "pred": "D", "correct": true, "response": "D. Deciduous forests\n\nThe answer is D, as deciduous forests"}
+{"id": 2791, "pred": "D", "correct": true, "response": "D\n\nThe correct answer is D. A cline refers to a gradation"}
+{"id": 2792, "pred": "C", "correct": false, "response": "C. 50%\n\nThe correct answer is C. If both parents are"}
+{"id": 2917, "pred": "B", "correct": true, "response": "B\n\nThe similarity between the structure of ATP synthase in bacteria and that in"}
+{"id": 2941, "pred": "A", "correct": true, "response": "The correct answer is A. Positive feedback is a process that occurs when a change"}
+{"id": 2959, "pred": "D", "correct": true, "response": "D. Plasmolysis is the process where water moves out of the cell"}
+{"id": 3011, "pred": "C", "correct": false, "response": "C. The mass of the displaced water\n\nIn this context, the key information"}
+{"id": 3021, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. C6H6 (Benzene"}
+{"id": 3033, "pred": "A", "correct": false, "response": "A. The 1s peak has the lowest energy. \n\nIn the photo"}
+{"id": 3046, "pred": "C", "correct": false, "response": "C\n\nThe answer is C. The concept here refers to electronegativity"}
+{"id": 3087, "pred": "B", "correct": true, "response": "B. a covalent or network crystal\n\nSilicon carbide (Si"}
+{"id": 3100, "pred": "D", "correct": false, "response": "D\n\nThe answer is D, which corresponds to option D (pH ="}
+{"id": 3114, "pred": "B", "correct": true, "response": "B. Hydrogen bond < dipole-dipole < induced dipole\n\n"}
+{"id": 3119, "pred": "B", "correct": true, "response": "B. This is a spontaneous process because of an entropy increase.\n\nExplanation: Since"}
+{"id": 3134, "pred": "D", "correct": false, "response": "D. Perhaps there was not enough acid to dissolve all the limestone.\n\nExplanation:"}
+{"id": 3147, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. The difference in acidity between nitrous acid"}
+{"id": 3207, "pred": "C", "correct": true, "response": "C. \n\nWhen moving from a 6-bit binary sequence to a 7"}
+{"id": 3221, "pred": null, "correct": false, "response": "The most useful function for detecting improbably high or low values, which could"}
+{"id": 3233, "pred": "C", "correct": true, "response": "C. max(list)\n\nThe correct answer is C. max(list). This function"}
+{"id": 3251, "pred": "D", "correct": true, "response": "D. -1, 0, 1, 2, 3"}
+{"id": 3265, "pred": "B", "correct": true, "response": "B. Chemistry\n\nIn Python 3, when accessing elements of a list,"}
+{"id": 3267, "pred": "C", "correct": false, "response": "C. The user's e-mail address\n\nHowever, please note that in reality"}
+{"id": 3270, "pred": "C", "correct": true, "response": "C. {1,2,3,4}\n\n(set() in Python will"}
+{"id": 3273, "pred": "C", "correct": true, "response": "C. The correct answer is C. \n\nTo ensure the method returns a random"}
+{"id": 3275, "pred": "D", "correct": true, "response": "D. During run time\n\nWhen a division by zero error occurs, it typically"}
+{"id": 3278, "pred": "B", "correct": true, "response": "B. Determining the likelihood that the photo was taken at a particular public event"}
+{"id": 3287, "pred": "C", "correct": true, "response": "C. the sense of continual class struggle\n\nThis passage from \u00c9mile Zola"}
+{"id": 3298, "pred": "A", "correct": true, "response": "A. Observation and induction\n\nThe passage describes Copernicus's reasoning based on"}
+{"id": 3312, "pred": "A", "correct": true, "response": "A. an independent society for the study of natural philosophy in the seventeenth century"}
+{"id": 3339, "pred": "D", "correct": false, "response": "D. Rationalism\n\nErasmus's approach to humanism, as described in"}
+{"id": 3345, "pred": "C", "correct": true, "response": "C. Better educational systems that taught navigation and warfare is not a correct option in"}
+{"id": 3368, "pred": "C", "correct": true, "response": "C. Increased disillusionment and cynicism\n\nThe passage suggests that initial fears about"}
+{"id": 3377, "pred": "B", "correct": true, "response": "B. The dissemination of liberal ideas by the media and the sharing of nationalist or"}
+{"id": 3394, "pred": "A", "correct": true, "response": "A. Compromising with free markets in rural areas after the civil war\n\n"}
+{"id": 3448, "pred": "D", "correct": true, "response": "D. demographic momentum."}
+{"id": 3397, "pred": "C", "correct": true, "response": "C. Low taxes on the peasants and middle class\n\nThe correct answer is C"}
+{"id": 3414, "pred": "A", "correct": true, "response": "A. Europeans established overseas colonies on the coasts of the Americas and throughout the"}
+{"id": 3464, "pred": "B", "correct": false, "response": "B. Interstate highways that link cities\n\nThe star-shaped city pattern is often associated"}
+{"id": 3462, "pred": "D", "correct": true, "response": "D. Hinduism\n\nPlease note that among these options, Hinduism is considered"}
+{"id": 3465, "pred": "B", "correct": true, "response": "B. Suburbs\n\nPlanned communities are more likely to be found in"}
+{"id": 3503, "pred": "A", "correct": true, "response": "A. Rostow.\n\nThis theory is associated with W. W. R"}
+{"id": 3505, "pred": "D", "correct": true, "response": "D. new residents move into areas occupied by older resident groups.\n\nInvasion and"}
+{"id": 3588, "pred": "A", "correct": true, "response": "A. Dissatisfaction with current jobs\n\nPush factors are elements that compel people to"}
+{"id": 3597, "pred": "B", "correct": false, "response": "B. The majority of Kurds are found in which country is not correctly answered by"}
+{"id": 3608, "pred": "D", "correct": true, "response": "D. PLO\n\nPLO, which stands for Palestine Liberation Organization, does"}
+{"id": 3653, "pred": "B", "correct": true, "response": "B. Given the nature of television network news coverage, it typically focuses on providing"}
+{"id": 3628, "pred": "D", "correct": false, "response": "D. Produces a large share of its country's GDI\n\nThe correct"}
+{"id": 3663, "pred": "C", "correct": true, "response": "C. The exclusionary rule was established to limit the government's ability to use"}
+{"id": 3699, "pred": "D", "correct": true, "response": "D. It reserves powers to the states.\n\nThe Tenth Amendment to the Constitution"}
+{"id": 3705, "pred": "D", "correct": true, "response": "D. Companies that are not involved in a court case but wish to affect the"}
+{"id": 3716, "pred": "A", "correct": true, "response": "A\n\nThe correct answer is A. Income equality is not typically considered a core"}
+{"id": 3729, "pred": "C", "correct": true, "response": "C. The Bill of Rights implies a right to privacy.\n\nThe correct answer is"}
+{"id": 3769, "pred": "D", "correct": true, "response": "D\n\nDelegates to presidential nomination conventions are often more ideologically committed compared to"}
+{"id": 3776, "pred": "B", "correct": true, "response": "B. Political parties\n\nIn the context of what is explicitly stated or required by"}
+{"id": 3783, "pred": "C", "correct": true, "response": "C. It occurs every 10 years to reflect changes in population according to"}
+{"id": 3816, "pred": "B", "correct": true, "response": "B. Funds with few restrictions that are provided to state or local governments for general"}
+{"id": 3886, "pred": "C", "correct": true, "response": "C. The promise of the U.S. government to maintain its value\n\nThe"}
+{"id": 3887, "pred": "C", "correct": false, "response": "C. Interest rates increase and the dollar appreciates.\n\nContractionary fiscal policy"}
+{"id": 3905, "pred": "B", "correct": true, "response": "B. The nominal interest rates falls.\n\nWhen the money supply increases, and assuming"}
+{"id": 3935, "pred": "B", "correct": false, "response": "B. Household incomes generally do not rise with prices.\n\nHowever, please note that"}
+{"id": 3962, "pred": "B", "correct": true, "response": "B. is the basis of Classical economic analysis.\n\nSay's Law, also known"}
+{"id": 4046, "pred": "B", "correct": true, "response": "B. Increased investment in capital\n\nThe correct answer is B. Long-run aggregate"}
+{"id": 4080, "pred": "B", "correct": false, "response": "B._increase_interest_rates_and_depreciate_the_nation's_currency._However"}
+{"id": 4130, "pred": "D", "correct": true, "response": "D. The purchase of bonds\n\nIn the context of countering a recession,"}
+{"id": 4133, "pred": "C", "correct": false, "response": "C. unaffected until 2006 when the computers are sold and the"}
+{"id": 4208, "pred": null, "correct": false, "response": "None of the options listed would typically cause the aggregate demand curve to shift to the"}
+{"id": 4255, "pred": "B", "correct": false, "response": "B. 5 min\n\nThis problem can be approached using the concept of exponential"}
+{"id": 4259, "pred": "D", "correct": false, "response": "The correct answer is D. 12\n\nExplanation:\nFirst, we need"}
+{"id": 4278, "pred": "C", "correct": false, "response": "The correct answer is C. \\frac{1}{3}\n\nHere's why"}
+{"id": 4409, "pred": null, "correct": false, "response": "Since the question does not provide specific information about what aspect of the parametric equations"}
+{"id": 4401, "pred": "C", "correct": true, "response": "C. \\frac{12}{7}\n\nTo determine for how long the"}
+{"id": 4434, "pred": "B", "correct": false, "response": "B\n\nGiven that $x$ and $y$ are inversely proportional,"}
+{"id": 4438, "pred": null, "correct": false, "response": "To find the answer, we need to calculate a 15% increase on"}
+{"id": 4444, "pred": "D", "correct": true, "response": "D\n\nExplanation:\nFirst, simplify the function y = 5 + 3"}
+{"id": 4448, "pred": "C", "correct": false, "response": "C\n\nThe correct answer is C. Here's a brief explanation:\n\nFor a"}
+{"id": 4467, "pred": "A", "correct": true, "response": "A. 1/e\n\nTo find the maximum value, we can take the"}
+{"id": 4525, "pred": "D", "correct": true, "response": "D. An upward shift in MC.\n\nThe per unit price of labor increases the"}
+{"id": 4533, "pred": "A", "correct": true, "response": "A. a 10 percent increase in income produces a 15 percent"}
+{"id": 4546, "pred": "D", "correct": true, "response": "D. consumer surplus is lost with higher prices and lower levels of output.\n\nMon"}
+{"id": 4561, "pred": "B", "correct": true, "response": "B. is primarily concerned with how resources are used."}
+{"id": 4547, "pred": "B", "correct": true, "response": "B. The quantity demanded equals the quantity supplied of good X.\n\nIn a perfectly"}
+{"id": 4612, "pred": "D", "correct": true, "response": "D. private ownership of economic resources."}
+{"id": 4606, "pred": "A", "correct": true, "response": "A. The correct answer is A. If the Reds offer discounted parking, it"}
+{"id": 4635, "pred": "D", "correct": true, "response": "D\n\nThe law of increasing costs, also known as diminishing returns or the principle"}
+{"id": 4702, "pred": "B", "correct": true, "response": "B. Economies of scale are associated with the rising or increasing portion of an"}
+{"id": 4718, "pred": "D", "correct": true, "response": "D. The demand curve is of one continuous function."}
+{"id": 4748, "pred": "D", "correct": true, "response": "D. The water molecules collide with the alcohol molecules, transferring energy until the average"}
+{"id": 4755, "pred": "B", "correct": false, "response": "B\n\nThe process to find the correct answer involves calculating the potential difference using the"}
+{"id": 4761, "pred": "C", "correct": false, "response": "C. As heat flows out of the person and warms the fluid surrounding the"}
+{"id": 4782, "pred": "B", "correct": true, "response": "B. have equal magnitudes and do not form an action-reaction pair\n\n"}
+{"id": 4807, "pred": "B", "correct": true, "response": "B. They have equal magnitude and are pointed in opposite directions."}
+{"id": 4799, "pred": "D", "correct": false, "response": "D\n\nWhen two charged objects come into contact, they will share their charge equally"}
+{"id": 4849, "pred": "C", "correct": false, "response": "C. perpendicular to the table\n\nThe force exerted on the block by the"}
+{"id": 4854, "pred": "D", "correct": true, "response": "D. The linear momentum of the system is conserved because the net force on"}
+{"id": 4874, "pred": "D", "correct": true, "response": "D. It increases non-linearly for r < R.\n\nExplanation:\nGiven the"}
+{"id": 4876, "pred": "C", "correct": true, "response": "C. Both the length and area\n\nThe rate at which heat is transferred along"}
+{"id": 4902, "pred": "D", "correct": true, "response": "D. The fundamental attribution error.\n\nIn this scenario, Sal attributes Petunia"}
+{"id": 4947, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. post-traumatic stress disorder. However,"}
+{"id": 4982, "pred": "D", "correct": true, "response": "D\n\nThe symptoms described - experiencing flashbacks and nightmares after a serious car accident"}
+{"id": 5057, "pred": "A", "correct": true, "response": "A. Acquisition trials\n\nIn this process, a neutral stimulus (which initially does"}
+{"id": 5105, "pred": "C", "correct": false, "response": "C. the social role hypothesis.\n\nThis finding is most closely linked to the social"}
+{"id": 5129, "pred": "B", "correct": true, "response": "B. 1 in 100.\n\nThe correct answer is B."}
+{"id": 5384, "pred": "C", "correct": true, "response": "C. Amplitude"}
+{"id": 5297, "pred": "C", "correct": true, "response": "C. delta waves.\n\nWhen someone is in a deep sleep stage, which typically"}
+{"id": 5303, "pred": "D", "correct": true, "response": "D.morpheme\n\nThe smallest unit of language that carries meaning is a morph"}
+{"id": 5379, "pred": "A", "correct": true, "response": "A\n\nOption A best illustrates hostile aggression because it involves an intentional act of violence"}
+{"id": 5432, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. 2P(t > 1."}
+{"id": 5474, "pred": "A", "correct": true, "response": "A. It is likely that the true proportion of high school students afraid to go"}
+{"id": 5499, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. \u03bc = 3.977"}
+{"id": 5505, "pred": "C", "correct": true, "response": "C. The value of the random variable of interest is the number of trials until"}
+{"id": 5529, "pred": "B", "correct": true, "response": "B. A t-test for a difference in means.\n\nSince the doctor is comparing"}
+{"id": 5531, "pred": "A", "correct": true, "response": "A. A third group for which no music is played\n\nIn this context,"}
+{"id": 5540, "pred": "B", "correct": true, "response": "B. \u03bcx+y = 76, \u03c3x+y = 1"}
+{"id": 5548, "pred": "B", "correct": false, "response": "B\n\nExplanation:\nAt the start of the first year, the employer hires "}
+{"id": 5610, "pred": "A", "correct": false, "response": "A. Because the population standard deviations are not known and conditions are met, the"}
+{"id": 5632, "pred": "C", "correct": false, "response": "C. An observational study, because there was no use of a control group\n\n"}
+{"id": 5687, "pred": "B", "correct": true, "response": "B\n\nThe passage describes conflicts involving Native Americans and European settlers, particularly focusing on"}
+{"id": 5696, "pred": "D", "correct": true, "response": "D. Newlands Reclamation Act (1902).\n\nThe Sherman Anti"}
+{"id": 5703, "pred": "C", "correct": true, "response": "C. The description suggests that Washington in 1801 was a place"}
+{"id": 5723, "pred": "A", "correct": true, "response": "A. Continuing white resistance slowed efforts at desegregation, sparking a series of"}
+{"id": 5772, "pred": "C", "correct": true, "response": "C. The Halfway Covenant\n\nThe Halfway Covenant was designed to extend church"}
+{"id": 5790, "pred": "D", "correct": true, "response": "D. the rise of voluntary organizations to promote religious and secular reforms.\n\nDoro"}
+{"id": 5817, "pred": "C", "correct": false, "response": "C. The Nineteenth Amendment, which guaranteed all women the right to vote"}
+{"id": 5831, "pred": "D", "correct": true, "response": "D. vigorously exercised federal power in foreign affairs\n\nJefferson, despite his belief"}
+{"id": 5835, "pred": "D", "correct": true, "response": "D. Christian abolitionist rejection of slavery on moral grounds\n\nThe excerpt is discussing"}
+{"id": 5848, "pred": "D", "correct": true, "response": "D. the end of the Cold War.\n\nPresident George H.W. Bush's"}
+{"id": 5864, "pred": "C", "correct": false, "response": "C. Sever its responsibility to protect citizens who chose to live in South Africa\n\n"}
+{"id": 5866, "pred": "D", "correct": true, "response": "D. Agriculture was collectivized, with the result that entire communities shared fields"}
+{"id": 5867, "pred": "D", "correct": true, "response": "D. Commodore Perry forcing Japan to open its ports to trade\n\nThe passage"}
+{"id": 5932, "pred": "C", "correct": true, "response": "C. The sale of indulgences\n\nThe passage provided by Martin Luther in"}
+{"id": 5974, "pred": "B", "correct": false, "response": "B. The establishment of successful democratic regimes in targets of foreign investment\n\nThis answer"}
+{"id": 5990, "pred": "C", "correct": true, "response": "C. Contact with Muslim trade caravans.\n\nThe historical context of Mali during"}
+{"id": 6000, "pred": "B", "correct": true, "response": "B. Ancient cities featured areas for worshipping their patron deities.\n\nThe passage"}
+{"id": 6001, "pred": "A", "correct": true, "response": "A. The formation of far-flung diaspora communities as a result of inter"}
+{"id": 6106, "pred": "B", "correct": true, "response": "B. An alternative to marriage"}
+{"id": 6040, "pred": "D", "correct": false, "response": "D. The Spanish thought India would be harder to conquer than the New World.\n\n"}
+{"id": 6043, "pred": "B", "correct": true, "response": "B. Established public health care and pensions\n\nOtto von Bismarck"}
+{"id": 6103, "pred": "B", "correct": true, "response": "B. B6 and B12\n\nA deficiency in B6 and B"}
+{"id": 6129, "pred": "B", "correct": true, "response": "B. Negative ones are stronger"}
+{"id": 6109, "pred": "D", "correct": false, "response": "D. \n\nThe concept that best aligns with high levels of self-care behaviors"}
+{"id": 6136, "pred": "D", "correct": false, "response": "D. \n\nThe correct answer is D. However, it's important to clarify"}
+{"id": 6217, "pred": "B", "correct": true, "response": "B. They raised us\n\nWhile respecting elders can stem from various reasons, the"}
+{"id": 6219, "pred": null, "correct": false, "response": "The correct answer is not directly listed as one of the primary causes of loss of"}
+{"id": 6224, "pred": "B", "correct": true, "response": "B. The brain\n\nHowever, since you asked for just the letter of the"}
+{"id": 6306, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. Exercise keeps your mind sharp. While we"}
+{"id": 6307, "pred": "B", "correct": true, "response": "B. Our own interpretation\n\nMemory, or recall of past experiences and information,"}
+{"id": 6322, "pred": "C", "correct": true, "response": "C. between the ages of 3 and 6\n\nThis period, often"}
+{"id": 6332, "pred": "A", "correct": true, "response": "A. Gender identity"}
+{"id": 6329, "pred": "D", "correct": false, "response": "D\n\nThis question is addressing a known demographic trend in human sexuality studies. The"}
+{"id": 6342, "pred": "C", "correct": true, "response": "C. The environment for sperm passage is most hospitable just at ovulation."}
+{"id": 6372, "pred": "D", "correct": true, "response": "D. a and b\n\nIn the context of the Old Testament, sexuality is"}
+{"id": 6375, "pred": "B", "correct": true, "response": "B. it varies across men lasting from a few minutes to 24 hours"}
+{"id": 6378, "pred": "D", "correct": false, "response": "D. confusion stage\n\nThis is the most appropriate answer given the context of the"}
+{"id": 6415, "pred": "A", "correct": true, "response": "A. orgasmic reconditioning"}
+{"id": 6392, "pred": "D", "correct": true, "response": "D\n\nPlease note that in this context, \"reflex\" refers to an"}
+{"id": 6419, "pred": "D", "correct": true, "response": "D. They typically want to observe strangers' activities.\n\nThe correct answer is D"}
+{"id": 6459, "pred": "B", "correct": true, "response": "B. An agreement in 1215 between the King and his bar"}
+{"id": 6469, "pred": "D", "correct": false, "response": "D. The principal organs of the UN may request an advisory opinion as well as"}
+{"id": 6473, "pred": "C", "correct": true, "response": "C. Such conduct is a private act (jure gestionis)\n\nUnlawful"}
+{"id": 6476, "pred": "A", "correct": true, "response": "A\n\nThe correct answer is A: Treaties are to be interpreted in good"}
+{"id": 6525, "pred": "C", "correct": true, "response": "C"}
+{"id": 6481, "pred": "D", "correct": false, "response": "D. Dualism suggests that international and domestic law are distinct legal systems whereby domestic"}
+{"id": 6483, "pred": "A", "correct": true, "response": "A. There is no hierarchy between the formal sources of international law\n\nIn international"}
+{"id": 6493, "pred": "D", "correct": true, "response": "D. Handyside v UK (1976)"}
+{"id": 6528, "pred": "C", "correct": false, "response": "C. Cultural relativism posits that the application of human rights is relative to"}
+{"id": 6534, "pred": "B", "correct": false, "response": "B. The Human Rights Act 1998 allows a court to invalidate"}
+{"id": 6565, "pred": "A", "correct": true, "response": "A. It is misinterpreted as a prediction.\n\nMaine's aphorism"}
+{"id": 6573, "pred": "B", "correct": false, "response": "B. Equality is impossible because men define women as different.\n\nThis option is the"}
+{"id": 6576, "pred": "D", "correct": true, "response": "D. Reciprocity.\n\nBronislaw Malinowski's study of the"}
+{"id": 6604, "pred": "A", "correct": true, "response": "A. That law is essentially an artefact or social construction."}
+{"id": 6591, "pred": "D", "correct": true, "response": "D. Moral values are both independent and objective.\n\nIn \"Justice for Hedgeh"}
+{"id": 6622, "pred": "A", "correct": true, "response": "A. He denies that law develops independently of social and economic forces."}
+{"id": 6632, "pred": "B", "correct": true, "response": "B. Because they have failed to produce racial justice.\n\nCritical Race Theorists"}
+{"id": 6636, "pred": "D", "correct": true, "response": "D. Greek Thinking\n\nNatural law theory can be traced back to ancient Greek philosophers"}
+{"id": 6643, "pred": "A", "correct": false, "response": "A. Hugo Grotius\n\nThis statement reflects Hugo Grotius's perspective"}
+{"id": 6660, "pred": "C", "correct": true, "response": "C. Cognitivism.\n\nEthical relativism suggests that moral and ethical"}
+{"id": 6705, "pred": "D", "correct": true, "response": "D."}
+{"id": 6712, "pred": "D", "correct": true, "response": "D. Hasty Generalization"}
+{"id": 6739, "pred": "C", "correct": true, "response": "C. False dilemma"}
+{"id": 6689, "pred": "B", "correct": false, "response": "B. Reject all but one choice\n\nIn a valid disjunctive s"}
+{"id": 6766, "pred": "C", "correct": true, "response": "C."}
+{"id": 6734, "pred": "D", "correct": false, "response": "The correct answer is D. Begging the Question.\n\nExplanation:\nThe statement commits"}
+{"id": 6744, "pred": "C", "correct": true, "response": "C. Inconsistently\n\nThe correct answer is C. The passage presents"}
+{"id": 6761, "pred": "C", "correct": true, "response": "C. False criteria (or what is listed as the correct option in the format"}
+{"id": 6784, "pred": "B", "correct": true, "response": "B. Fallacy of Accident\n\nActually, the correct answer is B. Fall"}
+{"id": 6801, "pred": "D", "correct": true, "response": "D. Imperfect analogy\n\nFalse analogy refers to a logical fallacy that occurs"}
+{"id": 6836, "pred": "C", "correct": true, "response": "C. True, False\n\nStatement 1 is true because RoBERTa indeed"}
+{"id": 6873, "pred": "B", "correct": true, "response": "B. Improve the optimisation algorithm being used for error minimisation.\n\nIn the"}
+{"id": 6902, "pred": "C", "correct": false, "response": "C. True, False\n\nStatement 1 is correct as it accurately reflects a"}
+{"id": 6904, "pred": "A", "correct": true, "response": "A. Expectation Maximization\n\nWhile Expectation Maximization (EM) can"}
+{"id": 6913, "pred": "B", "correct": true, "response": "B. Whether we assume full class covariance matrices or diagonal class covariance matrices\n\nThis"}
+{"id": 6918, "pred": "A", "correct": true, "response": "A. The process that would help you align PCA with SVD in terms of"}
+{"id": 6920, "pred": "C", "correct": false, "response": "C. will never decrease the testing error.\n\nExplanation: In least-squares regression"}
+{"id": 6925, "pred": "C", "correct": true, "response": "The correct answer is C. True, False.\n\nStatement 1 is true because"}
+{"id": 6938, "pred": "C", "correct": true, "response": "C\n\nThe correct answer involves generating a Gaussian matrix with each entry sampled from $\\"}
+{"id": 6941, "pred": "C", "correct": true, "response": "The correct answer is:\n\nC. $\\nabla_w f(w) ="}
+{"id": 6960, "pred": "B", "correct": false, "response": "B. Guiding, commanding and motivating\n\nTransactional leaders focus on completing tasks and"}
+{"id": 6961, "pred": "A", "correct": true, "response": "The answer is A. However, to be precise based on your instruction format,"}
+{"id": 6964, "pred": "C", "correct": true, "response": "C. IT and computing skills\n\nIn the context of management skills required for planning"}
+{"id": 6966, "pred": "D", "correct": true, "response": "D. Building planning\n\nBuilding planning, in this context, is not recognized as"}
+{"id": 6980, "pred": "B", "correct": true, "response": "B. The answer corresponds to option B, which is James Dyson, known"}
+{"id": 6981, "pred": "C", "correct": true, "response": "C. Low transport or commuting costs is not the correct answer in this context,"}
+{"id": 6985, "pred": "B", "correct": false, "response": "B. Jay Barney\n\nThe concept you're referring to is more closely associated with"}
+{"id": 7017, "pred": "D", "correct": true, "response": "D. Individualism\n\nFayol's 14 principles of management include"}
+{"id": 7103, "pred": "D", "correct": true, "response": "D. Brand personalities."}
+{"id": 7031, "pred": "D", "correct": true, "response": "D. Henry Mintzberg\n\nHenry Mintzberg has been known to critique"}
+{"id": 7042, "pred": "B", "correct": true, "response": "B. Towards the consumer\n\nVertical integration forwards refers to a strategy where a company"}
+{"id": 7117, "pred": "A", "correct": true, "response": "A. Advertising"}
+{"id": 7122, "pred": "A", "correct": true, "response": "A. Mobile marketing"}
+{"id": 7102, "pred": "B", "correct": true, "response": "B. Consumer satisfaction with the purchase.\n\nPost-purchase re-evaluation focuses on"}
+{"id": 7137, "pred": "B", "correct": true, "response": "B. Market equivalence. \n\nThe correct answer is B. In international market research"}
+{"id": 7204, "pred": "D", "correct": true, "response": "D. All of the above. \n\nWhen analyzing consumer lifecycles, it"}
+{"id": 7212, "pred": "B", "correct": true, "response": "B. Is a broad concept that encompasses the satisfaction of consumer needs.\n\nIn marketing"}
+{"id": 7225, "pred": "D", "correct": true, "response": "D. Indirect competitions.\n\nIn this context, \"indirect competitions\" refer"}
+{"id": 7233, "pred": "A", "correct": true, "response": "A. Cost leadership. \n\nWhen an organization adopts a cost leadership strategy, it"}
+{"id": 7268, "pred": "A", "correct": true, "response": "A. Direct marketing.\n\nHowever, it seems there might be a slight confusion in"}
+{"id": 7284, "pred": "B", "correct": true, "response": "B..centromeres.\n\nRobertsonian translocations typically involve the fusion at the"}
+{"id": 7290, "pred": "D", "correct": true, "response": "D."}
+{"id": 7289, "pred": "B", "correct": true, "response": "B. proceeded much more successfully as large numbers of DNA markers became available.\n\nTherefore"}
+{"id": 7338, "pred": "A", "correct": true, "response": "A"}
+{"id": 7316, "pred": "D", "correct": true, "response": "D. Low density lipoprotein receptor"}
+{"id": 7295, "pred": "A", "correct": true, "response": "A. two \u03b1 (alpha) and two \u03b2 (beta) chains."}
+{"id": 7319, "pred": null, "correct": false, "response": "The correct answer is not directly associated with any of the listed options (X chromosomes"}
+{"id": 7346, "pred": "C", "correct": true, "response": "C. 0.08\n\nThe probability of an individual carrying two specific"}
+{"id": 7348, "pred": "D", "correct": false, "response": "D. X-linked recessive\n\nExplanation: For X-linked recessive disorders,"}
+{"id": 7365, "pred": "D", "correct": true, "response": "D. Zellweger syndrome\n\nPeroxasomal disorders are genetic conditions"}
+{"id": 7517, "pred": "C", "correct": true, "response": "C. The correct answer is C - frog. Frogs lay eggs, while"}
+{"id": 7549, "pred": "A", "correct": true, "response": "A. Invention\n\nThe correct answer is A. The proverb states \"N"}
+{"id": 7652, "pred": "A", "correct": true, "response": "A. 5 cents\n\nLucy charges 5 cents for her psychiatric advice"}
+{"id": 7836, "pred": "A", "correct": true, "response": "A. tea"}
+{"id": 7725, "pred": "D", "correct": true, "response": "D. The division of a country's power into national and subnational units\n\n"}
+{"id": 7821, "pred": "B", "correct": true, "response": "B. 1980\n\nThe United States won the gold medal in"}
+{"id": 8143, "pred": "D", "correct": true, "response": "D. An extruder"}
+{"id": 7948, "pred": "B", "correct": true, "response": "B. mitosis\n\nIn mitosis, DNA replication occurs to ensure that each"}
+{"id": 8036, "pred": "B", "correct": true, "response": "B\n\nThe first sound recording to be made and reproduced was a recitation of"}
+{"id": 8106, "pred": "D", "correct": true, "response": "D. Tensional\n\nAt divergent boundaries, the primary process is that"}
+{"id": 8171, "pred": "C", "correct": false, "response": "C. both A and B\n\nAccording to Carruthers' perspective, considerations"}
+{"id": 8185, "pred": "A", "correct": true, "response": "A. retributive theories of punishment.\n\nThe consequentialist approach to punishment focuses"}
+{"id": 8205, "pred": "C", "correct": false, "response": "C. Deliberately non-procreative. \n\nIn Corvino's interpretation"}
+{"id": 8224, "pred": "C", "correct": true, "response": "C. the vast number of individuals and agents who contribute to climate change\n\nIn"}
+{"id": 8356, "pred": "A", "correct": true, "response": "The answer is A. reproduction rates.\n\nGarret Hardin, in his work"}
+{"id": 8446, "pred": "D", "correct": true, "response": "D. a kind of consistency test.\n\nKant's Universal Law formulation is essentially"}
+{"id": 8243, "pred": null, "correct": false, "response": "The question seems to refer to Shapiro's claims about surveys and longitudinal studies regarding illegal"}
+{"id": 8449, "pred": "C", "correct": true, "response": "C. hypothetical\n\nIn Kantian philosophy, a hypothetical (or conditional) imperative"}
+{"id": 8465, "pred": "A", "correct": false, "response": "The answer is A. According to McGregor's view, our rights carve out what"}
+{"id": 8454, "pred": "A", "correct": true, "response": "The correct answer is A. The prevention of future murders is not typically considered a"}
+{"id": 8553, "pred": "C", "correct": true, "response": "C. Not wrong, Wrong\n\nExplanation:\nScenario 1 is not morally wrong"}
+{"id": 8555, "pred": "D", "correct": true, "response": "The correct answer is D. Not wrong, Not wrong.\n\nExplanation:\nScenario "}
+{"id": 8828, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong\n\nExplanation:\n- In Scenario 1, sliding"}
+{"id": 8664, "pred": "B", "correct": true, "response": "B. Wrong, Not wrong\n\nIn Scenario 1, the main character intends"}
+{"id": 8643, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong\n\nIn Scenario 1, taking credit for someone"}
+{"id": 8879, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong\n\nIn Scenario 1, the main character ensures"}
+{"id": 9328, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong\n\nExplanation:\nScenario 1 involves potentially risky investment"}
+{"id": 8953, "pred": "C", "correct": false, "response": "C. Not wrong, Wrong\n\nExplanation:\nScenario 1 involves using a method"}
+{"id": 8886, "pred": "B", "correct": true, "response": "B. Wrong, Not wrong\n\nExplanation:\nScenario 1 involves using someone else"}
+{"id": 9394, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong\n\nIn Scenario 1, keeping and mounting a"}
+{"id": 9460, "pred": "B", "correct": true, "response": "B. May cause oesopgageal obstruction\n\nEosinophilic"}
+{"id": 9491, "pred": "A", "correct": true, "response": "A. Fluoxetine is considered of benefit\n\nTherefore, the correct option is A"}
+{"id": 9487, "pred": "C", "correct": true, "response": "C. Sucrose\n\nThe correct answer is C. Oral bacteria synthesize extr"}
+{"id": 9498, "pred": "A", "correct": false, "response": "A. The presence or risk of a clinical deficiency, such as clinical scur"}
+{"id": 9515, "pred": "D", "correct": false, "response": "D\n\nThe correct answer is D. Most water absorption along the GI tract actually"}
+{"id": 9535, "pred": "A", "correct": true, "response": "A. Hemoglobin A1c\n\nThe correct answer is A, which refers"}
+{"id": 9529, "pred": "C", "correct": false, "response": "The correct answer is C. Acetate, propionate and butyrate"}
+{"id": 9589, "pred": "B", "correct": true, "response": "B. Niacin\n\nNiacin, also known as vitamin B3"}
+{"id": 9616, "pred": "D", "correct": true, "response": "D. BP < 130/80, Trig <1"}
+{"id": 9694, "pred": "C", "correct": false, "response": "C. Variable adaptation between different N-balance studies is fully accounted for in the"}
+{"id": 9726, "pred": "B", "correct": true, "response": "B. \n\nThe correct answer is B, which refers to the concept of justice"}
+{"id": 9769, "pred": "C", "correct": true, "response": "C\n\nSocrates' famous phrase suggests that living a life without reflection and examination"}
+{"id": 9805, "pred": "B", "correct": true, "response": "B. Knowledge of individual examples alone would not prepare someone for situations of justice or"}
+{"id": 9841, "pred": "C", "correct": true, "response": "C. Nearly everyone agrees that it is happiness.\n\nIn Aristotle's philosophy, he"}
+{"id": 9795, "pred": "C", "correct": true, "response": "C. How \u201cgood\u201d is to be defined.\n\nIn philosophy, particularly in"}
+{"id": 9850, "pred": "C", "correct": true, "response": "C. a thing that thinks\n\nIn his famous statement, \"I think,"}
+{"id": 9925, "pred": "A", "correct": true, "response": "A. dreaming"}
+{"id": 9884, "pred": "A", "correct": false, "response": "The correct answer is:\n\nA. none of them are successful.\n\nHowever, it"}
+{"id": 9909, "pred": "B", "correct": true, "response": "The correct answer is:\n\nB. this would make them vicious, and they would"}
+{"id": 9924, "pred": "C", "correct": true, "response": "C. Only after careful reflection on the consequences of our actions.\n\nEpictetus"}
+{"id": 10037, "pred": "C", "correct": true, "response": "C. Beringia; Late Glacial Maximum"}
+{"id": 10127, "pred": "B", "correct": true, "response": "B. brachiation."}
+{"id": 10141, "pred": "D", "correct": false, "response": "D."}
+{"id": 10044, "pred": "B", "correct": true, "response": "B. The Minoan economy may have been especially vulnerable to natural catastrophe because"}
+{"id": 10138, "pred": "B", "correct": true, "response": "B. anthropology.\n\nArchaeology is a subfield of anthropology, which involves"}
+{"id": 10260, "pred": "C", "correct": true, "response": "C."}
+{"id": 10139, "pred": "D", "correct": false, "response": "D. during the Upper Paleolithic; the importance of higher-quality, imported materials"}
+{"id": 10204, "pred": "B", "correct": true, "response": "B. megafauna."}
+{"id": 10181, "pred": "D", "correct": true, "response": "D. During the final 3 seconds of the film\n\nThe history of the"}
+{"id": 10265, "pred": "C", "correct": true, "response": "C. The blocks of residences were added haphazardly as needed.\n\nThe"}
+{"id": 10363, "pred": "B", "correct": false, "response": "B. $80 billion\n\nExplanation:\nTo bridge the gap between the actual"}
+{"id": 10384, "pred": "D", "correct": false, "response": "D. Whether the board of directors, audit committee, or owner-manager oversees employment"}
+{"id": 10447, "pred": "C", "correct": false, "response": "C. Notes to the financial statements.\n\nIn the context of professional accounting, particularly"}
+{"id": 10491, "pred": "C", "correct": true, "response": "C. Capitalized and depreciated over its estimated useful life.\n\nIn accounting for"}
+{"id": 10517, "pred": "C", "correct": false, "response": "C. $8.26\n\nThe correct answer is calculated using the present"}
+{"id": 10518, "pred": "C", "correct": false, "response": "C. Anticipatory repudiation.\n\nWhen one party to a contract clearly"}
+{"id": 10528, "pred": "C", "correct": true, "response": "C\n\nAccording to accounting principles, a liability should not be accrued until it is"}
+{"id": 10609, "pred": "B", "correct": true, "response": "B. Yes No"}
+{"id": 10553, "pred": "C", "correct": false, "response": "C. Material internal control weaknesses previously reported to management were not corrected.\n\nThis option"}
+{"id": 10623, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B. $25,000."}
+{"id": 10709, "pred": "D", "correct": true, "response": "D. not guilty, because there was no true agreement between the parties.\n\nThe"}
+{"id": 10853, "pred": "D", "correct": false, "response": "D. that when the investor purchased the house, he knew or should have known"}
+{"id": 10867, "pred": "D", "correct": true, "response": "D. Neither of the indictments.\n\nIn this scenario, double jeopardy would not"}
+{"id": 10996, "pred": "B", "correct": false, "response": "B. Yes, because the state interest in protecting the public from illegal activities required"}
+{"id": 11165, "pred": "B", "correct": false, "response": "B. valid, because there was no consideration to support an option contract.\n\nExplanation"}
+{"id": 11174, "pred": "D", "correct": true, "response": "D. After the woman paid to have the kitchen remodeled, an option contract"}
+{"id": 11338, "pred": "A", "correct": true, "response": "A. Recover, because the businessman is liable for permitting a dangerous condition to exist"}
+{"id": 11520, "pred": "B", "correct": false, "response": "B. guilty, because the statute imposes absolute criminal liability.\n\nSince the statute is"}
+{"id": 11820, "pred": "A", "correct": false, "response": "A. It constitutes a counteroffer, because it contains different terms from those contained"}
+{"id": 11852, "pred": "B", "correct": true, "response": "B. No, because it is not reasonable to use deadly force to prevent the"}
+{"id": 12165, "pred": "C", "correct": true, "response": "C. Hematoma of the left thigh is not directly causing the decreased sensation"}
+{"id": 12187, "pred": "D", "correct": false, "response": "D. Receive genetic counseling\n\nTurner syndrome is a genetic condition, and individuals"}
+{"id": 12224, "pred": "C", "correct": true, "response": "C. Herniorrhaphy should be scheduled at the earliest convenient time\n\n"}
+{"id": 12262, "pred": "C", "correct": false, "response": "The correct answer is:\n\nC. Neisseria gonorrhoeae\n\nThis"}
+{"id": 12295, "pred": "D", "correct": true, "response": "D. Menstrual history\n\nIn this scenario, given the patient's age"}
+{"id": 12325, "pred": "D", "correct": false, "response": "D\n\nGiven the patient's symptoms of chronic diarrhea, intermittent lower abdominal pain relieved"}
+{"id": 12388, "pred": "D", "correct": true, "response": "D. Meniere's disease\n\nThe symptoms described, including episodic dizziness"}
+{"id": 12362, "pred": "A", "correct": true, "response": "The correct answer is not aligned with any of the listed mechanisms described in options A"}
+{"id": 12426, "pred": "D", "correct": true, "response": "D\n\nThe symptoms described - being discovered semiconscious, stuporous state,"}
+{"id": 12431, "pred": "C", "correct": true, "response": "C. Calcium pyrophosphate\n\nThe description of positively birefringent"}
+{"id": 12508, "pred": "B", "correct": true, "response": "B. Mediator\n\nIn this context, motivation acts as a mediator because it"}
+{"id": 12564, "pred": "B", "correct": true, "response": "B. Adler\u2019s individual psychology\n\nThis concept aligns with Alfred Adler's Individual"}
+{"id": 12638, "pred": "A", "correct": true, "response": "A. ethical\n\nIn this scenario, the payment for a consultation is a standard"}
+{"id": 12744, "pred": "C", "correct": true, "response": "C..ethical considerations in psychology and legal contexts often require transparency and clarity to"}
+{"id": 12878, "pred": "B", "correct": true, "response": "B"}
+{"id": 12758, "pred": "D", "correct": true, "response": "D. Ecological assessment\n\nThis type of assessment focuses on observing an individual within"}
+{"id": 12775, "pred": "A", "correct": true, "response": "A. the right of parents or legal guardians of a child to inspect the child"}
+{"id": 12809, "pred": "B", "correct": false, "response": "B. suggest that she make an appointment so you can discuss the matter in person"}
+{"id": 12956, "pred": "B", "correct": true, "response": "B. Heschel\u2019s convolutions\n\nThe processing of auditory stimuli primarily occurs"}
+{"id": 12988, "pred": "D", "correct": false, "response": "D\n\nThe OVERJUSTIFICATION HYPOTHESIS is related to the concept in"}
+{"id": 13065, "pred": "D", "correct": false, "response": "D\n\nThe correct answer is D. A publicly-traded company. However,"}
+{"id": 13073, "pred": "C", "correct": false, "response": "C. Business writing\n\nNewsletters are typically categorized under business writing as they often"}
+{"id": 13088, "pred": "C", "correct": false, "response": "C. Aware\n\nThe correct answer is C. According to Grunig and"}
+{"id": 13090, "pred": "A", "correct": true, "response": "The correct answer is:\n\nA. Inputs\n\nIn Macnamara's (2"}
+{"id": 13086, "pred": "B", "correct": true, "response": "B. business and commercial areas\n\nThe majority of public relations practitioners work within the"}
+{"id": 13100, "pred": "C", "correct": true, "response": "C. Person-oriented advertising\n\nIn the context of political campaigns, person-oriented advertising"}
+{"id": 13119, "pred": "C", "correct": false, "response": "C. 326\n\nThe correct answer is C. In the context"}
+{"id": 13101, "pred": "B", "correct": true, "response": "B. Impact\n\nIn the context of public relations, summative evaluation typically comes"}
+{"id": 13134, "pred": "B", "correct": true, "response": "B. reactive\n\nThe situation described is an example of how public relations actions are"}
+{"id": 13266, "pred": "D", "correct": true, "response": "D. All of these options."}
+{"id": 13138, "pred": "B", "correct": true, "response": "B. Their ability to deliver specific, detailed information to narrowly defined target publics"}
+{"id": 13256, "pred": "D", "correct": true, "response": "D. All of the above are correct."}
+{"id": 13329, "pred": "C", "correct": true, "response": "C"}
+{"id": 13203, "pred": "A", "correct": true, "response": "A. By regarding security as a socially constructed concept, constructivists assert that"}
+{"id": 13316, "pred": "B", "correct": false, "response": "B\n\nThe correct answer is B, which reflects a contemporary understanding of security studies"}
+{"id": 13304, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. Since the end of the Cold War,"}
+{"id": 13399, "pred": "D", "correct": true, "response": "D"}
+{"id": 13332, "pred": "C", "correct": true, "response": "C. The concept of human security does not challenge traditional state-centric arguments in so"}
+{"id": 13404, "pred": "C", "correct": true, "response": "C."}
+{"id": 13350, "pred": "A", "correct": true, "response": "The odd one out would be:\n\nA. Withdrawal of economic trade rights with"}
+{"id": 13481, "pred": "D", "correct": true, "response": "D"}
+{"id": 13390, "pred": "C", "correct": true, "response": "C. Revolutionary uprisings are likely to occur; people of the world who"}
+{"id": 13457, "pred": "C", "correct": true, "response": "C. Suburbanization will develop because the time it takes to commute to the"}
+{"id": 13477, "pred": "D", "correct": true, "response": "D. all of the above\n\nThe social construction of childhood involves various factors including"}
+{"id": 13507, "pred": "D", "correct": true, "response": "D\n\nIn Mead's Symbolic Interactionist theory, the 'generalized"}
+{"id": 13514, "pred": "B", "correct": false, "response": "The correct answer is:\n\nB. they referred to explicit, context independent meanings\n\n"}
+{"id": 13544, "pred": "B", "correct": true, "response": "B. the office\n\nThe correct answer is B. While the household, the"}
+{"id": 13552, "pred": "D", "correct": false, "response": "D. Salaries\n\nIn Max Weber's ideal type of bureaucracy, characteristics such"}
+{"id": 13559, "pred": "C", "correct": true, "response": "C. \n\nLombroso's claim was that biological failings, particularly"}
+{"id": 13571, "pred": "C", "correct": true, "response": "The correct answer is:\n\nC. scanning a table to identify general patterns and significant"}
+{"id": 13626, "pred": "C", "correct": true, "response": "C. It encourages stability of the regime\n\nPlease note that while option C is"}
+{"id": 13632, "pred": "B", "correct": true, "response": "B. US expansion was based on markets rather than territory post-186"}
+{"id": 13646, "pred": "D", "correct": false, "response": "D. None of the above\n\nHowever, based on the question asking which is"}
+{"id": 13661, "pred": "D", "correct": false, "response": "D. Increase in US international influence\n\nNote: The term \"American multiplication table"}
+{"id": 13664, "pred": "B", "correct": true, "response": "B. \"brinkmanship.\"\n\nJohn Foster Dulles' term \"brink"}
+{"id": 13665, "pred": "A", "correct": true, "response": "A. Reagan's first term military spending pressured the Soviet Union to keep up its"}
+{"id": 13670, "pred": "C", "correct": true, "response": "The correct answer is C. It indicated a shift towards military containment.\n\nNSC"}
+{"id": 13691, "pred": "A", "correct": false, "response": "A. national security adviser."}
+{"id": 13689, "pred": "A", "correct": true, "response": "A. Realism\n\nRealism, as a theory in International Relations, primarily"}
+{"id": 13699, "pred": "A", "correct": false, "response": "The correct answer is A. The International Monetary Fund (IMF).\n\nHowever,"}
+{"id": 13726, "pred": "D", "correct": false, "response": "D. Knowledge of their replication as positive sense ssRNA viruses is now complete\n\n"}
+{"id": 13728, "pred": "B", "correct": true, "response": "B\n\nThe correct answer is B. Fragmented, uncoordinated approach."}
+{"id": 13762, "pred": "B", "correct": false, "response": "B. Vaccine has been developed\n\nHowever, since the question asks for the answer"}
+{"id": 13765, "pred": "C", "correct": true, "response": "C. Jaundice and abdominal discomfort"}
+{"id": 13784, "pred": "B", "correct": true, "response": "B. As positive strand RNA viruses"}
+{"id": 13790, "pred": "C", "correct": true, "response": "C. The enzyme reverse transcriptase"}
+{"id": 13777, "pred": "B", "correct": true, "response": "B\n\nNote: The initial prompt seems to ask for a virology-related"}
+{"id": 13836, "pred": "B", "correct": true, "response": "B. Gastroenteritis in children\n\nPlease note, the correct answer is"}
+{"id": 13863, "pred": "C", "correct": false, "response": "C. Increasing CRP level appears to increase the risk of heart attack/stroke"}
+{"id": 13867, "pred": "B", "correct": false, "response": "B. It is shaped like a bullet from a gun\n\nThe rabies virus"}
+{"id": 13877, "pred": "A", "correct": true, "response": "A. Shabad\n\nIn the context of Sikhism and the teachings associated with"}
+{"id": 13882, "pred": "D", "correct": true, "response": "D. Soto Zen\n\nSoto Zen promotes the idea of gradual enlightenment,"}
+{"id": 13889, "pred": "D", "correct": true, "response": "D. Digambara\n\nIn Jain tradition, the Digambara sect has"}
+{"id": 13921, "pred": "A", "correct": true, "response": "A. Community\n\nIn Sikh tradition, Guru-Panth refers to the community as"}
+{"id": 13908, "pred": "B", "correct": true, "response": "B. Rabi'a\n\nRabi'a, also known as Rabi'a"}
+{"id": 13933, "pred": "B", "correct": true, "response": "B. Patanjali\n\nThe Yoga Sutras are attributed to Patanj"}
+{"id": 13992, "pred": "C", "correct": true, "response": "C. Baisakhi Day"}
+{"id": 13977, "pred": "A", "correct": true, "response": "A. Thesmophoria\n\nThesmophoria was an important"}
+{"id": 13987, "pred": null, "correct": false, "response": "The correct answer is none of the options listed directly suggest a Confucian philosopher"}
+{"id": 14027, "pred": "C", "correct": true, "response": "C. Cicero\n\nThe encouragement of civic religion in Rome is notably associated with"}
