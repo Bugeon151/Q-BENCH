@@ -19,3 +19,4 @@ data/datasets/
 
 # Tests
 .pytest_cache/
+.cache/
