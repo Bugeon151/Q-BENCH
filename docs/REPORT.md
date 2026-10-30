@@ -15,19 +15,22 @@ this page interprets them.
   22,582). A CPU-only re-check shows the weights, not a GPU kernel, are broken. Re-quantizing the
   same file size with an importance matrix brings 3B Q2_K back to perplexity 11.9 and 50 / 72 / 46 %.
 * **Accuracy hides answer churn; concurrent batching hides irreproducibility.** 7B Q4_K_M moves
-  mean accuracy by −0.5 points but flips 4.4 % of answers between right and wrong. Separately,
+  accuracy over all 984 items by −0.5 points but flips 4.4 % of answers between right and wrong.
+  Separately,
   re-running an identical quantized configuration under concurrent batching changes 24–31 % of
   response texts (F16: 1.6 %); with one server slot, two runs are byte-identical (984 of 984 records, 1.5B and 7B).
   The deterministic run shows the flips are the quantization's (7B: 4.6 %); subtracting a re-run
   noise floor, the usual correction, would have understated them by more than half.
-* **A 164-problem benchmark can certify Q8_0 but not Q4.** The share of flipped items sets the
-  sample size: 160 HumanEval problems suffice for 7B Q8_0, about 800 for Q4_K_M.
-* **At equal memory, a bigger model at fewer bits wins down to ~4 bits, and to ~3 with an
-  importance matrix.** A 2.8 GiB 7B Q2_K loses to a 3.1 GiB 3B Q8_0 by 2.7 points with plain
-  K-quants and beats it by 4.1 (p = 0.006) with an imatrix. No F16 or Q8_0 file is on the
+* **HumanEval's 164 problems are at the edge for a Q8_0 swap and far from enough for Q4.** The
+  share of flipped items sets the sample size: about 160 problems for 80 % power on 7B Q8_0 (our
+  run missed the margin by 0.05 points), about 800 for Q4_K_M.
+* **At equal memory, a bigger model at fewer bits wins down to ~4 bits; for 7B, to ~3 bits with an
+  importance matrix.** A 2.8 GiB 7B Q2_K trails a 3.1 GiB 3B Q8_0 by 2.7 points (p = 0.08) with
+  plain K-quants and beats it by 4.1 (p = 0.006) with an imatrix (3B at 3.3 bits still loses to
+  1.5B Q6_K). No F16 or Q8_0 file is on the
   accuracy-per-GiB Pareto frontier.
-* **A one-minute perplexity run ranks answer flips** across 27 configurations (Spearman ρ = 0.88):
-  a screen before the full gate.
+* **A short perplexity run (0.7–11 minutes) ranks answer flips** across 27 configurations
+  (Spearman ρ = 0.88): a screen before the full gate.
 * **Accuracy and serving capacity rank configurations differently.** 7B Q6_K and Q4_K_M are
   statistically indistinguishable on 984 paired items (−0.3 points, 95 % CI −1.6 to +1.0), but
   under MLPerf's interactive latency SLA Q4_K_M serves 4 concurrent users and Q6_K serves 1.
@@ -72,9 +75,10 @@ MMLU-Redux, so a few points apart is expected): 7B F16 71.9 / 94.0 / 82.9 vs pub
 Q3_K_M costs 7B and 14B under 2 points of coding accuracy but destroys 3B (73.2 → 6.1); 3B Q2_K
 answers nothing correctly (perplexity 22,582 vs 8.99 for F16; it emits digit noise). A rule like
 "Q3 is fine" is model-specific; it has to be checked per model, which is what the gate (§2.3) is
-for. 3B Q3_K_M also made `llama-server` return HTTP 500 on 6 of 984 requests, because the reply
-contained broken UTF-8 byte sequences its chat-output parser rejects: in production those users get
-an error, not a wrong answer. These items are scored wrong and counted separately.
+for. 3B Q3_K_M also made `llama-server` return HTTP 500 on 6 of 984 requests ("The model produced
+output that does not match the expected peg-native format"): in production those users get an
+error, not a wrong answer. These items are counted separately and scored on a raw `/completion` of
+the same prompt (4 of 6 got an answer there, 1 of them correct) or as wrong when that failed too.
 
 **Is it the GPU or the weights?** `src/imatrix_fix.py` recomputes the first 20 perplexity chunks
 with no CUDA device visible (`CUDA_VISIBLE_DEVICES=-1`, `-ngl 0 --no-op-offload`; without the
@@ -126,7 +130,8 @@ Dutta et al. (2024) showed that compressed models can keep accuracy while many i
 | 7B | 1.1 % | 1.6 % | 3.3 % | 4.4 % | 7.7 % | 20.6 % |
 | 14B (vs Q8_0) | — | 1.9 % | 3.3 % | 3.8 % | 6.5 % | 17.0 % |
 
-7B Q4_K_M changes mean accuracy by −0.5 points but flips 4.4 % of all answers and 9.1 % of
+7B Q4_K_M changes accuracy over all 984 items by −0.5 points (the unweighted mean of the three
+task accuracies by −1.2) but flips 4.4 % of all answers and 9.1 % of
 HumanEval problems. Smaller models are more fragile at the same bit width: at Q8_0, 5.5 % of 1.5B
 answers flip vs 1.1 % of 7B answers.
 
@@ -159,7 +164,7 @@ more than *how many*: of the 45 items 7B Q4_K_M flips in the one-slot run, 34 al
 boundary looks like: it moves them in both directions relative to the reference, so it largely
 cancels in the rate. So the textbook correction,
 subtracting a re-run noise floor from the flip rate (the `attributable` column in
-`docs/RESULTS.md`, 1.9 points for 7B Q4_K_M), understates the quantization effect by more than
+`docs/RESULTS.md`, 1.8 points for 7B Q4_K_M), understates the quantization effect by more than
 half; the reliable measurement is a deterministic candidate run.
 
 Why F16 barely moves under batching while Q4_K_M does is not isolated here. The CUDA path at the
@@ -174,8 +179,9 @@ What this means in practice:
 
 * **A quantized model behind a batching server is not a fixed function of its input.** Audit
   trails, regression tests and response caches that assume it is will see a quarter to a third of
-  responses change on a re-run. One slot restores reproducibility at a throughput cost: 7B Q4_K_M
-  delivers 57 tok/s with one request at a time vs 238 tok/s with 16 concurrent users (§2.6).
+  responses change on a re-run. One slot restores reproducibility at a throughput cost: one
+  request at a time gets 57 tok/s in total from 7B Q4_K_M, 16 concurrent users get 238 tok/s
+  (§2.6, measured on the 16-slot server).
 * **Measure flips with a deterministic candidate run**, not by subtracting a noise floor.
 * **Accuracy and flip rates are robust to the batching noise; individual answers are not.** The
   accuracy difference vs the reference barely moves with a deterministic run (7B −0.5 → −0.3
@@ -206,11 +212,13 @@ Why HumanEval cannot certify: the variance of a paired difference is set by the 
 | 1.5B Q8_0, GSM8K | 11.6 % | 1,012 | 1,319 (full test set) |
 
 So flips are not only a user-facing problem; they are the statistical cost of proving a model swap
-safe. A public 164-problem benchmark can certify a near-lossless Q8_0 swap, not a Q4 one, and
+safe. A public 164-problem benchmark is at the edge for a near-lossless Q8_0 swap (7B Q8_0
+HumanEval stayed INCONCLUSIVE here: lower CI bound −3.05 against the −3 margin) and cannot certify
+a Q4 one, and
 running the candidate deterministically does not lower the cost: the discordance is the
 quantization's (§2.2).
 
-### 2.4 Same memory: a bigger model at fewer bits wins down to about 4 bits, or 3 with an imatrix
+### 2.4 Same memory: a bigger model at fewer bits wins down to about 4 bits, for 7B to 3 with an imatrix
 
 Dettmers & Zettlemoyer (2023) found 4-bit almost universally optimal for zero-shot accuracy per
 total model bits. On downstream tasks, comparing each bigger-model configuration with the
@@ -228,25 +236,28 @@ closest-size configuration of a smaller model on the same 984 items:
 | 3B Q3_K_M **imatrix** | 1.5 | 1.5B Q8_0 | 1.5 | +4.1 (+0.8 to +7.3), p = 0.016 |
 | 7B Q2_K | 2.8 | 3B Q8_0 | 3.1 | −2.7 (−5.7 to +0.1), p = 0.08 |
 | 7B Q2_K **imatrix** | 2.8 | 3B Q8_0 | 3.1 | **+4.1 (+1.2 to +6.8), p = 0.006** |
+| 3B Q2_K **imatrix** | 1.2 | 1.5B Q6_K | 1.2 | −3.7 (−7.0 to −0.4), p = 0.036 |
 | 14B Q2_K | 5.4 | 7B Q5_K_M | 5.1 | −5.9 (−8.6 to −3.3) |
 
-With ≥ 4.8 bits per weight the bigger model wins every time. At ~4 bits (Q3_K_M) it still wins
-except where the plain quantization collapses (3B). At ~3.2 bits (Q2_K) plain K-quants lose or tie
-against the next smaller model at 5–8 bits (−5.9, −2.7, −58.7 points) and only beat a model 4–5×
-smaller (7B Q2_K vs 1.5B F16: +11.2). With an importance matrix the same 3.2-bit file of 7B beats
-3B at 8.5 bits while being 8 % smaller: where the "bigger model at fewer bits" rule stops depends on
-the rounding method, not only on the bit count. On the accuracy-per-GiB Pareto frontier
+With ≥ 4.8 bits per weight the bigger model wins every time. At ~4 bits (Q3_K_M) it wins or ties
+(14B Q3_K_M vs 7B Q8_0: +2.4, p = 0.06) except where the plain quantization collapses (3B). At
+~3.2 bits (Q2_K) plain K-quants lose or tie against the next smaller model at 5–8 bits (−5.9, −2.7,
+−58.7 points) and against a model 4–5× smaller they win (7B Q2_K vs 1.5B F16: +11.2) or tie (14B
+Q2_K vs 3B F16: +0.8, p = 0.64). With an importance matrix the same 3.2-bit file of 7B beats 3B at
+8.5 bits while being 8 % smaller; 3B at 3.3 bits with an imatrix still loses to 1.5B Q6_K. Where
+the "bigger model at fewer bits" rule stops depends on the rounding method and on the model, not
+only on the bit count. On the accuracy-per-GiB Pareto frontier
 (`results/figures/frontier.png`) there is no F16 or Q8_0 configuration; between 1.4 and 6 GiB the
 frontier is 3B Q3_K_M-imatrix → 3B Q4–Q6 → 7B Q2_K-imatrix → 7B Q3_K_M-imatrix → 7B Q5_K_M/Q6_K.
 The gate and the frontier answer different questions: 7B Q2_K FAILs against 7B F16, yet beats
 1.5B F16 of the same size by 11.2 points.
 
-### 2.5 A one-minute perplexity run predicts answer flips
+### 2.5 A short perplexity run predicts answer flips
 
 Across 27 quantized configurations (including the imatrix files), ln(PPL / PPL_ref) ranks the
 share of flipped answers with Spearman ρ = 0.88 (p = 1.1e-9) and the drop in mean accuracy with
 ρ = 0.86. Perplexity on wikitext-2 took 0.7–11 minutes per configuration here, the task sample
-5–150 minutes. It flags collapses immediately (3B Q2_K: 22,582) and orders the rest, so it works
+from a few minutes (1.5B) to over two hours (14B Q8_0). It flags collapses immediately (3B Q2_K: 22,582) and orders the rest, so it works
 as a screen before the full gate, not as a replacement: it does not certify anything.
 
 ### 2.6 What an 8 GB laptop GPU actually runs
@@ -255,7 +266,7 @@ Decode speed at ctx 4096 (tok/s): 7B Q6_K 49.2, Q4_K_M 69.3 (fits in VRAM); 7B Q
 7.2 (part of the layers on the CPU); 14B Q4_K_M 10.8, 14B Q2_K 42.5 (fits); 14B F16 2.5 with swap.
 Crossing the VRAM boundary costs 2.4–3× (7B Q6_K → Q8_0, 14B Q2_K → Q3_K_M). The same 7B Q4_K_M
 decodes at 22.4 tok/s on an Apple M5 (v0.1 legacy run), 3.1× slower than this laptop. Over the run
-the GPU reached 88 °C.
+the GPU reached 89 °C.
 
 Single-stream speed is not serving capacity. `src/loadtest.py` drives `llama-server` (16 slots of
 1,024 tokens) with 1, 2, 4, 8 and 16 closed-loop users sending GSM8K prompts (≤ 256 output tokens)
@@ -272,8 +283,9 @@ requests per level we use p95).
 | 7B Q6_K | 8 | 1 | 27 | 96 |
 | 14B Q4_K_M | 2 | 0 | 12 | 20 |
 
-* The interactive TPOT limit (40 ms, i.e. 25 tok/s per user) binds first: 7B Q4_K_M has p95 TPOT
-  26 ms at 4 users and 41 ms at 8.
+* Which interactive limit breaks first depends on the configuration: 7B Q4_K_M at 8 users exceeds
+  both (TTFT p95 0.62 s, TPOT p95 41 ms), 3B Q4_K_M at 16 users only TTFT (0.51 s; TPOT 35 ms),
+  7B Q6_K at 2 users only TPOT (43 ms).
 * **7B Q6_K and Q4_K_M are a tie on accuracy and not on serving.** Paired on all 984 items, Q4_K_M
   is −0.3 points vs Q6_K (95 % CI −1.6 to +1.0, McNemar p = 0.77), yet it carries 2× the users
   within the server SLA and 4× within the interactive one. A quality-first recommendation picks
@@ -290,10 +302,11 @@ requests per level we use p95).
 
 Decode is memory-bandwidth bound: tokens/s ≈ effective bandwidth / bytes read per token (weights +
 KV cache), plus a fixed per-token overhead. Fitted per device, this explains 79 laptop
-configurations with 7.0 % mean error (M5: 3.4 %). Transferred across devices with published
+measurements (20 model–quant pairs at up to four context lengths) with 7.0 % mean error (M5: 5.1 %;
+with bandwidth alone 11.7 % and 3.4 %). Transferred across devices with published
 bandwidth only, the error is 12 % if this laptop's memory runs at the 384 GB/s figure and 32 % at
 the 512 GB/s figure that also circulates; laptop GPU specs are the weakest input. Two `llama-bench`
-runs of the smallest model on the target machine (≈1 min) predict the other 51 configurations with
+runs of the smallest model on the target machine (≈1 min) predict the other 51 measurements with
 10.7 % mean error and no spec at all: 2.7–8 % for F16 to Q4_K_M, but 17–21 % over-prediction for
 Q3_K_M and Q2_K (max 29.5 %, 3B Q2_K), where dequantization compute starts to matter.
 
@@ -339,7 +352,7 @@ the box serves a team.
   own prompts; absolute scores differ from the publisher's protocol by a few points (§1).
 * 14B is compared with Q8_0, not F16.
 * Noise floors are measured for four configurations (one-slot runs for two); other configurations
-  use a proxy from the same model's quantized re-runs.
+  of 1.5B–7B use a proxy from the same model's quantized re-runs; 14B has none.
 * The importance matrix is calibrated on wikitext-2 train and perplexity is measured on wikitext-2
   test, the same distribution, so the perplexity gains may flatter it; the task gains (MMLU, GSM8K,
   HumanEval) do not share that bias. Only 3B and 7B Q2_K/Q3_K_M were re-quantized.
