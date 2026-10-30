@@ -310,7 +310,7 @@ Concurrent batching (`quality_eval.py --parallel 1`, all tasks pooled):
 | model | quant | re-run 4 slots: flips % / text changed % | re-run 1 slot: flips % / text changed % | 1-slot vs 4-slot run: flips % | flips vs ref, 4-slot run % | flips vs ref, 1-slot run % |
 |---|---|---|---|---|---|---|
 | 1.5B | Q4_K_M | 4.1 / 30.8 | 0.0 / 0.0 | 5.8 | 16.2 | 14.8 |
-| 7B | Q4_K_M | 2.5 / 24.4 |  | 2.0 | 4.4 | 4.6 |
+| 7B | Q4_K_M | 2.5 / 24.4 | 0.0 / 0.0 | 2.0 | 4.4 | 4.6 |
 
 ## 5. Size vs bits at matched memory
 

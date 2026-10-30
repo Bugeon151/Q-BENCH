@@ -205,6 +205,10 @@
       "raw_dir": "data/raw",
       "quality_dir": "data/quality",
       "quality_rerun_dir": "data/quality_rerun",
+      "quality_np1_dirs": [
+        "data/quality_np1",
+        "data/quality_np1_rerun"
+      ],
       "capacity_dir": "data/capacity",
       "processed_stats": "data/processed/benchmark_stats.csv",
       "summary_table": "results/tables/summary.csv",
