@@ -1,0 +1,5 @@
+hw_id,model,quant,chunks,ppl_gpu,ppl_cpu,cpu_over_gpu,cpu_mode,elapsed_sec,error
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q2_K,20,22505.8397,25303.8214,1.124322475290713,CUDA_VISIBLE_DEVICES=-1 -ngl 0 --no-op-offload,62.7,
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-3B-Instruct,Q3_K_M,20,18.0095,15.2334,0.8458535772786585,CUDA_VISIBLE_DEVICES=-1 -ngl 0 --no-op-offload,67.1,
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q2_K,20,11.3482,11.3397,0.9992509825346751,CUDA_VISIBLE_DEVICES=-1 -ngl 0 --no-op-offload,140.7,
+nvidia-geforce-rtx-5070-laptop-gpu-8gb,Qwen2.5-7B-Instruct,Q3_K_M,20,8.1184,8.1225,1.0005050256208121,CUDA_VISIBLE_DEVICES=-1 -ngl 0 --no-op-offload,147.5,

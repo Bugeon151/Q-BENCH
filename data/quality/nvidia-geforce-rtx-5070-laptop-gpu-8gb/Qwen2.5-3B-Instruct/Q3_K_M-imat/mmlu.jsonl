@@ -1,0 +1,570 @@
+{"id": 3, "pred": "C", "correct": false, "response": "C"}
+{"id": 13, "pred": "C", "correct": true, "response": "C."}
+{"id": 17, "pred": "C", "correct": true, "response": "C."}
+{"id": 28, "pred": "C", "correct": false, "response": "C"}
+{"id": 31, "pred": "B", "correct": true, "response": "B"}
+{"id": 14, "pred": "C", "correct": true, "response": "C. 30"}
+{"id": 35, "pred": "C", "correct": false, "response": "C"}
+{"id": 81, "pred": "C", "correct": false, "response": "C"}
+{"id": 86, "pred": "C", "correct": false, "response": "C"}
+{"id": 94, "pred": "C", "correct": false, "response": "C"}
+{"id": 107, "pred": "B", "correct": true, "response": "B"}
+{"id": 106, "pred": "A", "correct": true, "response": "A."}
+{"id": 108, "pred": "B", "correct": false, "response": "B"}
+{"id": 122, "pred": "A", "correct": false, "response": "A"}
+{"id": 123, "pred": "B", "correct": true, "response": "B"}
+{"id": 155, "pred": "B", "correct": false, "response": "B. Outward"}
+{"id": 159, "pred": "A", "correct": false, "response": "A. Masseter"}
+{"id": 208, "pred": "D", "correct": true, "response": "D. Respiration"}
+{"id": 150, "pred": "D", "correct": true, "response": "D. All of the above"}
+{"id": 229, "pred": "C", "correct": false, "response": "C"}
+{"id": 275, "pred": "C", "correct": true, "response": "C"}
+{"id": 291, "pred": "D", "correct": true, "response": "D."}
+{"id": 322, "pred": "A", "correct": false, "response": "A"}
+{"id": 306, "pred": "D", "correct": true, "response": "D"}
+{"id": 236, "pred": "D", "correct": true, "response": "D. Its distance from you"}
+{"id": 349, "pred": "A", "correct": true, "response": "A"}
+{"id": 342, "pred": "D", "correct": false, "response": "D"}
+{"id": 374, "pred": "C", "correct": true, "response": "C"}
+{"id": 343, "pred": "D", "correct": true, "response": "D."}
+{"id": 398, "pred": "C", "correct": true, "response": "C"}
+{"id": 385, "pred": "C", "correct": true, "response": "C"}
+{"id": 399, "pred": "D", "correct": true, "response": "D."}
+{"id": 400, "pred": "B", "correct": true, "response": "B."}
+{"id": 414, "pred": "C", "correct": true, "response": "C"}
+{"id": 406, "pred": "A", "correct": true, "response": "A"}
+{"id": 435, "pred": "D", "correct": true, "response": "D"}
+{"id": 430, "pred": "B", "correct": true, "response": "B"}
+{"id": 484, "pred": "B", "correct": false, "response": "B"}
+{"id": 432, "pred": "D", "correct": true, "response": "D. Locus of control"}
+{"id": 527, "pred": "B", "correct": true, "response": "B."}
+{"id": 509, "pred": "A", "correct": true, "response": "A. 30 minutes."}
+{"id": 550, "pred": "C", "correct": false, "response": "C"}
+{"id": 422, "pred": "D", "correct": false, "response": "D. Attitudinal, Market equilibrium, Social pressures"}
+{"id": 585, "pred": "A", "correct": false, "response": "A"}
+{"id": 637, "pred": "D", "correct": true, "response": "D."}
+{"id": 663, "pred": "D", "correct": false, "response": "D."}
+{"id": 680, "pred": "C", "correct": true, "response": "C"}
+{"id": 672, "pred": "D", "correct": true, "response": "D. 46"}
+{"id": 622, "pred": "C", "correct": true, "response": "C. The general public."}
+{"id": 722, "pred": "A", "correct": true, "response": "A"}
+{"id": 769, "pred": "B", "correct": false, "response": "B"}
+{"id": 772, "pred": "D", "correct": true, "response": "D."}
+{"id": 763, "pred": "A", "correct": false, "response": "A. Plasma membrane"}
+{"id": 777, "pred": "D", "correct": true, "response": "D. primary succession"}
+{"id": 810, "pred": "B", "correct": true, "response": "B."}
+{"id": 811, "pred": "D", "correct": true, "response": "D."}
+{"id": 826, "pred": "C", "correct": false, "response": "C."}
+{"id": 823, "pred": "C", "correct": true, "response": "C."}
+{"id": 868, "pred": "A", "correct": false, "response": "A"}
+{"id": 849, "pred": "D", "correct": true, "response": "D. reverse transcriptase"}
+{"id": 922, "pred": "C", "correct": false, "response": "C."}
+{"id": 930, "pred": "B", "correct": false, "response": "B"}
+{"id": 941, "pred": "C", "correct": false, "response": "C"}
+{"id": 942, "pred": "C", "correct": false, "response": "C"}
+{"id": 943, "pred": "A", "correct": false, "response": "A"}
+{"id": 977, "pred": "B", "correct": true, "response": "B"}
+{"id": 981, "pred": "A", "correct": false, "response": "A"}
+{"id": 985, "pred": "C", "correct": false, "response": "C"}
+{"id": 916, "pred": "D", "correct": true, "response": "D. Arsenic-dip osilicon"}
+{"id": 983, "pred": "A", "correct": false, "response": "A"}
+{"id": 1005, "pred": "C", "correct": true, "response": "C"}
+{"id": 1016, "pred": "D", "correct": true, "response": "D"}
+{"id": 1017, "pred": "C", "correct": false, "response": "C"}
+{"id": 1027, "pred": "D", "correct": true, "response": "D."}
+{"id": 1055, "pred": "D", "correct": true, "response": "D."}
+{"id": 1073, "pred": "D", "correct": false, "response": "D"}
+{"id": 1064, "pred": "B", "correct": true, "response": "B."}
+{"id": 1124, "pred": "C", "correct": false, "response": "C"}
+{"id": 1077, "pred": "C", "correct": true, "response": "C. Operator precedence"}
+{"id": 1089, "pred": "C", "correct": true, "response": "C."}
+{"id": 1078, "pred": "D", "correct": true, "response": "D. II and III"}
+{"id": 1144, "pred": "C", "correct": true, "response": "C"}
+{"id": 1130, "pred": "D", "correct": true, "response": "D."}
+{"id": 1167, "pred": "C", "correct": false, "response": "C"}
+{"id": 1137, "pred": "D", "correct": true, "response": "D. abelian"}
+{"id": 1177, "pred": "B", "correct": true, "response": "B"}
+{"id": 1183, "pred": "A", "correct": false, "response": "A"}
+{"id": 1184, "pred": "B", "correct": false, "response": "B"}
+{"id": 1195, "pred": "B", "correct": false, "response": "B"}
+{"id": 1204, "pred": "A", "correct": true, "response": "A."}
+{"id": 1210, "pred": "D", "correct": false, "response": "D"}
+{"id": 1194, "pred": "C", "correct": false, "response": "C. 28"}
+{"id": 1212, "pred": "C", "correct": true, "response": "C."}
+{"id": 1250, "pred": "A", "correct": false, "response": "A"}
+{"id": 1276, "pred": "B", "correct": false, "response": "B"}
+{"id": 1264, "pred": "B", "correct": false, "response": "B."}
+{"id": 1298, "pred": "C", "correct": false, "response": "C."}
+{"id": 1254, "pred": "C", "correct": true, "response": "C. Depersonalization disorder"}
+{"id": 1341, "pred": "D", "correct": true, "response": "D."}
+{"id": 1386, "pred": "C", "correct": false, "response": "C"}
+{"id": 1402, "pred": "A", "correct": false, "response": "A"}
+{"id": 1387, "pred": "D", "correct": false, "response": "D"}
+{"id": 1400, "pred": "B", "correct": false, "response": "B"}
+{"id": 1432, "pred": "C", "correct": false, "response": "C"}
+{"id": 1427, "pred": "B", "correct": false, "response": "B"}
+{"id": 1363, "pred": "D", "correct": true, "response": "D. a single Y chromosome from the father."}
+{"id": 1419, "pred": "D", "correct": false, "response": "D."}
+{"id": 1488, "pred": "A", "correct": true, "response": "A"}
+{"id": 1451, "pred": "B", "correct": false, "response": "B"}
+{"id": 1464, "pred": "D", "correct": true, "response": "D."}
+{"id": 1440, "pred": "C", "correct": true, "response": "C."}
+{"id": 1499, "pred": "C", "correct": true, "response": "C"}
+{"id": 1522, "pred": "A", "correct": false, "response": "A"}
+{"id": 1517, "pred": "B", "correct": true, "response": "B."}
+{"id": 1525, "pred": "B", "correct": false, "response": "B"}
+{"id": 1536, "pred": "C", "correct": true, "response": "C"}
+{"id": 1504, "pred": "C", "correct": true, "response": "C. Session layer"}
+{"id": 1539, "pred": "B", "correct": true, "response": "B."}
+{"id": 1545, "pred": "B", "correct": true, "response": "B"}
+{"id": 1594, "pred": "B", "correct": false, "response": "B"}
+{"id": 1583, "pred": "B", "correct": true, "response": "B."}
+{"id": 1566, "pred": "B", "correct": false, "response": "B."}
+{"id": 1599, "pred": "B", "correct": false, "response": "B"}
+{"id": 1610, "pred": "A", "correct": true, "response": "A"}
+{"id": 1731, "pred": "C", "correct": false, "response": "C."}
+{"id": 1697, "pred": "B", "correct": false, "response": "B."}
+{"id": 1611, "pred": "A", "correct": false, "response": "A. less."}
+{"id": 1773, "pred": "A", "correct": true, "response": "A"}
+{"id": 1791, "pred": "B", "correct": true, "response": "B"}
+{"id": 1838, "pred": "D", "correct": false, "response": "D."}
+{"id": 1764, "pred": "D", "correct": true, "response": "D. ejected neutrons"}
+{"id": 1814, "pred": "C", "correct": false, "response": "C."}
+{"id": 1854, "pred": "B", "correct": true, "response": "B."}
+{"id": 1865, "pred": "B", "correct": true, "response": "B"}
+{"id": 1876, "pred": "C", "correct": false, "response": "C."}
+{"id": 1860, "pred": "B", "correct": false, "response": "B. (i) and (iii) only"}
+{"id": 1882, "pred": "B", "correct": false, "response": "B."}
+{"id": 1855, "pred": "B", "correct": false, "response": "B. (i) and (iii) only"}
+{"id": 1873, "pred": "A", "correct": true, "response": "A. (ii) and (iv) only"}
+{"id": 1922, "pred": "D", "correct": false, "response": "D."}
+{"id": 1948, "pred": "B", "correct": true, "response": "B."}
+{"id": 1893, "pred": "D", "correct": false, "response": "D."}
+{"id": 1949, "pred": "C", "correct": true, "response": "C. 2"}
+{"id": 1960, "pred": "B", "correct": false, "response": "B"}
+{"id": 1995, "pred": "D", "correct": true, "response": "D."}
+{"id": 1988, "pred": "B", "correct": false, "response": "B."}
+{"id": 2007, "pred": "A", "correct": false, "response": "A"}
+{"id": 2057, "pred": "A", "correct": true, "response": "A"}
+{"id": 2036, "pred": "C", "correct": true, "response": "C."}
+{"id": 2156, "pred": "B", "correct": false, "response": "B"}
+{"id": 2031, "pred": "A", "correct": true, "response": "A. Snubber circuit."}
+{"id": 2119, "pred": "B", "correct": true, "response": "B."}
+{"id": 2066, "pred": "C", "correct": true, "response": "C. 8"}
+{"id": 2321, "pred": "B", "correct": true, "response": "B"}
+{"id": 2324, "pred": "D", "correct": true, "response": "D."}
+{"id": 2217, "pred": "B", "correct": false, "response": "B"}
+{"id": 2199, "pred": "C", "correct": true, "response": "C. 72"}
+{"id": 2434, "pred": "B", "correct": true, "response": "B"}
+{"id": 2433, "pred": "A", "correct": true, "response": "A"}
+{"id": 2468, "pred": "C", "correct": false, "response": "C"}
+{"id": 2463, "pred": "C", "correct": false, "response": "C"}
+{"id": 2462, "pred": "B", "correct": true, "response": "B"}
+{"id": 2490, "pred": "A", "correct": true, "response": "A"}
+{"id": 2512, "pred": "A", "correct": true, "response": "A."}
+{"id": 2385, "pred": "B", "correct": false, "response": "B. 0.0406"}
+{"id": 2524, "pred": "B", "correct": false, "response": "B"}
+{"id": 2507, "pred": "C", "correct": false, "response": "C. sP"}
+{"id": 2520, "pred": "C", "correct": false, "response": "C"}
+{"id": 2540, "pred": "B", "correct": false, "response": "B."}
+{"id": 2571, "pred": "D", "correct": false, "response": "D"}
+{"id": 2583, "pred": "B", "correct": true, "response": "B"}
+{"id": 2550, "pred": "A", "correct": true, "response": "A"}
+{"id": 2608, "pred": "C", "correct": true, "response": "C"}
+{"id": 2610, "pred": "B", "correct": false, "response": "B"}
+{"id": 2615, "pred": "B", "correct": false, "response": "B"}
+{"id": 2569, "pred": "C", "correct": true, "response": "C. 40%"}
+{"id": 2645, "pred": "B", "correct": false, "response": "B"}
+{"id": 2631, "pred": "A", "correct": false, "response": "A."}
+{"id": 2636, "pred": "D", "correct": false, "response": "D. Iran"}
+{"id": 2668, "pred": "B", "correct": false, "response": "B"}
+{"id": 2698, "pred": "C", "correct": true, "response": "C"}
+{"id": 2712, "pred": "A", "correct": true, "response": "A."}
+{"id": 2709, "pred": "C", "correct": false, "response": "C. Parallel evolution"}
+{"id": 2791, "pred": "D", "correct": true, "response": "D"}
+{"id": 2704, "pred": "D", "correct": false, "response": "D. 92%"}
+{"id": 2917, "pred": "C", "correct": false, "response": "C"}
+{"id": 2941, "pred": "A", "correct": true, "response": "A"}
+{"id": 2733, "pred": "D", "correct": true, "response": "D. Deciduous forests"}
+{"id": 2792, "pred": "D", "correct": true, "response": "D. 25%"}
+{"id": 3011, "pred": "D", "correct": true, "response": "D."}
+{"id": 3021, "pred": "C", "correct": true, "response": "C"}
+{"id": 3033, "pred": "A", "correct": false, "response": "A"}
+{"id": 3087, "pred": "B", "correct": true, "response": "B"}
+{"id": 3046, "pred": "A", "correct": false, "response": "A"}
+{"id": 3100, "pred": "D", "correct": false, "response": "D"}
+{"id": 2959, "pred": "D", "correct": true, "response": "D. plasmolysis."}
+{"id": 3114, "pred": "A", "correct": false, "response": "A"}
+{"id": 3119, "pred": "B", "correct": true, "response": "B"}
+{"id": 3221, "pred": "D", "correct": true, "response": "D"}
+{"id": 3147, "pred": "B", "correct": false, "response": "B"}
+{"id": 3134, "pred": "C", "correct": true, "response": "C."}
+{"id": 3207, "pred": "C", "correct": true, "response": "C."}
+{"id": 3251, "pred": "A", "correct": false, "response": "A"}
+{"id": 3267, "pred": "B", "correct": false, "response": "B"}
+{"id": 3233, "pred": "C", "correct": true, "response": "C"}
+{"id": 3265, "pred": "B", "correct": true, "response": "B."}
+{"id": 3273, "pred": "C", "correct": true, "response": "C"}
+{"id": 3278, "pred": "B", "correct": true, "response": "B."}
+{"id": 3287, "pred": "C", "correct": true, "response": "C."}
+{"id": 3275, "pred": "D", "correct": true, "response": "D. During run time"}
+{"id": 3339, "pred": "A", "correct": true, "response": "A"}
+{"id": 3312, "pred": "A", "correct": true, "response": "A"}
+{"id": 3298, "pred": "A", "correct": true, "response": "A"}
+{"id": 3377, "pred": "B", "correct": true, "response": "B"}
+{"id": 3270, "pred": "C", "correct": true, "response": "C. {1,2,3,4}"}
+{"id": 3345, "pred": "B", "correct": false, "response": "B."}
+{"id": 3368, "pred": "C", "correct": true, "response": "C."}
+{"id": 3394, "pred": "A", "correct": true, "response": "A"}
+{"id": 3448, "pred": "D", "correct": true, "response": "D."}
+{"id": 3414, "pred": "A", "correct": true, "response": "A."}
+{"id": 3462, "pred": "A", "correct": false, "response": "A"}
+{"id": 3464, "pred": "C", "correct": false, "response": "C"}
+{"id": 3465, "pred": "B", "correct": true, "response": "B"}
+{"id": 3397, "pred": "A", "correct": false, "response": "A. Low-productivity agricultural practices"}
+{"id": 3588, "pred": "B", "correct": false, "response": "B"}
+{"id": 3505, "pred": "D", "correct": true, "response": "D."}
+{"id": 3503, "pred": "A", "correct": true, "response": "A."}
+{"id": 3597, "pred": "C", "correct": true, "response": "C."}
+{"id": 3628, "pred": "D", "correct": false, "response": "D"}
+{"id": 3653, "pred": "D", "correct": false, "response": "D"}
+{"id": 3663, "pred": "C", "correct": true, "response": "C"}
+{"id": 3608, "pred": "D", "correct": true, "response": "D. PLO"}
+{"id": 3699, "pred": "D", "correct": true, "response": "D."}
+{"id": 3716, "pred": "A", "correct": true, "response": "A."}
+{"id": 3705, "pred": "D", "correct": true, "response": "D."}
+{"id": 3729, "pred": "C", "correct": true, "response": "C"}
+{"id": 3769, "pred": "B", "correct": false, "response": "B"}
+{"id": 3783, "pred": "C", "correct": true, "response": "C"}
+{"id": 3886, "pred": "C", "correct": true, "response": "C"}
+{"id": 3776, "pred": "A", "correct": false, "response": "A."}
+{"id": 3816, "pred": "B", "correct": true, "response": "B"}
+{"id": 3962, "pred": "B", "correct": true, "response": "B"}
+{"id": 3887, "pred": "A", "correct": false, "response": "A"}
+{"id": 3935, "pred": "A", "correct": true, "response": "A"}
+{"id": 3905, "pred": "B", "correct": true, "response": "B."}
+{"id": 4046, "pred": "B", "correct": true, "response": "B"}
+{"id": 4080, "pred": "C", "correct": true, "response": "C"}
+{"id": 4208, "pred": "B", "correct": true, "response": "B"}
+{"id": 4133, "pred": "C", "correct": false, "response": "C"}
+{"id": 4255, "pred": "C", "correct": true, "response": "C"}
+{"id": 4401, "pred": "C", "correct": true, "response": "C"}
+{"id": 4130, "pred": "C", "correct": false, "response": "C. An increase in the discount rate"}
+{"id": 4259, "pred": "D", "correct": false, "response": "D. 12"}
+{"id": 4409, "pred": "B", "correct": false, "response": "B"}
+{"id": 4434, "pred": "A", "correct": true, "response": "A."}
+{"id": 4444, "pred": "C", "correct": false, "response": "C"}
+{"id": 4438, "pred": "B", "correct": false, "response": "B"}
+{"id": 4448, "pred": "B", "correct": false, "response": "B"}
+{"id": 4278, "pred": "D", "correct": true, "response": "D. \\frac{1}{243}"}
+{"id": 4467, "pred": "A", "correct": true, "response": "A"}
+{"id": 4546, "pred": "D", "correct": true, "response": "D"}
+{"id": 4533, "pred": "B", "correct": false, "response": "B"}
+{"id": 4547, "pred": "B", "correct": true, "response": "B"}
+{"id": 4612, "pred": "D", "correct": true, "response": "D"}
+{"id": 4561, "pred": "B", "correct": true, "response": "B"}
+{"id": 4606, "pred": "C", "correct": false, "response": "C."}
+{"id": 4525, "pred": "D", "correct": true, "response": "D. An upward shift in MC."}
+{"id": 4702, "pred": "C", "correct": false, "response": "C"}
+{"id": 4635, "pred": "D", "correct": true, "response": "D"}
+{"id": 4718, "pred": "D", "correct": true, "response": "D."}
+{"id": 4748, "pred": "D", "correct": true, "response": "D"}
+{"id": 4755, "pred": "A", "correct": false, "response": "A"}
+{"id": 4761, "pred": "D", "correct": true, "response": "D"}
+{"id": 4782, "pred": "A", "correct": false, "response": "A"}
+{"id": 4799, "pred": "C", "correct": false, "response": "C."}
+{"id": 4807, "pred": "B", "correct": true, "response": "B"}
+{"id": 4849, "pred": "B", "correct": false, "response": "B"}
+{"id": 4854, "pred": "D", "correct": true, "response": "D"}
+{"id": 4874, "pred": "D", "correct": true, "response": "D"}
+{"id": 4876, "pred": "C", "correct": true, "response": "C"}
+{"id": 4902, "pred": "D", "correct": true, "response": "D."}
+{"id": 4982, "pred": "D", "correct": true, "response": "D"}
+{"id": 4947, "pred": "C", "correct": true, "response": "C. conversion disorder"}
+{"id": 5057, "pred": "A", "correct": true, "response": "A"}
+{"id": 5105, "pred": "B", "correct": false, "response": "B"}
+{"id": 5129, "pred": "D", "correct": false, "response": "D."}
+{"id": 5303, "pred": "B", "correct": false, "response": "B"}
+{"id": 5384, "pred": "C", "correct": true, "response": "C"}
+{"id": 5379, "pred": "A", "correct": true, "response": "A"}
+{"id": 5432, "pred": "A", "correct": false, "response": "A"}
+{"id": 5474, "pred": "A", "correct": true, "response": "A"}
+{"id": 5499, "pred": "B", "correct": true, "response": "B"}
+{"id": 5297, "pred": "D", "correct": false, "response": "D. sleep spindles."}
+{"id": 5505, "pred": "C", "correct": true, "response": "C"}
+{"id": 5531, "pred": "A", "correct": true, "response": "A"}
+{"id": 5529, "pred": "B", "correct": true, "response": "B."}
+{"id": 5540, "pred": "C", "correct": false, "response": "C"}
+{"id": 5548, "pred": "C", "correct": false, "response": "C."}
+{"id": 5610, "pred": "C", "correct": false, "response": "C."}
+{"id": 5632, "pred": "C", "correct": false, "response": "C"}
+{"id": 5687, "pred": "B", "correct": true, "response": "B."}
+{"id": 5696, "pred": "A", "correct": false, "response": "A"}
+{"id": 5703, "pred": "B", "correct": false, "response": "B"}
+{"id": 5723, "pred": "A", "correct": true, "response": "A"}
+{"id": 5772, "pred": "C", "correct": true, "response": "C"}
+{"id": 5790, "pred": "D", "correct": true, "response": "D"}
+{"id": 5817, "pred": "D", "correct": true, "response": "D"}
+{"id": 5831, "pred": "A", "correct": false, "response": "A"}
+{"id": 5835, "pred": "A", "correct": false, "response": "A"}
+{"id": 5848, "pred": "D", "correct": true, "response": "D"}
+{"id": 5864, "pred": "C", "correct": false, "response": "C"}
+{"id": 5932, "pred": "A", "correct": false, "response": "A"}
+{"id": 5866, "pred": "D", "correct": true, "response": "D"}
+{"id": 5974, "pred": "A", "correct": false, "response": "A."}
+{"id": 5867, "pred": "D", "correct": true, "response": "D."}
+{"id": 5990, "pred": "C", "correct": true, "response": "C"}
+{"id": 6000, "pred": "B", "correct": true, "response": "B"}
+{"id": 6001, "pred": "A", "correct": true, "response": "A"}
+{"id": 6040, "pred": "C", "correct": false, "response": "C."}
+{"id": 6103, "pred": "B", "correct": true, "response": "B"}
+{"id": 6106, "pred": "D", "correct": false, "response": "D"}
+{"id": 6043, "pred": "B", "correct": true, "response": "B."}
+{"id": 6217, "pred": "B", "correct": true, "response": "B"}
+{"id": 6129, "pred": "B", "correct": true, "response": "B"}
+{"id": 6136, "pred": "A", "correct": false, "response": "A."}
+{"id": 6109, "pred": "D", "correct": false, "response": "D. Secondary control"}
+{"id": 6224, "pred": "B", "correct": true, "response": "B"}
+{"id": 6219, "pred": "C", "correct": false, "response": "C"}
+{"id": 6306, "pred": "B", "correct": false, "response": "B"}
+{"id": 6329, "pred": "C", "correct": false, "response": "C"}
+{"id": 6307, "pred": "B", "correct": true, "response": "B"}
+{"id": 6322, "pred": "D", "correct": false, "response": "D"}
+{"id": 6332, "pred": "A", "correct": true, "response": "A"}
+{"id": 6342, "pred": "C", "correct": true, "response": "C"}
+{"id": 6378, "pred": "D", "correct": false, "response": "D"}
+{"id": 6372, "pred": "D", "correct": true, "response": "D"}
+{"id": 6375, "pred": "B", "correct": true, "response": "B"}
+{"id": 6459, "pred": "B", "correct": true, "response": "B"}
+{"id": 6392, "pred": "B", "correct": false, "response": "B"}
+{"id": 6419, "pred": "D", "correct": true, "response": "D"}
+{"id": 6469, "pred": "D", "correct": false, "response": "D"}
+{"id": 6415, "pred": "C", "correct": false, "response": "C. covert sensitization"}
+{"id": 6473, "pred": "D", "correct": false, "response": "D."}
+{"id": 6476, "pred": "A", "correct": true, "response": "A"}
+{"id": 6493, "pred": "C", "correct": false, "response": "C"}
+{"id": 6481, "pred": "C", "correct": false, "response": "C"}
+{"id": 6483, "pred": "A", "correct": true, "response": "A"}
+{"id": 6525, "pred": "B", "correct": false, "response": "B"}
+{"id": 6534, "pred": "A", "correct": true, "response": "A"}
+{"id": 6565, "pred": "A", "correct": true, "response": "A"}
+{"id": 6528, "pred": "B", "correct": false, "response": "B"}
+{"id": 6573, "pred": "B", "correct": false, "response": "B"}
+{"id": 6604, "pred": "A", "correct": true, "response": "A"}
+{"id": 6591, "pred": "B", "correct": false, "response": "B"}
+{"id": 6622, "pred": "A", "correct": true, "response": "A"}
+{"id": 6632, "pred": "B", "correct": true, "response": "B"}
+{"id": 6636, "pred": "D", "correct": true, "response": "D"}
+{"id": 6576, "pred": "D", "correct": true, "response": "D. Reciprocity."}
+{"id": 6660, "pred": "B", "correct": false, "response": "B"}
+{"id": 6689, "pred": "C", "correct": true, "response": "C"}
+{"id": 6643, "pred": "D", "correct": false, "response": "D. Rousseau"}
+{"id": 6705, "pred": "D", "correct": true, "response": "D"}
+{"id": 6744, "pred": "B", "correct": false, "response": "B"}
+{"id": 6734, "pred": "B", "correct": false, "response": "B"}
+{"id": 6712, "pred": "A", "correct": false, "response": "A"}
+{"id": 6739, "pred": "C", "correct": true, "response": "C"}
+{"id": 6761, "pred": "C", "correct": true, "response": "C"}
+{"id": 6784, "pred": "D", "correct": false, "response": "D."}
+{"id": 6766, "pred": "D", "correct": false, "response": "D."}
+{"id": 6801, "pred": "D", "correct": true, "response": "D"}
+{"id": 6873, "pred": "B", "correct": true, "response": "B"}
+{"id": 6904, "pred": "A", "correct": true, "response": "A"}
+{"id": 6902, "pred": "C", "correct": false, "response": "C"}
+{"id": 6836, "pred": "C", "correct": true, "response": "C"}
+{"id": 6918, "pred": "C", "correct": false, "response": "C."}
+{"id": 6920, "pred": "C", "correct": false, "response": "C."}
+{"id": 6913, "pred": "B", "correct": true, "response": "B."}
+{"id": 6925, "pred": "C", "correct": true, "response": "C"}
+{"id": 6938, "pred": "C", "correct": true, "response": "C"}
+{"id": 6960, "pred": "B", "correct": false, "response": "B"}
+{"id": 6961, "pred": "A", "correct": true, "response": "A"}
+{"id": 6941, "pred": "C", "correct": true, "response": "C."}
+{"id": 6964, "pred": "C", "correct": true, "response": "C."}
+{"id": 6981, "pred": "C", "correct": true, "response": "C."}
+{"id": 6966, "pred": "C", "correct": false, "response": "C. Financial planning"}
+{"id": 6980, "pred": "B", "correct": true, "response": "B. James Dyson"}
+{"id": 6985, "pred": "C", "correct": true, "response": "C"}
+{"id": 7042, "pred": "B", "correct": true, "response": "B"}
+{"id": 7102, "pred": "B", "correct": true, "response": "B"}
+{"id": 7017, "pred": "D", "correct": true, "response": "D. Individualism"}
+{"id": 7031, "pred": "D", "correct": true, "response": "D. Henry Mintzberg"}
+{"id": 7117, "pred": "A", "correct": true, "response": "A. Advertising"}
+{"id": 7122, "pred": "A", "correct": true, "response": "A."}
+{"id": 7103, "pred": "D", "correct": true, "response": "D. Brand personalities."}
+{"id": 7204, "pred": "D", "correct": true, "response": "D."}
+{"id": 7212, "pred": "B", "correct": true, "response": "B"}
+{"id": 7225, "pred": "A", "correct": false, "response": "A."}
+{"id": 7137, "pred": "D", "correct": false, "response": "D. Translation equivalence."}
+{"id": 7233, "pred": "A", "correct": true, "response": "A."}
+{"id": 7268, "pred": "B", "correct": false, "response": "B"}
+{"id": 7289, "pred": "B", "correct": true, "response": "B"}
+{"id": 7295, "pred": "B", "correct": false, "response": "B"}
+{"id": 7284, "pred": "B", "correct": true, "response": "B."}
+{"id": 7290, "pred": "D", "correct": true, "response": "D."}
+{"id": 7316, "pred": "B", "correct": false, "response": "B"}
+{"id": 7338, "pred": "A", "correct": true, "response": "A"}
+{"id": 7346, "pred": "B", "correct": false, "response": "B"}
+{"id": 7319, "pred": "A", "correct": true, "response": "A."}
+{"id": 7365, "pred": "D", "correct": true, "response": "D"}
+{"id": 7517, "pred": "B", "correct": false, "response": "B"}
+{"id": 7348, "pred": "C", "correct": false, "response": "C."}
+{"id": 7549, "pred": "A", "correct": true, "response": "A"}
+{"id": 7652, "pred": "B", "correct": false, "response": "B"}
+{"id": 7725, "pred": "D", "correct": true, "response": "D"}
+{"id": 7821, "pred": "A", "correct": false, "response": "A"}
+{"id": 7836, "pred": "A", "correct": true, "response": "A. tea"}
+{"id": 7948, "pred": "B", "correct": true, "response": "B"}
+{"id": 8036, "pred": "B", "correct": true, "response": "B"}
+{"id": 8106, "pred": "B", "correct": false, "response": "B"}
+{"id": 8185, "pred": "A", "correct": true, "response": "A"}
+{"id": 8143, "pred": "B", "correct": false, "response": "B"}
+{"id": 8171, "pred": "B", "correct": true, "response": "B"}
+{"id": 8205, "pred": "C", "correct": false, "response": "C"}
+{"id": 8243, "pred": "B", "correct": true, "response": "B"}
+{"id": 8446, "pred": "D", "correct": true, "response": "D"}
+{"id": 8356, "pred": "A", "correct": true, "response": "A"}
+{"id": 8224, "pred": "C", "correct": true, "response": "C"}
+{"id": 8454, "pred": "A", "correct": true, "response": "A"}
+{"id": 8553, "pred": "B", "correct": false, "response": "B."}
+{"id": 8465, "pred": "D", "correct": false, "response": "D."}
+{"id": 8449, "pred": "C", "correct": true, "response": "C. hypothetical"}
+{"id": 8555, "pred": "B", "correct": false, "response": "B."}
+{"id": 8643, "pred": "A", "correct": true, "response": "A."}
+{"id": 8664, "pred": "B", "correct": true, "response": "B."}
+{"id": 8828, "pred": "B", "correct": false, "response": "B."}
+{"id": 8879, "pred": "B", "correct": false, "response": "B."}
+{"id": 8886, "pred": "B", "correct": true, "response": "B."}
+{"id": 8953, "pred": "B", "correct": false, "response": "B."}
+{"id": 9328, "pred": "B", "correct": false, "response": "B."}
+{"id": 9487, "pred": "A", "correct": false, "response": "A"}
+{"id": 9460, "pred": "B", "correct": true, "response": "B"}
+{"id": 9394, "pred": "B", "correct": false, "response": "B."}
+{"id": 9491, "pred": "A", "correct": true, "response": "A"}
+{"id": 9498, "pred": "A", "correct": false, "response": "A"}
+{"id": 9515, "pred": "D", "correct": false, "response": "D"}
+{"id": 9529, "pred": "B", "correct": true, "response": "B"}
+{"id": 9535, "pred": "A", "correct": true, "response": "A"}
+{"id": 9616, "pred": "D", "correct": true, "response": "D."}
+{"id": 9694, "pred": "B", "correct": true, "response": "B"}
+{"id": 9769, "pred": "C", "correct": true, "response": "C"}
+{"id": 9589, "pred": "B", "correct": true, "response": "B. Niacin"}
+{"id": 9795, "pred": "C", "correct": true, "response": "C."}
+{"id": 9726, "pred": "D", "correct": false, "response": "D. supererogation."}
+{"id": 9805, "pred": "B", "correct": true, "response": "B"}
+{"id": 9850, "pred": "C", "correct": true, "response": "C"}
+{"id": 9841, "pred": "C", "correct": true, "response": "C"}
+{"id": 9909, "pred": "B", "correct": true, "response": "B"}
+{"id": 9924, "pred": "B", "correct": false, "response": "B"}
+{"id": 9925, "pred": "A", "correct": true, "response": "A"}
+{"id": 9884, "pred": "A", "correct": false, "response": "A."}
+{"id": 10127, "pred": "B", "correct": true, "response": "B"}
+{"id": 10037, "pred": "C", "correct": true, "response": "C"}
+{"id": 10044, "pred": "B", "correct": true, "response": "B. maritime trade"}
+{"id": 10139, "pred": "A", "correct": true, "response": "A"}
+{"id": 10181, "pred": "B", "correct": false, "response": "B"}
+{"id": 10138, "pred": "D", "correct": false, "response": "D. paleoanthropology."}
+{"id": 10204, "pred": "B", "correct": true, "response": "B."}
+{"id": 10141, "pred": "D", "correct": false, "response": "D. astronomy and mathematics."}
+{"id": 10260, "pred": "A", "correct": false, "response": "A"}
+{"id": 10363, "pred": "C", "correct": true, "response": "C"}
+{"id": 10265, "pred": "C", "correct": true, "response": "C"}
+{"id": 10384, "pred": "D", "correct": false, "response": "D."}
+{"id": 10491, "pred": "C", "correct": true, "response": "C"}
+{"id": 10518, "pred": "D", "correct": true, "response": "D."}
+{"id": 10517, "pred": "C", "correct": false, "response": "C."}
+{"id": 10609, "pred": "B", "correct": true, "response": "B"}
+{"id": 10553, "pred": "B", "correct": true, "response": "B."}
+{"id": 10447, "pred": "A", "correct": false, "response": "A. Fund financial statement."}
+{"id": 10623, "pred": "B", "correct": false, "response": "B."}
+{"id": 10709, "pred": "B", "correct": false, "response": "B."}
+{"id": 10853, "pred": "A", "correct": false, "response": "A"}
+{"id": 11165, "pred": "C", "correct": false, "response": "C"}
+{"id": 10867, "pred": "A", "correct": false, "response": "A."}
+{"id": 10996, "pred": "D", "correct": true, "response": "D."}
+{"id": 11520, "pred": "A", "correct": false, "response": "A"}
+{"id": 11174, "pred": "C", "correct": false, "response": "C"}
+{"id": 11338, "pred": "A", "correct": true, "response": "A."}
+{"id": 10528, "pred": "C", "correct": true, "response": "C. $0 $100000 - $150"}
+{"id": 11820, "pred": "A", "correct": false, "response": "A"}
+{"id": 11852, "pred": "D", "correct": false, "response": "D."}
+{"id": 12224, "pred": "C", "correct": true, "response": "C."}
+{"id": 12295, "pred": "C", "correct": false, "response": "C"}
+{"id": 12187, "pred": "D", "correct": false, "response": "D. Receive genetic counseling"}
+{"id": 12362, "pred": "C", "correct": false, "response": "C"}
+{"id": 12325, "pred": "A", "correct": false, "response": "A"}
+{"id": 12165, "pred": "C", "correct": true, "response": "C. Compression of the lateral femoral cutaneous nerve"}
+{"id": 12426, "pred": "B", "correct": false, "response": "B."}
+{"id": 12431, "pred": "A", "correct": false, "response": "A"}
+{"id": 12262, "pred": "D", "correct": false, "response": "D. Streptococcus pyogenes (group A)"}
+{"id": 12508, "pred": "B", "correct": true, "response": "B"}
+{"id": 12388, "pred": "D", "correct": true, "response": "D. Meniere's disease"}
+{"id": 12564, "pred": "B", "correct": true, "response": "B"}
+{"id": 12638, "pred": "B", "correct": false, "response": "B"}
+{"id": 12775, "pred": "D", "correct": false, "response": "D"}
+{"id": 12758, "pred": "D", "correct": true, "response": "D"}
+{"id": 12744, "pred": "A", "correct": false, "response": "A."}
+{"id": 12809, "pred": "D", "correct": true, "response": "D."}
+{"id": 13065, "pred": "B", "correct": false, "response": "B"}
+{"id": 12878, "pred": "A", "correct": false, "response": "A"}
+{"id": 12988, "pred": "A", "correct": true, "response": "A"}
+{"id": 12956, "pred": "B", "correct": true, "response": "B"}
+{"id": 13090, "pred": "A", "correct": true, "response": "A."}
+{"id": 13086, "pred": "D", "correct": false, "response": "D"}
+{"id": 13088, "pred": "A", "correct": false, "response": "A"}
+{"id": 13073, "pred": "C", "correct": false, "response": "C. Business writing"}
+{"id": 13101, "pred": "B", "correct": true, "response": "B"}
+{"id": 13100, "pred": "C", "correct": true, "response": "C."}
+{"id": 13119, "pred": "C", "correct": false, "response": "C."}
+{"id": 13138, "pred": "B", "correct": true, "response": "B"}
+{"id": 13203, "pred": "A", "correct": true, "response": "A"}
+{"id": 13134, "pred": "D", "correct": false, "response": "D. manipulative"}
+{"id": 13256, "pred": "D", "correct": true, "response": "D."}
+{"id": 13266, "pred": "D", "correct": true, "response": "D."}
+{"id": 13304, "pred": "B", "correct": true, "response": "B"}
+{"id": 13316, "pred": "B", "correct": false, "response": "B"}
+{"id": 13329, "pred": "C", "correct": true, "response": "C"}
+{"id": 13350, "pred": "A", "correct": true, "response": "A."}
+{"id": 13332, "pred": "B", "correct": false, "response": "B"}
+{"id": 13390, "pred": "C", "correct": true, "response": "C"}
+{"id": 13399, "pred": "D", "correct": true, "response": "D"}
+{"id": 13404, "pred": "B", "correct": false, "response": "B"}
+{"id": 13457, "pred": "C", "correct": true, "response": "C"}
+{"id": 13481, "pred": "A", "correct": false, "response": "A"}
+{"id": 13507, "pred": "D", "correct": true, "response": "D"}
+{"id": 13552, "pred": "B", "correct": true, "response": "B"}
+{"id": 13514, "pred": "D", "correct": true, "response": "D."}
+{"id": 13544, "pred": "C", "correct": false, "response": "C."}
+{"id": 13477, "pred": "D", "correct": true, "response": "D. all of the above"}
+{"id": 13559, "pred": "C", "correct": true, "response": "C."}
+{"id": 13571, "pred": "B", "correct": false, "response": "B"}
+{"id": 13626, "pred": "A", "correct": false, "response": "A"}
+{"id": 13632, "pred": "B", "correct": true, "response": "B"}
+{"id": 13646, "pred": "A", "correct": false, "response": "A"}
+{"id": 13661, "pred": "D", "correct": false, "response": "D"}
+{"id": 13665, "pred": "D", "correct": false, "response": "D"}
+{"id": 13670, "pred": "C", "correct": true, "response": "C"}
+{"id": 13691, "pred": "A", "correct": false, "response": "A"}
+{"id": 13689, "pred": "A", "correct": true, "response": "A."}
+{"id": 13699, "pred": "D", "correct": true, "response": "D."}
+{"id": 13726, "pred": "A", "correct": true, "response": "A"}
+{"id": 13728, "pred": "D", "correct": false, "response": "D."}
+{"id": 13664, "pred": "D", "correct": false, "response": "D. \"not in my backyard.\""}
+{"id": 13762, "pred": "B", "correct": false, "response": "B"}
+{"id": 13777, "pred": "B", "correct": true, "response": "B"}
+{"id": 13765, "pred": "C", "correct": true, "response": "C."}
+{"id": 13784, "pred": "A", "correct": false, "response": "A"}
+{"id": 13790, "pred": "C", "correct": true, "response": "C"}
+{"id": 13836, "pred": "B", "correct": true, "response": "B"}
+{"id": 13863, "pred": "C", "correct": false, "response": "C."}
+{"id": 13867, "pred": "A", "correct": false, "response": "A"}
+{"id": 13882, "pred": "D", "correct": true, "response": "D"}
+{"id": 13877, "pred": "A", "correct": true, "response": "A. Shabad"}
+{"id": 13889, "pred": "A", "correct": false, "response": "A."}
+{"id": 13921, "pred": "D", "correct": false, "response": "D."}
+{"id": 13977, "pred": "A", "correct": true, "response": "A"}
+{"id": 13908, "pred": "B", "correct": true, "response": "B. Rabi'a"}
+{"id": 13987, "pred": "A", "correct": false, "response": "A."}
+{"id": 13933, "pred": "B", "correct": true, "response": "B. Patanjali"}
+{"id": 13992, "pred": "C", "correct": true, "response": "C."}
+{"id": 14027, "pred": "C", "correct": true, "response": "C. Cicero"}

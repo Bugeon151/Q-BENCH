@@ -115,6 +115,9 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 ```bash
 # 재실행 노이즈 floor: 같은 설정 2회 (data/quality_rerun/)
 .venv/bin/python src/quality_eval.py --model Qwen2.5-7B-Instruct --quants Q4_K_M --out-root data/quality_rerun
+# 동시 배칭 제거(슬롯 1개) 2회: 재실행 차이가 배칭 때문인지 판별 (data/quality_np1/, data/quality_np1_rerun/)
+.venv/bin/python src/quality_eval.py --model Qwen2.5-7B-Instruct --quants Q4_K_M --parallel 1 --out-root data/quality_np1
+.venv/bin/python src/quality_eval.py --model Qwen2.5-7B-Instruct --quants Q4_K_M --parallel 1 --out-root data/quality_np1_rerun
 # 붕괴한 저비트 양자화 진단(CPU 대조) + imatrix 재양자화 -> <quant>-imat 레벨
 .venv/bin/python src/imatrix_fix.py
 .venv/bin/python src/perplexity_eval.py --model Qwen2.5-3B-Instruct --quants Q2_K-imat Q3_K_M-imat
@@ -122,12 +125,12 @@ setup은 `config/hardware/<hw_id>/profile.txt`(macOS는 Serial/UUID/UDID 제거)
 # 동시 사용자 용량 (MLPerf v5.0 TTFT/TPOT 기준, config loadtest.targets)
 .venv/bin/python src/loadtest.py
 # 배포: 추천 -> 해시 검증 -> 인수 테스트 -> 용량 -> 감사 매니페스트 (deploy/*.json)
-.venv/bin/python src/deploy.py --items 20 --capacity [--serve]
+.venv/bin/python src/deploy.py --items 20 --capacity [--serve] [--users 4 --sla interactive]
 # 교체 판정 (CI 게이트로 사용 가능: exit 0 PASS / 1 FAIL / 2 INCONCLUSIVE)
 .venv/bin/python src/gate.py --model Qwen2.5-7B-Instruct --candidate Q4_K_M
 .venv/bin/python src/gate.py --model Qwen2.5-7B-Instruct --reference Q8_0 --candidate Q4_K_M --candidate-model Qwen2.5-14B-Instruct
 # 하드웨어 맞춤 추천 (측정 기기 또는 미측정 GPU의 대역폭)
-.venv/bin/python src/recommend.py --vram-gb 7.6 [--min-tps 30]
+.venv/bin/python src/recommend.py --vram-gb 7.6 [--min-tps 30] [--users 4 --sla interactive]
 .venv/bin/python src/recommend.py --vram-gb 24 --bandwidth-gbs 1008
 ```
 

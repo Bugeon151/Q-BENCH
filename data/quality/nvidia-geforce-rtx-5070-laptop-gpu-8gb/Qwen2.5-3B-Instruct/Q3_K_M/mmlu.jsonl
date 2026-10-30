@@ -1,0 +1,570 @@
+{"id": 3, "pred": "C", "correct": false, "response": "C"}
+{"id": 17, "pred": "C", "correct": true, "response": "C"}
+{"id": 13, "pred": "C", "correct": true, "response": "C."}
+{"id": 35, "pred": "C", "correct": false, "response": "C."}
+{"id": 14, "pred": "C", "correct": true, "response": "C. 30"}
+{"id": 31, "pred": "B", "correct": true, "response": "B."}
+{"id": 28, "pred": "D", "correct": true, "response": "D. False, True"}
+{"id": 81, "pred": "C", "correct": false, "response": "C"}
+{"id": 94, "pred": "D", "correct": true, "response": "D"}
+{"id": 106, "pred": "B", "correct": false, "response": "B"}
+{"id": 86, "pred": "D", "correct": false, "response": "D. False, True"}
+{"id": 123, "pred": "B", "correct": true, "response": "B"}
+{"id": 122, "pred": "C", "correct": false, "response": "C."}
+{"id": 107, "pred": "B", "correct": true, "response": "B. Mucous membranes"}
+{"id": 155, "pred": "B", "correct": false, "response": "B. Outward"}
+{"id": 159, "pred": "B", "correct": false, "response": "B. Temporalis"}
+{"id": 150, "pred": "D", "correct": true, "response": "D. All of the above"}
+{"id": 108, "pred": "D", "correct": false, "response": "D.\u5341\u4e8c\u5468\u540e\u53d7\u7cbe\u3002  \n(\u6b63\u786e\u7ffb\u8bd1\u4e3a\uff1aD."}
+{"id": 229, "pred": "D", "correct": false, "response": "D"}
+{"id": 208, "pred": "D", "correct": true, "response": "D. Respiration"}
+{"id": 236, "pred": "D", "correct": true, "response": "D."}
+{"id": 275, "pred": "D", "correct": false, "response": "D"}
+{"id": 291, "pred": "D", "correct": true, "response": "D"}
+{"id": 322, "pred": "A", "correct": false, "response": "A"}
+{"id": 342, "pred": "D", "correct": false, "response": "D."}
+{"id": 343, "pred": "D", "correct": true, "response": "D."}
+{"id": 306, "pred": "D", "correct": true, "response": "D."}
+{"id": 398, "pred": "C", "correct": true, "response": "C"}
+{"id": 349, "pred": "C", "correct": false, "response": "C"}
+{"id": 385, "pred": "B", "correct": false, "response": "B"}
+{"id": 374, "pred": "C", "correct": true, "response": "C. \u03bd Neutrinos"}
+{"id": 400, "pred": "B", "correct": true, "response": "B. Deceptive pricing"}
+{"id": 414, "pred": "C", "correct": true, "response": "C"}
+{"id": 406, "pred": "C", "correct": false, "response": "C. 2,3,4"}
+{"id": 430, "pred": "B", "correct": true, "response": "B"}
+{"id": 399, "pred": "D", "correct": true, "response": "D. Public services, social, economic and environmental"}
+{"id": 435, "pred": "D", "correct": true, "response": "D"}
+{"id": 484, "pred": "B", "correct": false, "response": "B"}
+{"id": 432, "pred": "D", "correct": true, "response": "D. Locus of control"}
+{"id": 422, "pred": "C", "correct": true, "response": "C. Decision, Planned behaviour, Rationality"}
+{"id": 527, "pred": "B", "correct": true, "response": "B."}
+{"id": 509, "pred": "D", "correct": false, "response": "D. 12 hours."}
+{"id": 585, "pred": "A", "correct": false, "response": "A"}
+{"id": 550, "pred": "B", "correct": false, "response": "B"}
+{"id": 663, "pred": "B", "correct": false, "response": "B"}
+{"id": 637, "pred": "B", "correct": false, "response": "B"}
+{"id": 680, "pred": "C", "correct": true, "response": "C"}
+{"id": 722, "pred": "A", "correct": true, "response": "A"}
+{"id": 622, "pred": "C", "correct": true, "response": "C. The general public."}
+{"id": 672, "pred": "C", "correct": false, "response": "C. 23"}
+{"id": 769, "pred": "A", "correct": false, "response": "A"}
+{"id": 772, "pred": "D", "correct": true, "response": "D"}
+{"id": 763, "pred": "A", "correct": false, "response": "A"}
+{"id": 777, "pred": "D", "correct": true, "response": "D. primary succession"}
+{"id": 811, "pred": "D", "correct": true, "response": "D."}
+{"id": 823, "pred": "C", "correct": true, "response": "C."}
+{"id": 868, "pred": "B", "correct": false, "response": "B"}
+{"id": 849, "pred": "D", "correct": true, "response": "D"}
+{"id": 810, "pred": "A", "correct": false, "response": "A. amphibians\nAnswer: A"}
+{"id": 922, "pred": "D", "correct": true, "response": "D."}
+{"id": 826, "pred": "C", "correct": false, "response": "C. Air offers more resistance to motion."}
+{"id": 942, "pred": "B", "correct": false, "response": "B"}
+{"id": 916, "pred": "D", "correct": true, "response": "D. Arsenic-doped silicon"}
+{"id": 943, "pred": "A", "correct": false, "response": "A"}
+{"id": 977, "pred": "B", "correct": true, "response": "B"}
+{"id": 941, "pred": "C", "correct": false, "response": "C. 91.6 kHz"}
+{"id": 930, "pred": "D", "correct": false, "response": "D. g = 2.005"}
+{"id": 981, "pred": "B", "correct": false, "response": "B"}
+{"id": 1005, "pred": "B", "correct": false, "response": "B"}
+{"id": 1016, "pred": "D", "correct": true, "response": "D"}
+{"id": 1017, "pred": "C", "correct": false, "response": "C"}
+{"id": 1027, "pred": "D", "correct": true, "response": "D."}
+{"id": 983, "pred": "D", "correct": true, "response": "D. Potassium hydrogen phthalate"}
+{"id": 985, "pred": "C", "correct": false, "response": "C. 11,070 ppm"}
+{"id": 1055, "pred": "D", "correct": true, "response": "D."}
+{"id": 1073, "pred": "B", "correct": true, "response": "B"}
+{"id": 1077, "pred": "C", "correct": true, "response": "C."}
+{"id": 1064, "pred": "B", "correct": true, "response": "B. 5/4"}
+{"id": 1089, "pred": "C", "correct": true, "response": "C."}
+{"id": 1078, "pred": "D", "correct": true, "response": "D. II and III"}
+{"id": 1137, "pred": "A", "correct": false, "response": "A"}
+{"id": 1124, "pred": "C", "correct": false, "response": "C"}
+{"id": 1167, "pred": "D", "correct": true, "response": "D"}
+{"id": 1177, "pred": "C", "correct": false, "response": "C"}
+{"id": 1184, "pred": "B", "correct": false, "response": "B"}
+{"id": 1183, "pred": "A", "correct": false, "response": "A"}
+{"id": 1144, "pred": "B", "correct": false, "response": "B. Only (IV )"}
+{"id": 1204, "pred": "A", "correct": true, "response": "A"}
+{"id": 1130, "pred": "D", "correct": true, "response": "D. I, II, and III\nAnswer: D"}
+{"id": 1194, "pred": "C", "correct": false, "response": "C. 28"}
+{"id": 1210, "pred": "D", "correct": false, "response": "D."}
+{"id": 1195, "pred": "B", "correct": false, "response": "B. (-1, 4)"}
+{"id": 1250, "pred": "A", "correct": false, "response": "A"}
+{"id": 1254, "pred": "C", "correct": true, "response": "C"}
+{"id": 1212, "pred": "C", "correct": true, "response": "C. in the nucleus."}
+{"id": 1264, "pred": "B", "correct": false, "response": "B."}
+{"id": 1298, "pred": "C", "correct": false, "response": "C."}
+{"id": 1363, "pred": "D", "correct": true, "response": "D"}
+{"id": 1341, "pred": "D", "correct": true, "response": "D"}
+{"id": 1386, "pred": "B", "correct": false, "response": "B"}
+{"id": 1402, "pred": "B", "correct": false, "response": "B"}
+{"id": 1400, "pred": "D", "correct": true, "response": "D."}
+{"id": 1419, "pred": "A", "correct": false, "response": "A"}
+{"id": 1276, "pred": "B", "correct": false, "response": "B. Production of a similar but dysfunctional protein  \nAnswer: B"}
+{"id": 1427, "pred": "C", "correct": false, "response": "C"}
+{"id": 1432, "pred": "B", "correct": false, "response": "B."}
+{"id": 1451, "pred": "D", "correct": false, "response": "D. 2"}
+{"id": 1488, "pred": "A", "correct": true, "response": "A"}
+{"id": 1440, "pred": "D", "correct": false, "response": "D. 0.5c"}
+{"id": 1387, "pred": "B", "correct": true, "response": "B. 2.8 ns\nTo determine the correct answer, we need"}
+{"id": 1499, "pred": "C", "correct": true, "response": "C"}
+{"id": 1517, "pred": "B", "correct": true, "response": "B"}
+{"id": 1464, "pred": "C", "correct": false, "response": "C. 10.0 m"}
+{"id": 1504, "pred": "C", "correct": true, "response": "C. Session layer"}
+{"id": 1525, "pred": "B", "correct": false, "response": "B"}
+{"id": 1545, "pred": "B", "correct": true, "response": "B"}
+{"id": 1522, "pred": "D", "correct": false, "response": "D. All of the above"}
+{"id": 1566, "pred": "B", "correct": false, "response": "B"}
+{"id": 1539, "pred": "B", "correct": true, "response": "B. Metasploit"}
+{"id": 1594, "pred": "A", "correct": false, "response": "A"}
+{"id": 1610, "pred": "A", "correct": true, "response": "A"}
+{"id": 1583, "pred": "D", "correct": false, "response": "D. Not enough information to say"}
+{"id": 1599, "pred": "C", "correct": true, "response": "C. Both of these."}
+{"id": 1536, "pred": "C", "correct": true, "response": "C. True, False\n\nThe correct answer is C. True, False.\n\n"}
+{"id": 1697, "pred": "D", "correct": false, "response": "D."}
+{"id": 1773, "pred": "B", "correct": false, "response": "B"}
+{"id": 1611, "pred": "C", "correct": true, "response": "C. the same."}
+{"id": 1764, "pred": "D", "correct": true, "response": "D. ejected neutrons"}
+{"id": 1791, "pred": "B", "correct": true, "response": "B"}
+{"id": 1838, "pred": "B", "correct": false, "response": "B."}
+{"id": 1731, "pred": "C", "correct": false, "response": "C. may be greater or less than mg"}
+{"id": 1814, "pred": "B", "correct": true, "response": "B. (i) and (iii) only"}
+{"id": 1865, "pred": "A", "correct": false, "response": "A"}
+{"id": 1854, "pred": "C", "correct": false, "response": "C. (i), (ii), and (iii) only"}
+{"id": 1855, "pred": "B", "correct": false, "response": "B. (i), (ii), (iii) only"}
+{"id": 1860, "pred": "A", "correct": false, "response": "A. (ii) and (iv) only\nAnswer: A. ("}
+{"id": 1893, "pred": "A", "correct": false, "response": "A"}
+{"id": 1922, "pred": "A", "correct": true, "response": "A"}
+{"id": 1873, "pred": "D", "correct": false, "response": "D. (i), (ii), (iii), and (iv) only"}
+{"id": 1876, "pred": "D", "correct": false, "response": "D. (i), (ii), (iii), and (iv) only"}
+{"id": 1882, "pred": "D", "correct": false, "response": "D. (i), (ii), (iii), and (iv) only"}
+{"id": 1949, "pred": "C", "correct": true, "response": "C. 2"}
+{"id": 1995, "pred": "A", "correct": false, "response": "A"}
+{"id": 1988, "pred": "B", "correct": false, "response": "B. edge"}
+{"id": 1948, "pred": "B", "correct": true, "response": "B. 0.67."}
+{"id": 1960, "pred": "B", "correct": false, "response": "B. constant torque drive."}
+{"id": 2031, "pred": "A", "correct": true, "response": "A"}
+{"id": 2036, "pred": "C", "correct": true, "response": "C"}
+{"id": 2007, "pred": "D", "correct": true, "response": "D."}
+{"id": 2057, "pred": "A", "correct": true, "response": "A"}
+{"id": 2156, "pred": "B", "correct": false, "response": "B"}
+{"id": 2066, "pred": "A", "correct": false, "response": "A"}
+{"id": 2119, "pred": "B", "correct": true, "response": "B."}
+{"id": 2199, "pred": "A", "correct": false, "response": "A. 96"}
+{"id": 2217, "pred": "D", "correct": false, "response": "D. 92"}
+{"id": 2385, "pred": "B", "correct": false, "response": "B."}
+{"id": 2433, "pred": "A", "correct": true, "response": "A"}
+{"id": 2434, "pred": "A", "correct": false, "response": "A"}
+{"id": 2324, "pred": "D", "correct": true, "response": "D. (2x4)x6\nAnswer: D"}
+{"id": 2462, "pred": "D", "correct": false, "response": "D."}
+{"id": 2321, "pred": "B", "correct": true, "response": "B. 8 \u00d7 t = 56\n(To clarify, this"}
+{"id": 2490, "pred": "C", "correct": false, "response": "C"}
+{"id": 2468, "pred": "A", "correct": true, "response": "A. Inconsistent"}
+{"id": 2512, "pred": "A", "correct": true, "response": "A"}
+{"id": 2507, "pred": "C", "correct": false, "response": "C. sP"}
+{"id": 2520, "pred": "C", "correct": false, "response": "C."}
+{"id": 2550, "pred": "B", "correct": false, "response": "B"}
+{"id": 2463, "pred": "D", "correct": false, "response": "D. Invalid. Counterexample when R and Q are true and P is false"}
+{"id": 2569, "pred": "C", "correct": true, "response": "C"}
+{"id": 2583, "pred": "A", "correct": false, "response": "A"}
+{"id": 2571, "pred": "D", "correct": false, "response": "D. 82%"}
+{"id": 2524, "pred": "D", "correct": false, "response": "D. Invalid. Counterexample when B is true and A and C are false"}
+{"id": 2610, "pred": "B", "correct": false, "response": "B"}
+{"id": 2540, "pred": "B", "correct": false, "response": "B. Invalid. Counterexample when L, N, O, Q, and"}
+{"id": 2636, "pred": "A", "correct": false, "response": "A"}
+{"id": 2615, "pred": "A", "correct": true, "response": "A"}
+{"id": 2608, "pred": "C", "correct": true, "response": "C. 66%"}
+{"id": 2698, "pred": "C", "correct": true, "response": "C"}
+{"id": 2631, "pred": "D", "correct": false, "response": "D. 80%"}
+{"id": 2645, "pred": "C", "correct": true, "response": "C. 4%"}
+{"id": 2668, "pred": "A", "correct": false, "response": "A. 79%"}
+{"id": 2709, "pred": "A", "correct": true, "response": "A"}
+{"id": 2712, "pred": "A", "correct": true, "response": "A"}
+{"id": 2791, "pred": "D", "correct": true, "response": "D."}
+{"id": 2704, "pred": "B", "correct": false, "response": "B. 46%"}
+{"id": 2941, "pred": "A", "correct": true, "response": "A"}
+{"id": 2917, "pred": "A", "correct": false, "response": "A"}
+{"id": 2792, "pred": null, "correct": false, "response": "50%"}
+{"id": 3021, "pred": "C", "correct": true, "response": "C"}
+{"id": 3033, "pred": "A", "correct": false, "response": "A"}
+{"id": 2733, "pred": "D", "correct": true, "response": "D. Deciduousece\nQwen here refers to the correct answer \""}
+{"id": 2959, "pred": "D", "correct": true, "response": "D. plasmolysis."}
+{"id": 3011, "pred": "D", "correct": true, "response": "D. The vapor pressure of the water"}
+{"id": 3046, "pred": "A", "correct": false, "response": "A"}
+{"id": 3087, "pred": "B", "correct": true, "response": "B"}
+{"id": 3114, "pred": "A", "correct": false, "response": "A"}
+{"id": 3100, "pred": "D", "correct": false, "response": "D."}
+{"id": 3119, "pred": "B", "correct": true, "response": "B"}
+{"id": 3134, "pred": "B", "correct": false, "response": "B"}
+{"id": 3147, "pred": "B", "correct": false, "response": "B."}
+{"id": 3207, "pred": "D", "correct": false, "response": "D."}
+{"id": 3221, "pred": "A", "correct": false, "response": "A"}
+{"id": 3251, "pred": "D", "correct": true, "response": "D."}
+{"id": 3267, "pred": "D", "correct": false, "response": "D"}
+{"id": 3265, "pred": "C", "correct": false, "response": "C."}
+{"id": 3233, "pred": "C", "correct": true, "response": "C.\tmax(list)"}
+{"id": 3273, "pred": null, "correct": false, "response": "E"}
+{"id": 3278, "pred": "B", "correct": true, "response": "B."}
+{"id": 3275, "pred": "D", "correct": true, "response": "D. During run time"}
+{"id": 3312, "pred": "A", "correct": true, "response": "A"}
+{"id": 3270, "pred": "C", "correct": true, "response": "C. {1,2,3,4}"}
+{"id": 3298, "pred": "A", "correct": true, "response": "A. observation and induction"}
+{"id": 3287, "pred": "C", "correct": true, "response": "C. the sense of continual class struggle"}
+{"id": 3377, "pred": "B", "correct": true, "response": "B"}
+{"id": 3345, "pred": "B", "correct": false, "response": "B."}
+{"id": 3339, "pred": "D", "correct": false, "response": "D. Rationalism"}
+{"id": 3394, "pred": "A", "correct": true, "response": "A"}
+{"id": 3397, "pred": "B", "correct": false, "response": "B"}
+{"id": 3462, "pred": "A", "correct": false, "response": "A"}
+{"id": 3414, "pred": "C", "correct": false, "response": "C"}
+{"id": 3368, "pred": "C", "correct": true, "response": "C. Increased disillusionment and cynicism"}
+{"id": 3465, "pred": "B", "correct": true, "response": "B"}
+{"id": 3464, "pred": "B", "correct": false, "response": "B"}
+{"id": 3448, "pred": "D", "correct": true, "response": "D. demographic momentum."}
+{"id": 3588, "pred": "B", "correct": false, "response": "B"}
+{"id": 3503, "pred": "D", "correct": false, "response": "D. Burgess."}
+{"id": 3597, "pred": "B", "correct": false, "response": "B. Iraq"}
+{"id": 3628, "pred": "D", "correct": false, "response": "D"}
+{"id": 3653, "pred": "B", "correct": true, "response": "B"}
+{"id": 3608, "pred": "D", "correct": true, "response": "D. PLO"}
+{"id": 3699, "pred": "C", "correct": false, "response": "C"}
+{"id": 3663, "pred": "C", "correct": true, "response": "C."}
+{"id": 3705, "pred": "D", "correct": true, "response": "D"}
+{"id": 3729, "pred": "C", "correct": true, "response": "C"}
+{"id": 3716, "pred": "A", "correct": true, "response": "A"}
+{"id": 3769, "pred": "A", "correct": false, "response": "A"}
+{"id": 3505, "pred": "D", "correct": true, "response": "D. new residents move into areas occupied by older resident groups."}
+{"id": 3886, "pred": "C", "correct": true, "response": "C"}
+{"id": 3783, "pred": "C", "correct": true, "response": "C"}
+{"id": 3816, "pred": "B", "correct": true, "response": "B"}
+{"id": 3776, "pred": "B", "correct": true, "response": "B."}
+{"id": 3935, "pred": "A", "correct": true, "response": "A"}
+{"id": 3905, "pred": "B", "correct": true, "response": "B"}
+{"id": 3887, "pred": "B", "correct": false, "response": "B"}
+{"id": 3962, "pred": "C", "correct": false, "response": "C"}
+{"id": 4046, "pred": "B", "correct": true, "response": "B"}
+{"id": 4080, "pred": "C", "correct": true, "response": "C"}
+{"id": 4208, "pred": "C", "correct": false, "response": "C"}
+{"id": 4130, "pred": "D", "correct": true, "response": "D. The purchase of bonds"}
+{"id": 4255, "pred": "D", "correct": false, "response": "D. 20 min"}
+{"id": 4278, "pred": "A", "correct": false, "response": "A"}
+{"id": 4259, "pred": "D", "correct": false, "response": "D. 12"}
+{"id": 4409, "pred": "B", "correct": false, "response": "B"}
+{"id": 4133, "pred": "C", "correct": false, "response": "C. unaffected until 2006 when the computers are sold and the"}
+{"id": 4438, "pred": "D", "correct": false, "response": "D. 38 inches"}
+{"id": 4444, "pred": "C", "correct": false, "response": "C."}
+{"id": 4401, "pred": "C", "correct": true, "response": "C. \\frac{12}{7}"}
+{"id": 4448, "pred": "B", "correct": false, "response": "B"}
+{"id": 4434, "pred": "A", "correct": true, "response": "A. -49\nAnswer: A"}
+{"id": 4533, "pred": "B", "correct": false, "response": "B"}
+{"id": 4467, "pred": "A", "correct": true, "response": "A. 1/e"}
+{"id": 4546, "pred": "D", "correct": true, "response": "D."}
+{"id": 4547, "pred": "B", "correct": true, "response": "B"}
+{"id": 4561, "pred": "B", "correct": true, "response": "B"}
+{"id": 4606, "pred": "D", "correct": false, "response": "D."}
+{"id": 4525, "pred": "D", "correct": true, "response": "D. An upward shift in MC."}
+{"id": 4702, "pred": "C", "correct": false, "response": "C"}
+{"id": 4718, "pred": "D", "correct": true, "response": "D."}
+{"id": 4755, "pred": "A", "correct": false, "response": "A"}
+{"id": 4612, "pred": "D", "correct": true, "response": "D. private ownership of economic resources."}
+{"id": 4761, "pred": "B", "correct": false, "response": "B"}
+{"id": 4635, "pred": "D", "correct": true, "response": "D. a concave production possibility frontier."}
+{"id": 4782, "pred": "B", "correct": true, "response": "B"}
+{"id": 4807, "pred": "B", "correct": true, "response": "B"}
+{"id": 4849, "pred": "A", "correct": false, "response": "A"}
+{"id": 4854, "pred": "D", "correct": true, "response": "D."}
+{"id": 4799, "pred": "C", "correct": false, "response": "C. Both of the above"}
+{"id": 4876, "pred": "C", "correct": true, "response": "C"}
+{"id": 4748, "pred": "C", "correct": false, "response": "C. The water molecules collide with the alcohol molecules, transferring energy until the average"}
+{"id": 4874, "pred": "D", "correct": true, "response": "D."}
+{"id": 4947, "pred": "C", "correct": true, "response": "C"}
+{"id": 5057, "pred": "A", "correct": true, "response": "A"}
+{"id": 4902, "pred": "D", "correct": true, "response": "D. the fundamental attribution error."}
+{"id": 5297, "pred": "C", "correct": true, "response": "C"}
+{"id": 4982, "pred": "D", "correct": true, "response": "D. post-traumatic stress disorder"}
+{"id": 5105, "pred": "B", "correct": false, "response": "B._gender_schema_theory."}
+{"id": 5379, "pred": "A", "correct": true, "response": "A"}
+{"id": 5303, "pred": "B", "correct": false, "response": "B. word"}
+{"id": 5432, "pred": "A", "correct": false, "response": "A."}
+{"id": 5474, "pred": "A", "correct": true, "response": "A"}
+{"id": 5384, "pred": "C", "correct": true, "response": "C. amplitude"}
+{"id": 5129, "pred": "D", "correct": false, "response": "D. 1 in 10,000."}
+{"id": 5505, "pred": "C", "correct": true, "response": "C"}
+{"id": 5531, "pred": "A", "correct": true, "response": "A"}
+{"id": 5540, "pred": "B", "correct": true, "response": "B."}
+{"id": 5610, "pred": "B", "correct": false, "response": "B"}
+{"id": 5529, "pred": "B", "correct": true, "response": "B. A t-test for a difference in means."}
+{"id": 5548, "pred": "C", "correct": false, "response": "C. 152"}
+{"id": 5632, "pred": "A", "correct": true, "response": "A"}
+{"id": 5687, "pred": "A", "correct": false, "response": "A"}
+{"id": 5696, "pred": "A", "correct": false, "response": "A"}
+{"id": 5499, "pred": "C", "correct": false, "response": "C. \u03bc = 4.177, \u03c3 = 3."}
+{"id": 5772, "pred": "A", "correct": false, "response": "A"}
+{"id": 5723, "pred": "A", "correct": true, "response": "A"}
+{"id": 5790, "pred": "A", "correct": false, "response": "A"}
+{"id": 5817, "pred": "A", "correct": false, "response": "A"}
+{"id": 5835, "pred": "A", "correct": false, "response": "A"}
+{"id": 5831, "pred": "D", "correct": true, "response": "D."}
+{"id": 5864, "pred": "C", "correct": false, "response": "C"}
+{"id": 5703, "pred": "C", "correct": true, "response": "C. still an underdeveloped cultural backwater"}
+{"id": 5848, "pred": "D", "correct": true, "response": "D."}
+{"id": 5866, "pred": "D", "correct": true, "response": "D"}
+{"id": 5974, "pred": "A", "correct": false, "response": "A"}
+{"id": 5990, "pred": "C", "correct": true, "response": "C"}
+{"id": 6001, "pred": "A", "correct": true, "response": "A"}
+{"id": 6000, "pred": "B", "correct": true, "response": "B"}
+{"id": 5932, "pred": "C", "correct": true, "response": "C. The sale of indulgences"}
+{"id": 6103, "pred": "B", "correct": true, "response": "B"}
+{"id": 5867, "pred": "D", "correct": true, "response": "D. Commodore Perry forcing Japan to open its ports to trade"}
+{"id": 6043, "pred": "B", "correct": true, "response": "B. Established public health care and pensions"}
+{"id": 6106, "pred": "B", "correct": true, "response": "B"}
+{"id": 6129, "pred": "B", "correct": true, "response": "B"}
+{"id": 6109, "pred": "C", "correct": true, "response": "C. Agreeableness"}
+{"id": 6217, "pred": "B", "correct": true, "response": "B"}
+{"id": 6040, "pred": "C", "correct": false, "response": "C. The Spanish wanted to preserve the independence of Native states in the New World"}
+{"id": 6219, "pred": "C", "correct": false, "response": "C"}
+{"id": 6224, "pred": "B", "correct": true, "response": "B"}
+{"id": 6136, "pred": "D", "correct": false, "response": "D. Nurturant"}
+{"id": 6306, "pred": "B", "correct": false, "response": "B."}
+{"id": 6307, "pred": "B", "correct": true, "response": "B"}
+{"id": 6329, "pred": "A", "correct": true, "response": "A"}
+{"id": 6322, "pred": "A", "correct": false, "response": "A"}
+{"id": 6332, "pred": "A", "correct": true, "response": "A"}
+{"id": 6342, "pred": "C", "correct": true, "response": "C"}
+{"id": 6372, "pred": "D", "correct": true, "response": "D."}
+{"id": 6375, "pred": "B", "correct": true, "response": "B"}
+{"id": 6378, "pred": "D", "correct": false, "response": "D."}
+{"id": 6392, "pred": "B", "correct": false, "response": "B."}
+{"id": 6459, "pred": "B", "correct": true, "response": "B"}
+{"id": 6469, "pred": "D", "correct": false, "response": "D."}
+{"id": 6415, "pred": "D", "correct": false, "response": "D. desensitization therapy"}
+{"id": 6476, "pred": "A", "correct": true, "response": "A"}
+{"id": 6481, "pred": "B", "correct": true, "response": "B"}
+{"id": 6419, "pred": "D", "correct": true, "response": "D. They typically want to observe others' activities."}
+{"id": 6483, "pred": "B", "correct": false, "response": "B"}
+{"id": 6493, "pred": "A", "correct": false, "response": "A"}
+{"id": 6525, "pred": "A", "correct": false, "response": "A"}
+{"id": 6528, "pred": "B", "correct": false, "response": "B"}
+{"id": 6534, "pred": "A", "correct": true, "response": "A"}
+{"id": 6565, "pred": "C", "correct": false, "response": "C."}
+{"id": 6576, "pred": "C", "correct": false, "response": "C."}
+{"id": 6473, "pred": "D", "correct": false, "response": "D. Such conduct is a public act but is shielded by immunity"}
+{"id": 6591, "pred": "D", "correct": true, "response": "D"}
+{"id": 6604, "pred": "A", "correct": true, "response": "A"}
+{"id": 6632, "pred": "B", "correct": true, "response": "B"}
+{"id": 6622, "pred": "C", "correct": false, "response": "C."}
+{"id": 6636, "pred": "D", "correct": true, "response": "D. Greek Thinking"}
+{"id": 6573, "pred": "D", "correct": false, "response": "D. The world is phallocentric and oppressive."}
+{"id": 6660, "pred": "B", "correct": false, "response": "B."}
+{"id": 6643, "pred": "B", "correct": true, "response": "B. Hobbes"}
+{"id": 6705, "pred": "C", "correct": false, "response": "C"}
+{"id": 6712, "pred": "D", "correct": true, "response": "D. Hasty Generalization"}
+{"id": 6739, "pred": "C", "correct": true, "response": "C. False dilemma"}
+{"id": 6734, "pred": "D", "correct": false, "response": "D. Begging the Question"}
+{"id": 6744, "pred": "A", "correct": false, "response": "A"}
+{"id": 6689, "pred": "B", "correct": false, "response": "B. none of the above\nAnswer: B"}
+{"id": 6766, "pred": "A", "correct": false, "response": "A"}
+{"id": 6761, "pred": "C", "correct": true, "response": "C. false criteria"}
+{"id": 6784, "pred": "B", "correct": true, "response": "B"}
+{"id": 6801, "pred": "D", "correct": true, "response": "D."}
+{"id": 6873, "pred": "B", "correct": true, "response": "B"}
+{"id": 6904, "pred": "A", "correct": true, "response": "A"}
+{"id": 6836, "pred": "C", "correct": true, "response": "C. True, False"}
+{"id": 6913, "pred": "B", "correct": true, "response": "B"}
+{"id": 6902, "pred": "C", "correct": false, "response": "C. True, False"}
+{"id": 6920, "pred": "A", "correct": true, "response": "A"}
+{"id": 6918, "pred": "C", "correct": false, "response": "C\n\nPCA (Principal Component Analysis) and SVD (Singular Value Decom"}
+{"id": 6925, "pred": "C", "correct": true, "response": "C. True, False\n\nThe correct answer is C. True, False.\n\n"}
+{"id": 6938, "pred": "D", "correct": false, "response": "D. \\texttt{torch.normal(torch.ones(10,5)*"}
+{"id": 6960, "pred": "B", "correct": false, "response": "B"}
+{"id": 6941, "pred": "C", "correct": true, "response": "C. $\\nabla_w f(w) = X^\\top X w"}
+{"id": 6961, "pred": "D", "correct": false, "response": "D."}
+{"id": 6964, "pred": "C", "correct": true, "response": "C."}
+{"id": 6981, "pred": "C", "correct": true, "response": "C"}
+{"id": 6980, "pred": "B", "correct": true, "response": "B. James Dyson"}
+{"id": 6966, "pred": "B", "correct": false, "response": "B. Scenario planning\nAnswer: B"}
+{"id": 7031, "pred": "A", "correct": false, "response": "A"}
+{"id": 7017, "pred": "D", "correct": true, "response": "D. Individualism"}
+{"id": 6985, "pred": "D", "correct": false, "response": "D. Henry Mintzberg"}
+{"id": 7042, "pred": "A", "correct": false, "response": "A."}
+{"id": 7102, "pred": "B", "correct": true, "response": "B"}
+{"id": 7103, "pred": "D", "correct": true, "response": "D. Brand personalities."}
+{"id": 7137, "pred": "D", "correct": false, "response": "D. Translation equivalence."}
+{"id": 7122, "pred": "A", "correct": true, "response": "A. Mobile marketing\nAnswer: A"}
+{"id": 7212, "pred": "B", "correct": true, "response": "B"}
+{"id": 7225, "pred": "A", "correct": false, "response": "A"}
+{"id": 7204, "pred": "D", "correct": true, "response": "D. All of the above."}
+{"id": 7233, "pred": "A", "correct": true, "response": "A"}
+{"id": 7289, "pred": "B", "correct": true, "response": "B"}
+{"id": 7117, "pred": "A", "correct": true, "response": "A. Advertising\nC. Third-party endorsement\nD. Puffing\n"}
+{"id": 7290, "pred": "A", "correct": false, "response": "A"}
+{"id": 7268, "pred": "B", "correct": false, "response": "B. Advertising."}
+{"id": 7295, "pred": "B", "correct": false, "response": "B"}
+{"id": 7338, "pred": "A", "correct": true, "response": "A"}
+{"id": 7284, "pred": "D", "correct": false, "response": "D. ends of the long arms."}
+{"id": 7346, "pred": "B", "correct": false, "response": "B."}
+{"id": 7319, "pred": "A", "correct": true, "response": "A. Recessive inheritance has"}
+{"id": 7365, "pred": "B", "correct": false, "response": "B"}
+{"id": 7316, "pred": "B", "correct": false, "response": "B. HMG-CoA reductase"}
+{"id": 7549, "pred": "A", "correct": true, "response": "A."}
+{"id": 7517, "pred": "C", "correct": true, "response": "C. frog"}
+{"id": 7652, "pred": "C", "correct": false, "response": "C."}
+{"id": 7836, "pred": "A", "correct": true, "response": "A"}
+{"id": 7725, "pred": "D", "correct": true, "response": "D."}
+{"id": 7821, "pred": "A", "correct": false, "response": "A"}
+{"id": 8036, "pred": "A", "correct": false, "response": "A"}
+{"id": 7348, "pred": "C", "correct": false, "response": "C. X-linked dominant\nC. X-linked dominant\nThis refers to the"}
+{"id": 7948, "pred": "B", "correct": true, "response": "B. mitosis"}
+{"id": 8106, "pred": "D", "correct": true, "response": "D. Tensional"}
+{"id": 8185, "pred": "A", "correct": true, "response": "A"}
+{"id": 8205, "pred": "B", "correct": true, "response": "B"}
+{"id": 8224, "pred": "A", "correct": false, "response": "A"}
+{"id": 8143, "pred": "D", "correct": true, "response": "D. An extruder"}
+{"id": 8243, "pred": "B", "correct": true, "response": "B"}
+{"id": 8356, "pred": "B", "correct": false, "response": "B"}
+{"id": 8446, "pred": "B", "correct": false, "response": "B."}
+{"id": 8171, "pred": "C", "correct": false, "response": "C. neither A nor B  \nAnswer: C"}
+{"id": 8449, "pred": "C", "correct": true, "response": "C. hypothetical"}
+{"id": 8465, "pred": "D", "correct": false, "response": "D."}
+{"id": 8553, "pred": "B", "correct": false, "response": "B."}
+{"id": 8454, "pred": "D", "correct": false, "response": "D. the execution of innocent persons"}
+{"id": 8555, "pred": "C", "correct": false, "response": "C. Not wrong, Wrong"}
+{"id": 8643, "pred": "C", "correct": false, "response": "C. Not wrong, Wrong"}
+{"id": 8664, "pred": "B", "correct": true, "response": "B. Wrong, Not wrong"}
+{"id": 8886, "pred": "B", "correct": true, "response": "B."}
+{"id": 8879, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong"}
+{"id": 8828, "pred": "C", "correct": false, "response": "C. Not wrong, Wrong  \nAnswer: C."}
+{"id": 9460, "pred": "B", "correct": true, "response": "B"}
+{"id": 8953, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong"}
+{"id": 9328, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong"}
+{"id": 9491, "pred": "A", "correct": true, "response": "A"}
+{"id": 9487, "pred": "A", "correct": false, "response": "A"}
+{"id": 9498, "pred": "C", "correct": true, "response": "C"}
+{"id": 9394, "pred": "B", "correct": false, "response": "B. Wrong, Not wrong"}
+{"id": 9515, "pred": "C", "correct": false, "response": "C"}
+{"id": 9529, "pred": "B", "correct": true, "response": "B"}
+{"id": 9535, "pred": "A", "correct": true, "response": "A"}
+{"id": 9694, "pred": "B", "correct": true, "response": "B"}
+{"id": 9726, "pred": "A", "correct": false, "response": "A"}
+{"id": 9616, "pred": "D", "correct": true, "response": "D."}
+{"id": 9589, "pred": "D", "correct": false, "response": "D. Vitamin B6"}
+{"id": 9769, "pred": "A", "correct": false, "response": "A"}
+{"id": 9805, "pred": "D", "correct": false, "response": "D"}
+{"id": 9795, "pred": "B", "correct": false, "response": "B"}
+{"id": 9841, "pred": "C", "correct": true, "response": "C"}
+{"id": 9909, "pred": "B", "correct": true, "response": "B"}
+{"id": 9884, "pred": "B", "correct": false, "response": "B"}
+{"id": 9924, "pred": "C", "correct": true, "response": "C"}
+{"id": 10044, "pred": "B", "correct": true, "response": "B"}
+{"id": 9850, "pred": "C", "correct": true, "response": "C. a thing that thinks"}
+{"id": 9925, "pred": "A", "correct": true, "response": "A. dreaming"}
+{"id": 10127, "pred": "B", "correct": true, "response": "B. brachiation."}
+{"id": 10037, "pred": "C", "correct": true, "response": "C. Beringia; Late Glacial Maximum"}
+{"id": 10138, "pred": "D", "correct": false, "response": "D. paleoanthropology."}
+{"id": 10181, "pred": "B", "correct": false, "response": "B"}
+{"id": 10204, "pred": "B", "correct": true, "response": "B"}
+{"id": 10141, "pred": "D", "correct": false, "response": "D. astronomy and mathematics."}
+{"id": 10265, "pred": "A", "correct": false, "response": "A"}
+{"id": 10139, "pred": "D", "correct": false, "response": "D. during the Upper Paleolithic; the importance of higher-quality, imported materials"}
+{"id": 10363, "pred": "B", "correct": false, "response": "B"}
+{"id": 10384, "pred": "A", "correct": false, "response": "A"}
+{"id": 10447, "pred": "C", "correct": false, "response": "C."}
+{"id": 10491, "pred": "C", "correct": true, "response": "C."}
+{"id": 10260, "pred": "D", "correct": false, "response": "D. humans who carried diseases over the land bridge."}
+{"id": 10517, "pred": "D", "correct": true, "response": "D. $8.42"}
+{"id": 10553, "pred": "A", "correct": false, "response": "A"}
+{"id": 10518, "pred": "D", "correct": true, "response": "D. Impossibility of performance."}
+{"id": 10623, "pred": "A", "correct": false, "response": "A"}
+{"id": 10609, "pred": "A", "correct": false, "response": "A."}
+{"id": 10528, "pred": "C", "correct": true, "response": "C. $0 $150000"}
+{"id": 10709, "pred": "B", "correct": false, "response": "B."}
+{"id": 10853, "pred": "B", "correct": false, "response": "B."}
+{"id": 10867, "pred": "A", "correct": false, "response": "A"}
+{"id": 11165, "pred": "A", "correct": false, "response": "A"}
+{"id": 11338, "pred": "A", "correct": true, "response": "A"}
+{"id": 10996, "pred": "B", "correct": false, "response": "B."}
+{"id": 11174, "pred": "C", "correct": false, "response": "C."}
+{"id": 12165, "pred": "C", "correct": true, "response": "C."}
+{"id": 11820, "pred": "C", "correct": true, "response": "C."}
+{"id": 11520, "pred": "B", "correct": false, "response": "B."}
+{"id": 11852, "pred": "D", "correct": false, "response": "D."}
+{"id": 12262, "pred": "A", "correct": false, "response": "A"}
+{"id": 12224, "pred": "C", "correct": true, "response": "C"}
+{"id": 12187, "pred": "D", "correct": false, "response": "D. Receive genetic counseling"}
+{"id": 12295, "pred": "D", "correct": true, "response": "D. Menstrual history"}
+{"id": 12325, "pred": "B", "correct": true, "response": "B. Nortriptyline"}
+{"id": 12388, "pred": "D", "correct": true, "response": "D. Meniere's disease"}
+{"id": 12362, "pred": "D", "correct": false, "response": "D. Preventing fibrin and platelet plugs"}
+{"id": 12426, "pred": "B", "correct": false, "response": "B. Barbiturates"}
+{"id": 12564, "pred": "B", "correct": true, "response": "B"}
+{"id": 12431, "pred": "D", "correct": false, "response": "D. Calcium urate"}
+{"id": 12744, "pred": "A", "correct": false, "response": "A"}
+{"id": 12508, "pred": "B", "correct": true, "response": "B. Mediator"}
+{"id": 12638, "pred": "B", "correct": false, "response": "B. unethical"}
+{"id": 12775, "pred": "A", "correct": true, "response": "A"}
+{"id": 12809, "pred": "D", "correct": true, "response": "D."}
+{"id": 12878, "pred": "B", "correct": true, "response": "B"}
+{"id": 13065, "pred": "B", "correct": false, "response": "B"}
+{"id": 12758, "pred": "D", "correct": true, "response": "D. Ecological assessment"}
+{"id": 12988, "pred": "A", "correct": true, "response": "A"}
+{"id": 13073, "pred": "C", "correct": false, "response": "C. Business writing"}
+{"id": 12956, "pred": "B", "correct": true, "response": "B. Heschel\u2019s convolutions"}
+{"id": 13088, "pred": "B", "correct": true, "response": "B. Dormant"}
+{"id": 13086, "pred": "B", "correct": true, "response": "B. business and commercial areas"}
+{"id": 13090, "pred": "A", "correct": true, "response": "A"}
+{"id": 13100, "pred": "C", "correct": true, "response": "C."}
+{"id": 13101, "pred": "B", "correct": true, "response": "B. Impact"}
+{"id": 13138, "pred": "B", "correct": true, "response": "B"}
+{"id": 13203, "pred": null, "correct": false, "response": "E"}
+{"id": 13266, "pred": "A", "correct": false, "response": "A"}
+{"id": 13256, "pred": "D", "correct": true, "response": "D"}
+{"id": 13119, "pred": "B", "correct": true, "response": "B. 18\nAnswer: B"}
+{"id": 13304, "pred": "B", "correct": true, "response": "B"}
+{"id": 13316, "pred": "C", "correct": false, "response": "C."}
+{"id": 13329, "pred": "B", "correct": false, "response": "B"}
+{"id": 13134, "pred": "D", "correct": false, "response": "D. manipulative\nAnswer: D. manipulative"}
+{"id": 13332, "pred": "A", "correct": false, "response": "A"}
+{"id": 13350, "pred": "A", "correct": true, "response": "A"}
+{"id": 13404, "pred": "C", "correct": true, "response": "C"}
+{"id": 13399, "pred": "D", "correct": true, "response": "D"}
+{"id": 13390, "pred": "C", "correct": true, "response": "C."}
+{"id": 13457, "pred": "C", "correct": true, "response": "C."}
+{"id": 13481, "pred": "A", "correct": false, "response": "A"}
+{"id": 13477, "pred": "D", "correct": true, "response": "D"}
+{"id": 13514, "pred": "A", "correct": false, "response": "A"}
+{"id": 13507, "pred": "D", "correct": true, "response": "D."}
+{"id": 13552, "pred": "B", "correct": true, "response": "B"}
+{"id": 13559, "pred": "C", "correct": true, "response": "C"}
+{"id": 13571, "pred": "C", "correct": true, "response": "C"}
+{"id": 13626, "pred": "C", "correct": true, "response": "C"}
+{"id": 13544, "pred": "C", "correct": false, "response": "C. the global village"}
+{"id": 13646, "pred": "A", "correct": false, "response": "A"}
+{"id": 13632, "pred": "B", "correct": true, "response": "B"}
+{"id": 13661, "pred": "D", "correct": false, "response": "D."}
+{"id": 13670, "pred": "C", "correct": true, "response": "C"}
+{"id": 13665, "pred": "A", "correct": true, "response": "A"}
+{"id": 13689, "pred": "A", "correct": true, "response": "A"}
+{"id": 13664, "pred": "B", "correct": true, "response": "B. \"brinkmanship.\""}
+{"id": 13699, "pred": "D", "correct": true, "response": "D"}
+{"id": 13726, "pred": "A", "correct": true, "response": "A"}
+{"id": 13691, "pred": "A", "correct": false, "response": "A"}
+{"id": 13728, "pred": "D", "correct": false, "response": "D."}
+{"id": 13777, "pred": "B", "correct": true, "response": "B. Mexican"}
+{"id": 13784, "pred": "A", "correct": false, "response": "A."}
+{"id": 13762, "pred": "B", "correct": false, "response": "B. Vaccine has been developed"}
+{"id": 13765, "pred": "C", "correct": true, "response": "C. Jaundice and abdominal discomfort"}
+{"id": 13863, "pred": "B", "correct": false, "response": "B"}
+{"id": 13790, "pred": "C", "correct": true, "response": "C."}
+{"id": 13836, "pred": "B", "correct": true, "response": "B"}
+{"id": 13867, "pred": "A", "correct": false, "response": "A"}
+{"id": 13877, "pred": "A", "correct": true, "response": "A"}
+{"id": 13889, "pred": "A", "correct": false, "response": "A"}
+{"id": 13933, "pred": null, "correct": false, "response": ""}
+{"id": 13882, "pred": "C", "correct": false, "response": "C. Nichiren"}
+{"id": 13977, "pred": "B", "correct": false, "response": "B"}
+{"id": 13987, "pred": "A", "correct": false, "response": "A"}
+{"id": 13908, "pred": "B", "correct": true, "response": "B. Rabi'a"}
+{"id": 13921, "pred": "D", "correct": false, "response": "D. Apprenticeship"}
+{"id": 13992, "pred": "D", "correct": false, "response": "D"}
+{"id": 14027, "pred": "C", "correct": true, "response": "C. Cicero"}

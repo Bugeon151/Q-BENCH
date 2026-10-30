@@ -160,11 +160,11 @@ def determinism_rows(f: pd.DataFrame) -> list[str]:
     if not keys:
         return []
     get = lambda k, m, q, c: a.loc[(k, m, q), c] if (k, m, q) in a.index else float("nan")  # noqa: E731
+    both = lambda k, m, q: f"{pct(get(k, m, q, 'flips'))} / {pct(get(k, m, q, 'text_changed'))}" \
+        if (k, m, q) in a.index else ""  # noqa: E731
     rows = [{"model": short(m), "quant": q,
-             "re-run 4 slots: flips % / text changed %": f"{pct(get('rerun', m, q, 'flips'))} / "
-                                                          f"{pct(get('rerun', m, q, 'text_changed'))}",
-             "re-run 1 slot: flips % / text changed %": f"{pct(get('rerun_np1', m, q, 'flips'))} / "
-                                                         f"{pct(get('rerun_np1', m, q, 'text_changed'))}",
+             "re-run 4 slots: flips % / text changed %": both("rerun", m, q),
+             "re-run 1 slot: flips % / text changed %": both("rerun_np1", m, q),
              "1-slot vs 4-slot run: flips %": pct(get("np1_vs_np4", m, q, "flips")),
              "flips vs ref, 4-slot run %": pct(get("vs_ref", m, q, "flips")),
              "flips vs ref, 1-slot run %": pct(get("vs_ref_np1", m, q, "flips"))} for m, q in keys]
