@@ -134,6 +134,7 @@ paths:
   quality_dir: "data/quality"                    # <quality_dir>/<hw_id>/...
   quality_rerun_dir: "data/quality_rerun"        # identical re-runs (noise floor for src/consistency.py)
   quality_np1_dirs: ["data/quality_np1", "data/quality_np1_rerun"]  # one-slot run + re-run (--parallel 1): batching vs noise
+  isolation_dir: "data/isolation"                # np<slots>_r<k>/<hw_id>/...: cause isolation (src/isolation.py)
   capacity_dir: "data/capacity"                  # <capacity_dir>/<hw_id>/<model>_<quant>.csv (src/loadtest.py)
   processed_stats: "data/processed/benchmark_stats.csv"
   summary_table: "results/tables/summary.csv"
