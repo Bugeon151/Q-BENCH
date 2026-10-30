@@ -80,7 +80,7 @@ repo() {
     # keep existing files in this folder: point the branch at the remote commit without touching the worktree
     git fetch -q origin "$BRANCH" && git symbolic-ref HEAD "refs/heads/$BRANCH" && git reset -q FETCH_HEAD || return 1
     # tracked files that differ from the remote commit are backed up (and listed) before being replaced by it
-    git diff --name-only | tee logs/first_sync_modified.txt | while IFS= read -r f; do
+    git diff --name-only --diff-filter=M | tee logs/first_sync_modified.txt | while IFS= read -r f; do
       mkdir -p "_to_delete/pre_sync/$(dirname "$f")" && cp -p "$f" "_to_delete/pre_sync/$f"
     done
     git checkout -q -- . || return 1
