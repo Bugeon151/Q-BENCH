@@ -135,7 +135,8 @@ def flips_section(t: dict) -> list[str]:
            "Flips: items whose correctness differs from the reference (F16; Q8_0 where F16 was not evaluated; "
            "Dutta et al. 2024). Noise floor: flips between two identical runs of the same configuration "
            "(`same`) or, without one, of the model's quantized re-runs (`proxy`). attributable = flips - noise "
-           "floor, a conservative lower bound.", ""]
+           "floor, a conservative and loose lower bound: noise changes which items flip more than how many; "
+           "where a one-slot (deterministic) run exists, its flips vs the reference are the better estimate.", ""]
     v = qsort(f[f.kind == "vs_ref"])
     rows = [{"model": short(r.model), "quant": r.quant, "vs": r.reference, "task": r.task, "n": int(r.n),
              "accuracy diff %p": pp(r.acc_diff),

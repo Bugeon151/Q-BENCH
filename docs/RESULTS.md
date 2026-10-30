@@ -171,7 +171,7 @@ PASS: lower 95% CI bound above -3 %p; FAIL: significantly worse (McNemar, Bonfer
 
 ## 4. Answer flips vs the reference and the re-run noise floor
 
-Flips: items whose correctness differs from the reference (F16; Q8_0 where F16 was not evaluated; Dutta et al. 2024). Noise floor: flips between two identical runs of the same configuration (`same`) or, without one, of the model's quantized re-runs (`proxy`). attributable = flips - noise floor, a conservative lower bound.
+Flips: items whose correctness differs from the reference (F16; Q8_0 where F16 was not evaluated; Dutta et al. 2024). Noise floor: flips between two identical runs of the same configuration (`same`) or, without one, of the model's quantized re-runs (`proxy`). attributable = flips - noise floor, a conservative and loose lower bound: noise changes which items flip more than how many; where a one-slot (deterministic) run exists, its flips vs the reference are the better estimate.
 
 | model | quant | vs | task | n | accuracy diff %p | flips % | noise floor % | noise basis | attributable %p |
 |---|---|---|---|---|---|---|---|---|---|
@@ -310,6 +310,7 @@ Concurrent batching (`quality_eval.py --parallel 1`, all tasks pooled):
 | model | quant | re-run 4 slots: flips % / text changed % | re-run 1 slot: flips % / text changed % | 1-slot vs 4-slot run: flips % | flips vs ref, 4-slot run % | flips vs ref, 1-slot run % |
 |---|---|---|---|---|---|---|
 | 1.5B | Q4_K_M | 4.1 / 30.8 | 0.0 / 0.0 | 5.8 | 16.2 | 14.8 |
+| 7B | Q4_K_M | 2.5 / 24.4 |  | 2.0 | 4.4 | 4.6 |
 
 ## 5. Size vs bits at matched memory
 
