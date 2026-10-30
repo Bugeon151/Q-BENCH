@@ -92,3 +92,13 @@ def test_require_users():
     assert rc.require_users(rec, 4, "interactive").quant.tolist() == ["Q4_K_M"]  # unmeasured Q5_K_M dropped
     assert rc.require_users(rec, 8).quant.tolist() == ["Q6_K", "Q4_K_M"]
     assert rc.require_users(rec[["model", "quant"]], 1).empty
+
+
+def test_imat_quant_uses_base_measurements():
+    summary, quality, gates, cfgs, ctx, n_gen, overhead, _ = _inputs()
+    quality = pd.concat([quality, pd.DataFrame([("m7", "Q2_K-imat", .69, .91, .80)], columns=quality.columns)])
+    gates = pd.concat([gates, pd.DataFrame([("m7", "Q2_K-imat", "overall", "INCONCLUSIVE")], columns=gates.columns)])
+    c = candidates(summary, quality, gates, cfgs, ctx, n_gen, overhead, "nvidia-x-8gb").set_index("quant")
+    assert c.loc["Q2_K-imat", "need_gib"] == pytest.approx(3.6) and c.loc["Q2_K-imat", "need_basis"] == "measured (Q2_K)"
+    assert c.loc["Q2_K-imat", "tps"] == pytest.approx(90.7) and c.loc["Q2_K", "need_basis"] == "measured"
+    assert recommend(c.reset_index(), 4.0).quant.tolist() == ["Q2_K-imat"]  # plain Q2_K FAILs the gate

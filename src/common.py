@@ -52,6 +52,15 @@ def quant_levels(cfg: dict) -> list[str]:
     return ["F16", *cfg["quantization"]["levels"]]
 
 
+IMAT_SUFFIX = "-imat"  # src/imatrix_fix.py: same tensor types as the base quant, only the rounding differs
+
+
+def base_quant(quant: str) -> str:
+    """'Q2_K-imat' -> 'Q2_K'. An imatrix re-quantization keeps the base quant's tensor types (its GGUF is
+    352 bytes larger here, imatrix metadata), so size, memory and speed measured for the base apply."""
+    return quant[:-len(IMAT_SUFFIX)] if quant.endswith(IMAT_SUFFIX) else quant
+
+
 def params_b(model: str) -> float:
     """'Qwen2.5-14B-Instruct' -> 14.0 (billions, from the name; used for ordering)."""
     tok = next(t for t in model.split("-") if t.endswith("B") and t[:-1].replace(".", "").isdigit())
