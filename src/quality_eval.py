@@ -12,6 +12,7 @@ expose, or skip the task with --tasks mmlu gsm8k.
 Per-item results: data/quality/<hw_id>/<model>/<quant>/<task>.jsonl (resume).
 Summary:          data/quality/<hw_id>/quality.csv
 --out-root DIR writes the same layout under DIR (identical re-runs for the noise floor).
+--parallel N overrides quality.n_parallel (server slots and client threads); 1 = no concurrent batching.
 """
 
 from __future__ import annotations
@@ -317,10 +318,13 @@ def main() -> None:
     ap.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     ap.add_argument("--build-sample-only", action="store_true", help="write prompts/quality.json and exit")
     ap.add_argument("--out-root", help="results root instead of paths.quality_dir (e.g. data/quality_rerun)")
+    ap.add_argument("--parallel", type=int, help="llama-server slots and client threads (default: quality.n_parallel)")
     args = ap.parse_args()
 
     cfg = load_config()
     q = cfg["quality"]
+    if args.parallel:  # 1 = no concurrent batching: tests whether re-run differences come from it
+        q["n_parallel"] = args.parallel
     log = make_logger(cfg, "quality")
     sample = load_sample(cfg, log)
     if args.build_sample_only:

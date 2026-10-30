@@ -66,3 +66,19 @@ def test_noise_floor_same_config_or_quantized_proxy():
     assert v.loc["Q4_K_M", "noise_basis"] == "same" and v.loc["Q4_K_M", "noise_floor"] == pytest.approx(0.04)
     assert v.loc["Q6_K", "noise_basis"] == "proxy:Q4_K_M" and v.loc["Q6_K", "noise_floor"] == pytest.approx(0.04)
     assert v.loc["Q6_K", "attributable"] == pytest.approx(v.loc["Q6_K", "flips"] - 0.04)
+
+
+def test_one_slot_runs():
+    """np1 runs: reference vs the one-slot run, one-slot run vs the 4-slot run, and the one-slot re-run
+    as that comparison's noise floor; an incomplete one-slot re-run is ignored."""
+    ref = [True] * 80 + [False] * 20
+    items = pd.DataFrame(run("F16", ref) + run("Q4_K_M", [False] * 10 + [True] * 90), columns=COLS)
+    a = pd.DataFrame(run("Q4_K_M", [False] * 8 + [True] * 92), columns=COLS)     # 2 differ from the 4-slot run
+    b = pd.DataFrame(run("Q4_K_M", [False] * 8 + [True] * 92), columns=COLS)     # deterministic re-run
+    t = cs.flip_table(items, None, [a, b]).set_index(["kind", "task"])
+    assert t.loc[("np1_vs_np4", "mmlu"), "flips"] == pytest.approx(0.02)
+    assert t.loc[("rerun_np1", "mmlu"), "flips"] == 0
+    v = t.loc[("vs_ref_np1", "mmlu")]
+    assert v.flips == pytest.approx(0.28) and v.noise_basis == "same_np1" and v.attributable == pytest.approx(0.28)
+    t2 = cs.flip_table(items, None, [a, b.iloc[:50]])
+    assert "rerun_np1" not in set(t2.kind) and "vs_ref_np1" in set(t2.kind)

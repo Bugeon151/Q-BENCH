@@ -15,6 +15,10 @@ else the mean re-run flips of the model's quantized (non-reference) re-runs ("pr
 attributable = flips - noise floor is a conservative lower bound: both compared runs are noisy,
 but a re-run already counts the noise of two runs of the quantized model, while the reference
 side is often far less noisy. Rows with task "all" pool the tasks.
+One-slot runs (quality_eval.py --parallel 1, paths.quality_np1_dirs = [run, re-run]) remove
+concurrent batching: kind "rerun_np1" (the two one-slot runs), "np1_vs_np4" (one-slot run vs the
+4-slot run of the same configuration), "vs_ref_np1" (reference vs the one-slot run, noise floor
+from "rerun_np1").
 
     python src/consistency.py   -> results/tables/flips.csv, results/figures/flips_<model>.png
 """
@@ -38,11 +42,12 @@ INK, INK2, SURFACE = "#0b0b0b", "#52514e", "#fcfcfb"
 C_ACC, C_FLIP, C_NOISE = "#2a78d6", "#eb6834", "#52514e"
 
 
-def complete(items: pd.DataFrame) -> pd.DataFrame:
-    """Keep (hw, model, quant, task) runs that cover every item id seen for that task."""
+def complete(items: pd.DataFrame, full: pd.Series | None = None) -> pd.DataFrame:
+    """Keep (hw, model, quant, task) runs that cover every item id of the task (full: ids per task,
+    default: all ids seen for that task in items)."""
     if items.empty:
         return items
-    full = items.groupby("task").id.nunique()
+    full = items.groupby("task").id.nunique() if full is None else full
     n = items.groupby(KEY).id.transform("size")
     return items[n.to_numpy() == items.task.map(full).to_numpy()]
 
@@ -88,15 +93,28 @@ def compare_runs(a: pd.DataFrame, b: pd.DataFrame, kind: str, same_quant: bool) 
     return out
 
 
-def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None) -> pd.DataFrame:
+def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None,
+               np1: list[pd.DataFrame | None] | None = None) -> pd.DataFrame:
+    full = items.groupby("task").id.nunique() if not items.empty else None
     items = complete(items)
     rows = compare_runs(items, items, "vs_ref", same_quant=False)
     if rerun is not None and not rerun.empty:
-        rows += compare_runs(items, complete(rerun), "rerun", same_quant=True)
+        rows += compare_runs(items, complete(rerun, full), "rerun", same_quant=True)
+    one = [complete(d, full) if d is not None and not d.empty else pd.DataFrame() for d in (np1 or [])]
+    if one and not one[0].empty:
+        rows += compare_runs(items, one[0], "vs_ref_np1", same_quant=False)
+        rows += compare_runs(items, one[0], "np1_vs_np4", same_quant=True)
+        if len(one) > 1 and not one[1].empty:
+            rows += compare_runs(one[0], one[1], "rerun_np1", same_quant=True)
     t = pd.DataFrame(rows)
     if t.empty:
         return t
     t["noise_floor"], t["noise_basis"] = np.nan, ""
+    r1 = t[t.kind == "rerun_np1"].set_index(["hw_id", "model", "quant", "task"]).flips
+    for i in t.index[t.kind == "vs_ref_np1"]:
+        k = tuple(t.loc[i, ["hw_id", "model", "quant", "task"]])
+        if k in r1.index:
+            t.loc[i, ["noise_floor", "noise_basis"]] = r1[k], "same_np1"
     rr = t[t.kind == "rerun"]
     if not rr.empty:
         refs = t[t.kind == "vs_ref"].groupby(["hw_id", "model"]).reference.first()
@@ -111,7 +129,7 @@ def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None) -> pd.Dat
             elif (r.hw_id, r.model, r.task) in proxy.index:
                 t.loc[i, ["noise_floor", "noise_basis"]] = proxy[(r.hw_id, r.model, r.task)], \
                     f"proxy:{proxy_q[(r.hw_id, r.model)]}"
-    t["attributable"] = np.where(t.kind == "vs_ref", t.flips - t.noise_floor, np.nan)
+    t["attributable"] = np.where(t.kind.isin(["vs_ref", "vs_ref_np1"]), t.flips - t.noise_floor, np.nan)
     order = {q: i for i, q in enumerate(QUANT_ORDER)}
     return t.assign(_q=t.quant.map(order)).sort_values(["kind", "hw_id", "model", "_q", "task"]) \
         .drop(columns="_q").reset_index(drop=True)
@@ -154,7 +172,9 @@ def main() -> None:
     items = gate.load_items(ROOT_DIR / paths["quality_dir"], extra=True)
     rerun_dir = ROOT_DIR / paths["quality_rerun_dir"]
     rerun = gate.load_items(rerun_dir, extra=True) if rerun_dir.exists() else None
-    t = flip_table(items, rerun)
+    np1 = [gate.load_items(ROOT_DIR / d, extra=True) if (ROOT_DIR / d).exists() else None
+           for d in paths.get("quality_np1_dirs", [])]
+    t = flip_table(items, rerun, np1)
     if t.empty:
         print("no complete quality runs with a reference (F16 or Q8_0)")
         return
