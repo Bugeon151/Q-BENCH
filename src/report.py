@@ -149,7 +149,26 @@ def flips_section(t: dict) -> list[str]:
                  "flips between identical runs %": f"{pct(r.flips)} ({pct(r.flips_ci_low)}-{pct(r.flips_ci_high)})",
                  "accuracy diff %p": pp(r.acc_diff)} for r in qsort(rr).itertuples()]
         out += ["Identical re-runs:", "", md(pd.DataFrame(rows)), ""]
+    out += determinism_rows(f)
     return out
+
+
+def determinism_rows(f: pd.DataFrame) -> list[str]:
+    """One-slot runs (no concurrent batching) next to the 4-slot runs, all tasks pooled."""
+    a = f[f.task == "all"].set_index(["kind", "model", "quant"])
+    keys = sorted({(m, q) for k, m, q in a.index if k == "np1_vs_np4"})
+    if not keys:
+        return []
+    get = lambda k, m, q, c: a.loc[(k, m, q), c] if (k, m, q) in a.index else float("nan")  # noqa: E731
+    rows = [{"model": short(m), "quant": q,
+             "re-run 4 slots: flips % / text changed %": f"{pct(get('rerun', m, q, 'flips'))} / "
+                                                          f"{pct(get('rerun', m, q, 'text_changed'))}",
+             "re-run 1 slot: flips % / text changed %": f"{pct(get('rerun_np1', m, q, 'flips'))} / "
+                                                         f"{pct(get('rerun_np1', m, q, 'text_changed'))}",
+             "1-slot vs 4-slot run: flips %": pct(get("np1_vs_np4", m, q, "flips")),
+             "flips vs ref, 4-slot run %": pct(get("vs_ref", m, q, "flips")),
+             "flips vs ref, 1-slot run %": pct(get("vs_ref_np1", m, q, "flips"))} for m, q in keys]
+    return ["Concurrent batching (`quality_eval.py --parallel 1`, all tasks pooled):", "", md(pd.DataFrame(rows)), ""]
 
 
 def duel_section(t: dict) -> list[str]:
@@ -235,7 +254,7 @@ def main() -> None:
              f"llama.cpp {meta.get('llama_cpp_commit', '')} (binaries build {first('build_commit')}).", ""]
     sample = ROOT_DIR / cfg["quality"]["sample_file"]
     n_items = {k: d["n"] for k, d in json.loads(sample.read_text(encoding="utf-8"))["datasets"].items()} \
-        if sample.exists() else {}
+        if sample.exists() and sample.stat().st_size else {}
     errors = api_errors(ROOT_DIR / cfg["paths"]["quality_dir"])
     for sec in (accuracy_section(t, ref, n_items, errors), speed_section(t, hw, cfg["inference"]["context_length"]), gate_section(t),
                 flips_section(t), duel_section(t), capacity_section(t, cfg), perf_section(t)):

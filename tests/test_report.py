@@ -36,3 +36,15 @@ def test_api_errors(tmp_path):
     (d / "gsm8k.jsonl").write_text('{"id": 1, "correct": true}\n{"id": 2, "correct": false, "api_error": "x"}\n')
     (d / "mmlu.jsonl").write_text('{"id": 1, "correct": true, "api_error": "y"}\n')
     assert report.api_errors(tmp_path) == {("m", "Q3_K_M"): 2}
+
+
+def test_determinism_rows():
+    base = {"model": "Qwen2.5-7B-Instruct", "quant": "Q4_K_M", "task": "all"}
+    f = pd.DataFrame([{**base, "kind": "rerun", "flips": 0.025, "text_changed": 0.244},
+                      {**base, "kind": "rerun_np1", "flips": 0.0, "text_changed": 0.0},
+                      {**base, "kind": "np1_vs_np4", "flips": 0.012, "text_changed": 0.2},
+                      {**base, "kind": "vs_ref", "flips": 0.044, "text_changed": 0.4},
+                      {**base, "kind": "vs_ref_np1", "flips": 0.03, "text_changed": 0.4}])
+    out = report.determinism_rows(f)
+    assert out[2].splitlines()[2] == "| 7B | Q4_K_M | 2.5 / 24.4 | 0.0 / 0.0 | 1.2 | 4.4 | 3.0 |"
+    assert report.determinism_rows(f[f.kind == "vs_ref"]) == []
