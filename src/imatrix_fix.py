@@ -1,9 +1,11 @@
 """Diagnose a collapsed low-bit quantization and re-quantize it with an importance matrix.
 
 For each target (model, quant) of config imatrix.targets:
-  1. kernel check  llama-perplexity on the CPU only (-ngl 0, first `check_chunks` chunks) against
-                   the running estimate after the same chunks in the GPU run's log: the same
-                   value means the loss is in the quantized weights, not in a GPU kernel
+  1. kernel check  llama-perplexity on the CPU only (first `check_chunks` chunks) against the
+                   running estimate after the same chunks in the GPU run's log: a close value
+                   means the loss is in the quantized weights, not in a GPU kernel. CPU only means
+                   no CUDA device visible (CUDA_VISIBLE_DEVICES=-1) and --no-op-offload: with -ngl 0
+                   alone llama.cpp still offloads large-batch matmuls to the GPU (op offload)
   2. imatrix       llama-imatrix on wikitext-2 *train* from the F16 model (the test split used for
                    perplexity stays unseen) -> models/imatrix/<model>.gguf
   3. requantize    llama-quantize --imatrix -> models/quantized/<model>-<quant>-imat.gguf
@@ -16,6 +18,7 @@ perplexity_eval.py / quality_eval.py --quants Q2_K-imat ...
 from __future__ import annotations
 
 import csv
+import os
 import re
 import subprocess
 import time
@@ -35,8 +38,15 @@ def running_ppl(log_text: str, chunk: int) -> float | None:
     return None
 
 
-def run(cmd: list[str], log_path: Path) -> str:
-    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+CPU_ENV = {"CUDA_VISIBLE_DEVICES": "-1"}
+CPU_ARGS = ["-ngl", "0", "--no-op-offload"]
+CPU_MODE = "CUDA_VISIBLE_DEVICES=-1 -ngl 0 --no-op-offload"
+FIELDS = ["hw_id", "model", "quant", "chunks", "ppl_gpu", "ppl_cpu", "cpu_over_gpu", "cpu_mode", "elapsed_sec", "error"]
+
+
+def run(cmd: list[str], log_path: Path, env: dict | None = None) -> str:
+    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                          env={**os.environ, **env} if env else None)
     out = proc.stdout + proc.stderr
     log_path.write_text(out, encoding="utf-8")
     if proc.returncode != 0:
@@ -60,7 +70,11 @@ def main() -> None:
     done = set()
     if out_csv.exists():
         with open(out_csv, encoding="utf-8") as f:
-            done = {(r["model"], r["quant"]) for r in csv.DictReader(f)}
+            rows = list(csv.DictReader(f))
+        if rows and "cpu_mode" not in rows[0]:  # earlier check ran with op offload (GPU matmuls): redo
+            out_csv.unlink()
+        else:
+            done = {(r["model"], r["quant"]) for r in rows}
     n = ic["check_chunks"]
 
     for model, quant in ic["targets"]:
@@ -70,19 +84,24 @@ def main() -> None:
         gpu_log = logs / f"perplexity_{model}_{quant}.log"
         if (model, quant) not in done and gpu_log.exists() and src.is_file():
             gpu = running_ppl(gpu_log.read_text(encoding="utf-8", errors="replace"), n)
-            t0 = time.time()
-            cpu, _ = parse_ppl(run([str(ppl_bin), "-m", str(src), "-f", str(test_text), "-c", str(pcfg["ctx"]),
-                                    "--chunks", str(n), "-ngl", "0"], logs / f"kernel_check_{model}_{quant}.log"))
+            t0, cpu, err = time.time(), None, ""
+            try:  # diagnostic only: a failure is recorded, the fix below still runs
+                cpu, _ = parse_ppl(run([str(ppl_bin), "-m", str(src), "-f", str(test_text), "-c", str(pcfg["ctx"]),
+                                        "--chunks", str(n), *CPU_ARGS], logs / f"kernel_check_{model}_{quant}.log",
+                                       env=CPU_ENV))
+            except (SystemExit, ValueError) as e:
+                err = str(e).splitlines()[0][:200]
             row = {"hw_id": hw["hw_id"], "model": model, "quant": quant, "chunks": n, "ppl_gpu": gpu, "ppl_cpu": cpu,
-                   "cpu_over_gpu": cpu / gpu if gpu else None, "elapsed_sec": round(time.time() - t0, 1)}
+                   "cpu_over_gpu": cpu / gpu if gpu and cpu else None, "cpu_mode": CPU_MODE,
+                   "elapsed_sec": round(time.time() - t0, 1), "error": err}
             new = not out_csv.exists()
             out_csv.parent.mkdir(parents=True, exist_ok=True)
             with open(out_csv, "a", newline="", encoding="utf-8") as f:
-                w = csv.DictWriter(f, fieldnames=list(row))
+                w = csv.DictWriter(f, fieldnames=FIELDS)
                 if new:
                     w.writeheader()
                 w.writerow(row)
-            log(f"{tag}: PPL after {n} chunks GPU {gpu} vs CPU {cpu:.4f}")
+            log(f"{tag}: PPL after {n} chunks GPU {gpu} vs CPU {cpu} {err}")
         # 2. imatrix from F16 on the train split
         imat = ROOT_DIR / ic["dir"] / f"{model}.gguf"
         if not imat.exists():

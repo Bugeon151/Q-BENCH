@@ -25,10 +25,11 @@ def test_flow(tmp_path, monkeypatch):
            "perplexity": {"llama_perplexity_bin": "ppl", "dataset_file": "data/datasets/w/test.raw", "ctx": 512,
                           "n_gpu_layers": "auto"},
            "benchmark": {"llama_quantize_bin": "quant"}, "paths": {"logs_dir": "logs", "quality_dir": "data/quality"}}
-    calls = []
+    calls, envs = [], []
 
-    def fake_run(cmd, log_path):
+    def fake_run(cmd, log_path, env=None):
         calls.append(cmd)
+        envs.append(env)
         if cmd[0] == "imat":
             open(cmd[cmd.index("-o") + 1], "wb").close()
         if cmd[0] == "quant":
@@ -46,10 +47,47 @@ def test_flow(tmp_path, monkeypatch):
     im.main()
     assert [c[0] for c in calls] == ["ppl", "imat", "quant"]
     assert calls[0][calls[0].index("-ngl") + 1] == "0" and calls[0][calls[0].index("--chunks") + 1] == "20"
+    assert "--no-op-offload" in calls[0] and envs[0] == {"CUDA_VISIBLE_DEVICES": "-1"} and envs[1] is None
     assert "train.raw" in calls[1][calls[1].index("-f") + 1] and calls[2][1] == "--imatrix" and calls[2][-1] == "Q2_K"
     assert (tmp_path / "models/quantized/m-Q2_K-imat.gguf").exists()
     rows = list(csv.DictReader(open(tmp_path / "data/quality/gpu/kernel_check.csv")))
     assert float(rows[0]["ppl_gpu"]) == 22505.8397 and abs(float(rows[0]["cpu_over_gpu"]) - 0.99974) < 1e-4
+    assert rows[0]["cpu_mode"] == im.CPU_MODE and rows[0]["error"] == ""
     calls.clear()
     im.main()  # everything done: resumes without running anything
     assert calls == []
+
+
+def test_old_check_rows_are_redone_and_failures_recorded(tmp_path, monkeypatch):
+    """Rows written before cpu_mode existed (op offload still on) are discarded and re-measured;
+    a failing CPU run is recorded and does not stop the re-quantization."""
+    for d in ("logs", "data/datasets/w", "models/base", "models/quantized", "models/imatrix", "data/quality/gpu"):
+        (tmp_path / d).mkdir(parents=True)
+    (tmp_path / "data/datasets/w/train.raw").write_text("t")
+    (tmp_path / "data/datasets/w/test.raw").write_text("t")
+    (tmp_path / "models/quantized/m-Q2_K.gguf").write_bytes(b"q")
+    (tmp_path / "models/quantized/m-Q2_K-imat.gguf").write_bytes(b"q")
+    (tmp_path / "models/imatrix/m.gguf").write_bytes(b"i")
+    (tmp_path / "logs/perplexity_m_Q2_K.log").write_text(LOG)
+    old = tmp_path / "data/quality/gpu/kernel_check.csv"
+    old.write_text("hw_id,model,quant,chunks,ppl_gpu,ppl_cpu,cpu_over_gpu,elapsed_sec\ngpu,m,Q2_K,20,1,1,1.0,1\n")
+    cfg = {"imatrix": {"llama_imatrix_bin": "imat", "train_file": "data/datasets/w/train.raw", "chunks": 4,
+                       "dir": "models/imatrix", "check_chunks": 20, "targets": [["m", "Q2_K"]]},
+           "perplexity": {"llama_perplexity_bin": "ppl", "dataset_file": "data/datasets/w/test.raw", "ctx": 512,
+                          "n_gpu_layers": "auto"},
+           "benchmark": {"llama_quantize_bin": "quant"}, "paths": {"logs_dir": "logs", "quality_dir": "data/quality"}}
+
+    def failing(cmd, log_path, env=None):
+        raise SystemExit("FAIL: llama-perplexity exit 1; see log")
+
+    monkeypatch.setattr(im, "ROOT_DIR", tmp_path)
+    monkeypatch.setattr(im, "load_config", lambda: cfg)
+    monkeypatch.setattr(im, "make_logger", lambda c, t: lambda m: None)
+    monkeypatch.setattr(im, "detect_hw", lambda: {"hw_id": "gpu"})
+    monkeypatch.setattr(im, "resolve_bin", lambda rel: rel)
+    monkeypatch.setattr(im, "gguf_path", lambda c, m, q: tmp_path / "models/quantized" / f"{m}-{q}.gguf")
+    monkeypatch.setattr(im, "run", failing)
+    im.main()
+    rows = list(csv.DictReader(open(old)))
+    assert len(rows) == 1 and rows[0]["ppl_cpu"] == "" and rows[0]["error"].startswith("FAIL")
+    assert rows[0]["cpu_mode"] == im.CPU_MODE
