@@ -14,7 +14,10 @@ A vs_ref row uses the re-run of its own configuration when there is one (noise_b
 else the mean re-run flips of the model's quantized (non-reference) re-runs ("proxy:<quants>").
 attributable = flips - noise floor is a conservative lower bound: both compared runs are noisy,
 but a re-run already counts the noise of two runs of the quantized model, while the reference
-side is often far less noisy. Rows with task "all" pool the tasks.
+side is often far less noisy. It is also loose: noise changes which items flip more than how many
+(on this laptop a deterministic one-slot candidate run gave 4.6 % flips for 7B Q4_K_M vs 4.4 % with
+4 slots, while the subtraction leaves 1.9 %), so prefer vs_ref_np1 where it exists.
+Rows with task "all" pool the tasks.
 One-slot runs (quality_eval.py --parallel 1, paths.quality_np1_dirs = [run, re-run]) remove
 concurrent batching: kind "rerun_np1" (the two one-slot runs), "np1_vs_np4" (one-slot run vs the
 4-slot run of the same configuration), "vs_ref_np1" (reference vs the one-slot run, noise floor

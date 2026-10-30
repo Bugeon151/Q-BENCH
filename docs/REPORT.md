@@ -14,10 +14,12 @@ this page interprets them.
   points of HumanEval but takes 3B from 73.2 % to 6.1 %; 3B Q2_K answers nothing (perplexity
   22,582). A CPU-only re-check shows the weights, not a GPU kernel, are broken. Re-quantizing the
   same file size with an importance matrix brings 3B Q2_K back to perplexity 11.9 and 50 / 72 / 46 %.
-* **Accuracy hides answer churn, and part of the churn is the server.** 7B Q4_K_M moves mean
-  accuracy by −0.5 points but flips 4.4 % of answers between right and wrong. Re-running the
-  identical Q4_K_M configuration changes the text of 24–31 % of responses (F16: 1.6 %); with one
-  server slot instead of four, two runs are byte-identical. <!-- TLDR_NP1 -->
+* **Accuracy hides answer churn; concurrent batching hides irreproducibility.** 7B Q4_K_M moves
+  mean accuracy by −0.5 points but flips 4.4 % of answers between right and wrong. Separately,
+  re-running an identical quantized configuration under concurrent batching changes 24–31 % of
+  response texts (F16: 1.6 %); with one server slot, two runs are byte-identical <!-- TLDR_NP1 -->.
+  The deterministic run shows the flips are the quantization's (7B: 4.6 %); subtracting a re-run
+  noise floor, the usual correction, would have understated them by more than half.
 * **A 164-problem benchmark can certify Q8_0 but not Q4.** The share of flipped items sets the
   sample size: 160 HumanEval problems suffice for 7B Q8_0, about 800 for Q4_K_M.
 * **At equal memory, a bigger model at fewer bits wins down to ~4 bits, and to ~3 with an
@@ -126,10 +128,10 @@ Dutta et al. (2024) showed that compressed models can keep accuracy while many i
 
 7B Q4_K_M changes mean accuracy by −0.5 points but flips 4.4 % of all answers and 9.1 % of
 HumanEval problems. Smaller models are more fragile at the same bit width: at Q8_0, 5.5 % of 1.5B
-answers flip vs 1.1 % of 7B answers. Not all of these flips are caused by the quantization:
+answers flip vs 1.1 % of 7B answers.
 
-**Re-running the identical configuration** (same file, binary, settings, seed, temperature 0)
-does not reproduce a quantized model's answers:
+**Is it the quantization or the server?** Re-running the identical configuration (same file,
+binary, settings, seed, temperature 0) does not reproduce a quantized model's answers:
 
 | identical re-run, 4 server slots | answers flipped | response text changed |
 |---|---|---|
@@ -141,35 +143,44 @@ does not reproduce a quantized model's answers:
 The cause is concurrent batching. `llama-server` decodes its 4 slots together, so the number of
 sequences in a forward pass changes from step to step with request timing, and GPU kernels are
 not batch-invariant: the same row is summed in a different order depending on what else is in the
-batch (Thinking Machines Lab, 2025). Running the same configurations with one slot
-(`quality_eval.py --parallel 1`), twice:
+batch (Thinking Machines Lab, 2025). The same configurations with one slot
+(`quality_eval.py --parallel 1`), run twice:
 
-<!-- NP1_TABLE -->
+| Q4_K_M | re-run, 4 slots: flipped / text changed | re-run, 1 slot: flipped / text changed | flips vs reference, 4-slot run | flips vs reference, 1-slot run |
+|---|---|---|---|---|
+| 1.5B | 4.1 % / 30.8 % | **0 / 0** (984 of 984 records identical) | 16.2 % | 14.8 % |
+| 7B | 2.5 % / 24.4 % | <!-- 7B_NP1 --> | 4.4 % | 4.6 % |
 
-With a fixed batch the server is deterministic on this machine and binary. Two more observations:
+With a fixed batch the server is deterministic on this machine and binary. And the deterministic
+run settles the question above: the flip rate against the reference is the quantization's, not
+the server's (1.5B 14.8 % vs 16.2 %, 7B 4.6 % vs 4.4 %). Batching noise changes *which* items flip
+more than *how many*: of the 45 items 7B Q4_K_M flips in the one-slot run, 34 also flip in the
+4-slot run, and the rest are swapped for others. That is what noise acting on items near a decision
+boundary looks like: it moves them in both directions relative to the reference, so it largely
+cancels in the rate. So the textbook correction,
+subtracting a re-run noise floor from the flip rate (the `attributable` column in
+`docs/RESULTS.md`, 1.9 points for 7B Q4_K_M), understates the quantization effect by more than
+half; the reliable measurement is a deterministic candidate run.
 
-* A one-slot run differs from either 4-slot run more than the two 4-slot runs differ from each
-  other (1.5B Q4_K_M: 5.8 % of answers flip and 42.6 % of texts change, vs 4.1 % and 30.8 %).
-  The batching pattern is part of the configuration being measured, not noise around one true
-  output.
-* Why F16 barely moves while Q4_K_M does is not isolated here. The CUDA path at the pinned commit
-  suggests an amplifier: for quantized weights the activations are first rounded to 8-bit blocks
-  (`q8_1`) and multiplied by a kernel whose warp layout, and with it the order of the partial sums,
-  is chosen per number of batch columns (`ggml-cuda/mmvq.cu`, `calc_nwarps(type, ncols_dst, …)`,
-  used up to 8 columns). A last-bit difference before that rounding can move an activation to the
-  next 8-bit level, a far larger step than the floating-point difference itself; F16 weights skip
-  that rounding.
+Why F16 barely moves under batching while Q4_K_M does is not isolated here. The CUDA path at the
+pinned commit suggests an amplifier: for quantized weights the activations are first rounded to
+8-bit blocks (`q8_1`) and multiplied by a kernel whose warp layout, and with it the order of the
+partial sums, is chosen per number of batch columns (`ggml-cuda/mmvq.cu`,
+`calc_nwarps(type, ncols_dst, …)`, used up to 8 columns). A last-bit difference before that
+rounding can move an activation to the next 8-bit level, a far larger step than the
+floating-point difference itself; F16 weights skip that rounding.
 
 What this means in practice:
 
-* **Quantization flips without serving noise** (reference vs the one-slot run): <!-- NP1_ATTR -->
-  The quantization effect dominates; batching noise adds one to two points.
 * **A quantized model behind a batching server is not a fixed function of its input.** Audit
   trails, regression tests and response caches that assume it is will see a quarter to a third of
   responses change on a re-run. One slot restores reproducibility at a throughput cost: 7B Q4_K_M
   delivers 57 tok/s with one request at a time vs 238 tok/s with 16 concurrent users (§2.6).
-* **A gate must compare runs made with the same slot setting**, and the items needed (§2.3) are
-  inflated by this noise.
+* **Measure flips with a deterministic candidate run**, not by subtracting a noise floor.
+* **Accuracy and flip rates are robust to the batching noise; individual answers are not.** The
+  accuracy difference vs the reference barely moves with a deterministic run (7B −0.5 → −0.3
+  points, 1.5B −3.4 → −3.5), so the gate (§2.3) is not distorted; a test that asserts an exact
+  response is.
 
 ### 2.3 A regression gate, and what it costs to certify "no regression"
 
@@ -196,7 +207,8 @@ Why HumanEval cannot certify: the variance of a paired difference is set by the 
 
 So flips are not only a user-facing problem; they are the statistical cost of proving a model swap
 safe. A public 164-problem benchmark can certify a near-lossless Q8_0 swap, not a Q4 one, and
-part of the discordance that sets this cost is serving noise rather than quantization (§2.2).
+running the candidate deterministically does not lower the cost: the discordance is the
+quantization's (§2.2).
 
 ### 2.4 Same memory: a bigger model at fewer bits wins down to about 4 bits, or 3 with an imatrix
 
