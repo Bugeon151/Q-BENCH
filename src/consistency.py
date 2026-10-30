@@ -8,9 +8,13 @@ F16 was not evaluated, see gate.pick_reference):
   pred_changed  share whose extracted answer differs (mmlu letter, gsm8k number; blank for humaneval)
   text_changed  share whose response text differs at all
 Noise floor: the same (model, quant) re-run with identical settings (quality_eval.py
---out-root data/quality_rerun) shows the flips that occur without any change, because
-llama-server batching is not bit-reproducible. attributable = flips - noise floor of the same
-(hw, model, task), averaged over the re-run quants. Rows with task "all" pool the tasks.
+--out-root data/quality_rerun) shows the flips that occur without any change: llama-server's
+continuous batching changes batch sizes from run to run, and outputs are not batch-invariant.
+A vs_ref row uses the re-run of its own configuration when there is one (noise_basis "same"),
+else the mean re-run flips of the model's quantized (non-reference) re-runs ("proxy:<quants>").
+attributable = flips - noise floor is a conservative lower bound: both compared runs are noisy,
+but a re-run already counts the noise of two runs of the quantized model, while the reference
+side is often far less noisy. Rows with task "all" pool the tasks.
 
     python src/consistency.py   -> results/tables/flips.csv, results/figures/flips_<model>.png
 """
@@ -92,8 +96,21 @@ def flip_table(items: pd.DataFrame, rerun: pd.DataFrame | None = None) -> pd.Dat
     t = pd.DataFrame(rows)
     if t.empty:
         return t
-    noise = t[t.kind == "rerun"].groupby(["hw_id", "model", "task"]).flips.mean().rename("noise_floor")
-    t = t.join(noise, on=["hw_id", "model", "task"])
+    t["noise_floor"], t["noise_basis"] = np.nan, ""
+    rr = t[t.kind == "rerun"]
+    if not rr.empty:
+        refs = t[t.kind == "vs_ref"].groupby(["hw_id", "model"]).reference.first()
+        same = rr.set_index(["hw_id", "model", "quant", "task"]).flips
+        proxy_rows = rr[[q != refs.get((h, m)) for h, m, q in zip(rr.hw_id, rr.model, rr.quant)]]
+        proxy = proxy_rows.groupby(["hw_id", "model", "task"]).flips.mean()
+        proxy_q = proxy_rows.groupby(["hw_id", "model"]).quant.agg(lambda q: "+".join(sorted(set(q))))
+        for i in t.index[t.kind == "vs_ref"]:
+            r = t.loc[i]
+            if (r.hw_id, r.model, r.quant, r.task) in same.index:
+                t.loc[i, ["noise_floor", "noise_basis"]] = same[(r.hw_id, r.model, r.quant, r.task)], "same"
+            elif (r.hw_id, r.model, r.task) in proxy.index:
+                t.loc[i, ["noise_floor", "noise_basis"]] = proxy[(r.hw_id, r.model, r.task)], \
+                    f"proxy:{proxy_q[(r.hw_id, r.model)]}"
     t["attributable"] = np.where(t.kind == "vs_ref", t.flips - t.noise_floor, np.nan)
     order = {q: i for i, q in enumerate(QUANT_ORDER)}
     return t.assign(_q=t.quant.map(order)).sort_values(["kind", "hw_id", "model", "_q", "task"]) \

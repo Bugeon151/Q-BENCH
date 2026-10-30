@@ -133,13 +133,15 @@ def flips_section(t: dict) -> list[str]:
         return []
     out = ["## 4. Answer flips vs the reference and the re-run noise floor", "",
            "Flips: items whose correctness differs from the reference (F16; Q8_0 where F16 was not evaluated; "
-           "Dutta et al. 2024). Noise floor: the same "
-           "configuration run twice with identical settings. attributable = flips - noise floor.", ""]
+           "Dutta et al. 2024). Noise floor: flips between two identical runs of the same configuration "
+           "(`same`) or, without one, of the model's quantized re-runs (`proxy`). attributable = flips - noise "
+           "floor, a conservative lower bound.", ""]
     v = qsort(f[f.kind == "vs_ref"])
     rows = [{"model": short(r.model), "quant": r.quant, "vs": r.reference, "task": r.task, "n": int(r.n),
              "accuracy diff %p": pp(r.acc_diff),
              "flips %": f"{pct(r.flips)} ({pct(r.flips_ci_low)}-{pct(r.flips_ci_high)})",
-             "noise floor %": pct(r.noise_floor), "attributable %p": pp(r.attributable)} for r in v.itertuples()]
+             "noise floor %": pct(r.noise_floor), "noise basis": getattr(r, "noise_basis", "") or "",
+             "attributable %p": pp(r.attributable)} for r in v.itertuples()]
     out += [md(pd.DataFrame(rows)), ""]
     rr = f[f.kind == "rerun"]
     if not rr.empty:
