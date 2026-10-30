@@ -26,7 +26,7 @@ from scipy import stats  # noqa: E402
 
 import gate  # noqa: E402
 from analyze import QUANT_ORDER, pareto_mask  # noqa: E402
-from common import GIB, ROOT_DIR, load_config, params_b  # noqa: E402
+from common import GIB, IMAT_SUFFIX, ROOT_DIR, base_quant, load_config, params_b  # noqa: E402
 
 TASKS = ["mmlu", "gsm8k", "humaneval"]
 INK, INK2, SURFACE, GRID = "#0b0b0b", "#52514e", "#fcfcfb", "#e5e4df"
@@ -38,10 +38,11 @@ def frontier_table(quality: pd.DataFrame, summary: pd.DataFrame, flips: pd.DataF
                    gates: pd.DataFrame | None) -> pd.DataFrame:
     tasks = [t for t in TASKS if t in quality]
     q = quality.dropna(subset=tasks).copy()
-    size = summary.groupby(["model", "quant"]).model_size_bytes.first()
-    q = q[[k in size.index for k in zip(q.model, q.quant)]]
+    sz = summary.groupby(["model", "quant"]).model_size_bytes.first()
+    size = {k: sz.get(k, sz.get((k[0], base_quant(k[1])))) for k in zip(q.model, q.quant)}
+    q = q[[pd.notna(size[k]) for k in zip(q.model, q.quant)]].copy()
     q["size_gib"] = [size[k] / GIB for k in zip(q.model, q.quant)]
-    f16 = {m: size.get((m, "F16")) for m in q.model.unique()}
+    f16 = {m: sz.get((m, "F16")) for m in q.model.unique()}
     q["bpw"] = [16 * size[(m, qq)] / f16[m] if f16[m] else np.nan for m, qq in zip(q.model, q.quant)]
     q["quality"] = q[tasks].mean(axis=1)
     if "reference" not in q:
@@ -92,7 +93,9 @@ def size_vs_bits(front: pd.DataFrame, items: pd.DataFrame, lo: float = 0.8, hi: 
                 s = s[(r >= lo) & (r <= hi)]
                 if s.empty:
                     continue
-                small = s.loc[(s.size_gib - big.size_gib).abs().idxmin()]
+                # closest size; on a tie (an -imat variant has its base's size) the plain quant
+                small = s.assign(_d=(s.size_gib - big.size_gib).abs(), _i=s.quant.str.endswith(IMAT_SUFFIX)) \
+                    .sort_values(["_d", "_i"]).iloc[0]
                 for row in duel(items, hw, (big.model, big.quant), (small.model, small.quant)):
                     out.append({"quality_hw_id": hw, "big": f"{big.model} {big.quant}", "big_gib": big.size_gib,
                                 "big_bpw": big.bpw, "small": f"{small.model} {small.quant}",
@@ -132,11 +135,18 @@ def frontier_figure(front: pd.DataFrame, out) -> None:
     style(ax)
     models = sorted(front.model.unique(), key=params_b)
     colors = dict(zip(models, RAMP[-len(models):] if len(models) <= len(RAMP) else RAMP))
+    imat = front.quant.str.endswith(IMAT_SUFFIX)
     for m in models:
-        d = front[front.model == m].sort_values("size_gib")
+        e = front[(front.model == m) & imat]  # same size as the base quant: marker only, not on the model's line
+        ax.scatter(e.size_gib, e.quality * 100, s=34, marker="D", facecolor=SURFACE, edgecolor=colors[m], lw=1.5,
+                   zorder=3)
+        for r in e.itertuples():
+            ax.annotate(r.quant, (r.size_gib, r.quality * 100), xytext=(4, 3), textcoords="offset points",
+                        fontsize=6.5, color=INK2)
+        d = front[(front.model == m) & ~imat].sort_values("size_gib")
         ax.plot(d.size_gib, d.quality * 100, "-", color=colors[m], lw=2, label=m.replace("-Instruct", ""))
         ax.scatter(d.size_gib, d.quality * 100, s=30, color=colors[m], edgecolor=SURFACE, lw=1.5, zorder=3)
-        fail = d[d.get("gate", pd.Series("", index=d.index)) == "FAIL"]
+        fail = front[(front.model == m) & (front["gate"] == "FAIL" if "gate" in front else False)]
         ax.scatter(fail.size_gib, fail.quality * 100, s=90, facecolor="none", edgecolor=FAIL_RED, lw=1.5, zorder=4)
         for r in d.itertuples():
             ax.annotate(r.quant, (r.size_gib, r.quality * 100), xytext=(4, -10), textcoords="offset points",
@@ -144,6 +154,8 @@ def frontier_figure(front: pd.DataFrame, out) -> None:
     p = front[front.pareto].sort_values("size_gib")
     ax.step(p.size_gib, p.quality * 100, where="post", color=INK2, ls=":", lw=1.2, label="Pareto frontier")
     ax.scatter([], [], s=90, facecolor="none", edgecolor=FAIL_RED, lw=1.5, label="gate FAIL vs own reference")
+    if imat.any():
+        ax.scatter([], [], s=34, marker="D", facecolor=SURFACE, edgecolor=INK2, lw=1.5, label="importance-matrix re-quant")
     ax.set_xscale("log")
     ax.set_xlabel("GGUF size (GiB, log scale)", color=INK2)
     ax.set_ylabel("mean accuracy, MMLU/GSM8K/HumanEval (%)", color=INK2)

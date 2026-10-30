@@ -4,7 +4,8 @@ Reads results/tables/{summary,quality,gate}.csv (run src/analyze.py first).
 For each (model, quant) with complete quality results:
   need_gib  GPU memory needed (GiB) at --ctx: the measured peak VRAM of a full-GPU run when one
             exists (any CUDA hw_id), else GGUF size + f16 KV cache + overhead from
-            config/model_configs/<model>.json (marked "estimated")
+            config/model_configs/<model>.json (marked "estimated"); an -imat quant uses its base
+            quant's measurements (same tensor types; marked "(Q2_K)" etc.)
   fits      "gpu" if need_gib <= --vram-gb, "offload" if it fits in VRAM + --ram-gb, else "no"
   tps       generation tokens/s measured on --hw (blank if not measured there)
   tps_pred  with --bandwidth-gbs (unmeasured hardware): predicted range from src/perfmodel.py,
@@ -32,7 +33,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from common import GIB, ROOT_DIR, load_config
+from common import GIB, ROOT_DIR, base_quant, load_config
 from perfmodel import kv_bytes_per_token, predict_tps  # noqa: F401 (re-exported)
 
 TASKS = ["mmlu", "gsm8k", "humaneval"]
@@ -56,7 +57,10 @@ def candidates(summary: pd.DataFrame, quality: pd.DataFrame, gates: pd.DataFrame
     refs |= {(m, "F16") for m in q.model if not any(rm == m for rm, _ in refs)}
     rows = []
     for r in q.itertuples(index=False):
+        # an -imat quant has its base quant's tensor types: memory and speed of the base apply
         key = (r.model, r.quant)
+        if key not in measured.index and key not in size.index:
+            key = (r.model, base_quant(r.quant))
         if key in measured.index:
             need, basis = float(measured[key]), "measured"
         elif key in size.index and r.model in model_cfgs:
@@ -64,8 +68,10 @@ def candidates(summary: pd.DataFrame, quality: pd.DataFrame, gates: pd.DataFrame
             need, basis = (size[key] + kv) / GIB + overhead_gb, "estimated"
         else:
             continue
-        tps = s[(s.hw_id == hw) & (s.model == r.model) & (s.quant == r.quant)].generation_throughput_tps
-        offl = s[(s.hw_id == hw) & (s.model == r.model) & (s.quant == r.quant)].partial_offload
+        if key[1] != r.quant:
+            basis += f" ({key[1]})"
+        here = s[(s.hw_id == hw) & (s.model == r.model) & (s.quant == key[1])]
+        tps, offl = here.generation_throughput_tps, here.partial_offload
         g = gates[(gates.model == r.model) & (gates.candidate == r.quant) & (gates.task == "overall")].verdict
         row = {"model": r.model, "quant": r.quant, "need_gib": need, "need_basis": basis,
                "quality": r.quality, **{t: getattr(r, t) for t in tasks},
